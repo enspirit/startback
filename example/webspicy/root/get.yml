@@ -1,0 +1,33 @@
+---
+name: |-
+  Health check webservice of the app
+
+url: |-
+  /
+
+services:
+- method: |-
+    GET
+
+  description: |-
+    Returns whether the component is heathly
+
+  input_schema: |-
+    {}
+
+  output_schema: |-
+    .
+
+  error_schema: |-
+    String
+
+  examples:
+
+    - description: |-
+        when requested
+      params: {}
+      expected:
+        content_type: text/plain
+        status: 200
+      assert:
+        - match(/GyrbTodo v\d+.\d+.\d+/)

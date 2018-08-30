@@ -1,0 +1,72 @@
+---
+name: |-
+  Demonstration of Gyrb automated error translations
+
+url: |-
+  /errors/{kind}
+
+services:
+- method: |-
+    GET
+
+  description: |-
+    Forces the error to be raised, then catched, then converted by
+    the shield
+
+  input_schema: |-
+    {
+      kind: String
+    }
+
+  output_schema: |-
+    .
+
+  error_schema: |-
+    { code: String, description: String }
+
+  examples:
+
+    - description: |-
+        when raising a Gyrb::BadRequest
+      params:
+        kind: user-error
+      expected:
+        content_type: application/json
+        status: 400
+      assert:
+        - pathFD('', :code => 'Gyrb::Errors::BadRequestError')
+        - pathFD('', :description => 'Bad request')
+
+    - description: |-
+        when raising a Gyrb::BadRequest with a specific message
+      params:
+        kind: specific-user-error
+      expected:
+        content_type: application/json
+        status: 400
+      assert:
+        - pathFD('', :code => 'Gyrb::Errors::BadRequestError')
+        - pathFD('', :description => 'Your request is wrong')
+
+    - description: |-
+        when raising a Gyrb::GoneError
+      params:
+        kind: gone-error
+      expected:
+        content_type: application/json
+        status: 410
+      assert:
+        - pathFD('', :code => 'Gyrb::Errors::GoneError')
+        - pathFD('', :description => 'Gone')
+          
+    - description: |-
+        when raising a Gyrb::InternalServerError
+      params:
+        kind: internal-server-error
+      expected:
+        content_type: application/json
+        status: 500
+      assert:
+        - pathFD('', :code => 'Gyrb::Errors::InternalServerError')
+        - pathFD('', :description => 'Internal server error')
+          
