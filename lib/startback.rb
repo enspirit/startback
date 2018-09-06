@@ -16,7 +16,7 @@ require 'logger'
 #
 # Please refer to the documentation of those main abstractions for details.
 #
-module Gyrb
+module Startback
 
   # Simply checks that a path exists of raise an error
   def self._!(path)
@@ -25,14 +25,14 @@ module Gyrb
     end
   end
 
-  require_relative 'gyrb/ext'
-  require_relative 'gyrb/errors'
-  require_relative 'gyrb/support'
-  require_relative 'gyrb/context'
-  require_relative 'gyrb/operation'
-  require_relative 'gyrb/web'
+  require_relative 'startback/ext'
+  require_relative 'startback/errors'
+  require_relative 'startback/support'
+  require_relative 'startback/context'
+  require_relative 'startback/operation'
+  require_relative 'startback/web'
 
   # Logger instance to use for the application
-  LOGGER = ::Gyrb::Support::Logger.new
+  LOGGER = ::Startback::Support::Logger.new
 
-end # module Gyrb
+end # module Startback

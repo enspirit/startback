@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   class Operation
     class ErrorOperation < Operation
 
@@ -16,4 +16,4 @@ module Gyrb
 
     end # class ErrorOperation
   end # class Operation
-end # module Gyrb
+end # module Startback
