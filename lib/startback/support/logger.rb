@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   module Support
     #
     # A Logger extension that sends info and debug messages to STDOUT
@@ -31,4 +31,4 @@ module Gyrb
 
     end # class Logger
   end # module Support
-end # module Gyrb
+end # module Startback

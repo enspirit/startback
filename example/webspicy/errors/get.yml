@@ -1,6 +1,6 @@
 ---
 name: |-
-  Demonstration of Gyrb automated error translations
+  Demonstration of Startback automated error translations
 
 url: |-
   /errors/{kind}
@@ -27,46 +27,46 @@ services:
   examples:
 
     - description: |-
-        when raising a Gyrb::BadRequest
+        when raising a Startback::BadRequest
       params:
         kind: user-error
       expected:
         content_type: application/json
         status: 400
       assert:
-        - pathFD('', :code => 'Gyrb::Errors::BadRequestError')
+        - pathFD('', :code => 'Startback::Errors::BadRequestError')
         - pathFD('', :description => 'Bad request')
 
     - description: |-
-        when raising a Gyrb::BadRequest with a specific message
+        when raising a Startback::BadRequest with a specific message
       params:
         kind: specific-user-error
       expected:
         content_type: application/json
         status: 400
       assert:
-        - pathFD('', :code => 'Gyrb::Errors::BadRequestError')
+        - pathFD('', :code => 'Startback::Errors::BadRequestError')
         - pathFD('', :description => 'Your request is wrong')
 
     - description: |-
-        when raising a Gyrb::GoneError
+        when raising a Startback::GoneError
       params:
         kind: gone-error
       expected:
         content_type: application/json
         status: 410
       assert:
-        - pathFD('', :code => 'Gyrb::Errors::GoneError')
+        - pathFD('', :code => 'Startback::Errors::GoneError')
         - pathFD('', :description => 'Gone')
           
     - description: |-
-        when raising a Gyrb::InternalServerError
+        when raising a Startback::InternalServerError
       params:
         kind: internal-server-error
       expected:
         content_type: application/json
         status: 500
       assert:
-        - pathFD('', :code => 'Gyrb::Errors::InternalServerError')
+        - pathFD('', :code => 'Startback::Errors::InternalServerError')
         - pathFD('', :description => 'Internal server error')
           

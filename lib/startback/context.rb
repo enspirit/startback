@@ -1,7 +1,7 @@
 module Framework
-  class Gyrb
+  class Startback
     attr_accessor :original_rack_env
 
-  end # class Gyrb
+  end # class Startback
 end # module Framework
 require_relative 'context/middleware'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Gyrb
+module Startback
   describe Operation do
 
     class FooOp < Operation
@@ -55,4 +55,4 @@ module Gyrb
     end
 
   end
-end # module Gyrb
+end # module Startback

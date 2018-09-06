@@ -1,9 +1,9 @@
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
-require 'gyrb/version'
+require 'startback/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'gyrb'
-  s.version     = Gyrb::VERSION
+  s.name        = 'startback'
+  s.version     = Startback::VERSION
   s.date        = '2018-08-30'
   s.summary     = "Got Your Ruby Back"
   s.description = "Yet another ruby backend framework, I'm afraid"

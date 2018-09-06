@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   module Web
     class Api < Sinatra::Base
       include Support
@@ -13,7 +13,7 @@ module Gyrb
       ###
 
       def context
-        env['GYRB_CONTEXT']
+        env['SAMBACK_CONTEXT']
       end
 
       ###
@@ -86,4 +86,4 @@ module Gyrb
 
     end # class Api
   end # module Web
-end # module Gyrb
+end # module Startback

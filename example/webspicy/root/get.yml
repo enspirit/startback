@@ -30,4 +30,4 @@ services:
         content_type: text/plain
         status: 200
       assert:
-        - match(/GyrbTodo v\d+.\d+.\d+/)
+        - match(/StartbackTodo v\d+.\d+.\d+/)

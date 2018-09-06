@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   class Context
     class Middleware
 
@@ -7,7 +7,7 @@ module Gyrb
       end
 
       def call(env)
-        env['GYRB_CONTEXT'] ||= Context.new.tap{|c|
+        env['SAMBACK_CONTEXT'] ||= Context.new.tap{|c|
           c.original_rack_env = env.dup
         }
         @app.call(env)
@@ -15,4 +15,4 @@ module Gyrb
 
     end # class Middleware
   end # class Context
-end # module Gyrb
+end # module Startback

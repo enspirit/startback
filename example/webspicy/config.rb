@@ -1,6 +1,6 @@
 require 'webspicy'
-require 'gyrb_todo'
+require 'startback_todo'
 
 Webspicy::Configuration.new(Path.dir) do |c|
-  c.client = Webspicy::RackTestClient.for(GyrbTodo::App)
+  c.client = Webspicy::RackTestClient.for(StartbackTodo::App)
 end

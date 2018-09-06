@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   class Operation
 
     attr_accessor :context
@@ -26,6 +26,6 @@ module Gyrb
     end
 
   end # class Operation
-end # module Gyrb
+end # module Startback
 require_relative 'operation/error_operation'
 require_relative 'operation/multi_operation'

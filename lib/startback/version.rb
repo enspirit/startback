@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   module Version
     MAJOR = 0
     MINOR = 1

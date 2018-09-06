@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   class Operation
     class MultiOperation
 
@@ -25,4 +25,4 @@ module Gyrb
 
     end # class MultiOperation
   end # class Operation
-end # module Gyrb
+end # module Startback

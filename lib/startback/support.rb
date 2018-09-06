@@ -1,10 +1,10 @@
-module Gyrb
+module Startback
   module Support
 
     def logger
-      Gyrb::LOGGER
+      Startback::LOGGER
     end
 
   end # module Support
-end # module Gyrb
+end # module Startback
 require_relative 'support/logger'

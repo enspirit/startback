@@ -1,4 +1,4 @@
-# Gyrb - Got Your Ruby Back
+# Startback - Got Your Ruby Back
 
 Yet another ruby framework, I'm afraid. Here, we srongly seperate between:
 
@@ -9,5 +9,5 @@ Yet another ruby framework, I'm afraid. Here, we srongly seperate between:
 Currently,
 
 1. is handled using extra support on top of Sinatra
-2. is handled using Gyrb specific classes
+2. is handled using Startback specific classes
 3. is handled using Bmg

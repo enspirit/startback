@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'gyrb', path: '..'
+gem 'startback', path: '..'
 
 group :test do
   gem 'rake', '~> 12.0'
