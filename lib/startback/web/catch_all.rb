@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   module Web
     #
     # This Rack middleware catches all exceptions that are raised by sublayers
@@ -11,7 +11,7 @@ module Gyrb
     # Examples:
     #
     #     Rack::Builder.new do
-    #       use Gyrb::CatchAll
+    #       use Startback::CatchAll
     #     end
     #
     class CatchAll < Rack::Robustness
@@ -28,9 +28,9 @@ module Gyrb
       self.body FATAL_ERROR.to_json
 
       self.ensure(true) do |ex|
-        Gyrb::LOGGER.fatal(ex)
+        Startback::LOGGER.fatal(ex)
       end
 
     end # class CatchAll
   end # class Web
-end # module Gyrb
+end # module Startback

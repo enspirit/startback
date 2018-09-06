@@ -1,22 +1,22 @@
-module Gyrb
+module Startback
   module Web
     #
-    # Can be used to easily implement a HealthCheck web service inside a Gyrb
+    # Can be used to easily implement a HealthCheck web service inside a Startback
     # application.
     #
     # Examples:
     #
     #     # Returns a 204 with no body
-    #     run Gyrb::HealthCheck.new
+    #     run Startback::HealthCheck.new
     #
     #     # Returns a 204 with no body
-    #     run Gyrb::HealthCheck.new { nil }
+    #     run Startback::HealthCheck.new { nil }
     #
     #     # Returns a 200 with Ok in plain text
-    #     run Gyrb::HealthCheck.new { "Ok" }
+    #     run Startback::HealthCheck.new { "Ok" }
     #
     #     # Re-raises the exception
-    #     run Gyrb::HealthCheck.new { raise "Something bad" }
+    #     run Startback::HealthCheck.new { raise "Something bad" }
     #
     # Please note that this rack app is not 100% Rack compliant, since it raises
     # any error that the block itself raises. This class aims at being backed up
@@ -46,4 +46,4 @@ module Gyrb
 
     end # class HealthCheck
   end # module Web
-end # module Gyrb
+end # module Startback

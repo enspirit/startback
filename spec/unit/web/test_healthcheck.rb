@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Gyrb
+module Startback
   module Web
     describe HealthCheck do
       include Rack::Test::Methods
@@ -55,4 +55,4 @@ module Gyrb
 
     end
   end # module Web
-end # module Gyrb
+end # module Startback

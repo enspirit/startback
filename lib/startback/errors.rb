@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   module Errors
 
     class Error < StandardError

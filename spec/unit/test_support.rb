@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Gyrb
+module Startback
   describe Support do
     include Support
 

@@ -1,4 +1,4 @@
-module Gyrb
+module Startback
   class Context
     class Middleware
 
@@ -15,4 +15,4 @@ module Gyrb
 
     end # class Middleware
   end # class Context
-end # module Gyrb
+end # module Startback
