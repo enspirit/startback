@@ -1,10 +1,10 @@
 module Startback
   class Operation
+    include Errors
 
-    attr_accessor :context
     attr_accessor :world
 
-    protected :context=, :world=
+    protected :world=
 
     def bind(world)
       return self unless world
