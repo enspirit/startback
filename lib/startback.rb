@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'rack/robustness'
 require 'finitio'
-require 'bmg'
 require 'logger'
 # Provides a reusable backend framework for backend components written
 # in ruby.

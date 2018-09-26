@@ -20,6 +20,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "rack-robustness", "~> 1.1"
   s.add_runtime_dependency "finitio", "~> 0.6"
   s.add_runtime_dependency "path", ">= 1.3"
-  s.add_runtime_dependency "bmg", "~> 0.14"
   s.add_runtime_dependency "rack-test"
 end
