@@ -13,7 +13,7 @@ module Startback
     # Examples:
     #
     #     Rack::Builder.new do
-    #       use Startback::Shield
+    #       use Startback::Web::Shield
     #     end
     #
     class Shield < Rack::Robustness

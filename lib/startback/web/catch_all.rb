@@ -11,7 +11,7 @@ module Startback
     # Examples:
     #
     #     Rack::Builder.new do
-    #       use Startback::CatchAll
+    #       use Startback::Web::CatchAll
     #     end
     #
     class CatchAll < Rack::Robustness

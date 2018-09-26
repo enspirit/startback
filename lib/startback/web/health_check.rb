@@ -7,16 +7,16 @@ module Startback
     # Examples:
     #
     #     # Returns a 204 with no body
-    #     run Startback::HealthCheck.new
+    #     run Startback::Web::HealthCheck.new
     #
     #     # Returns a 204 with no body
-    #     run Startback::HealthCheck.new { nil }
+    #     run Startback::Web::HealthCheck.new { nil }
     #
     #     # Returns a 200 with Ok in plain text
-    #     run Startback::HealthCheck.new { "Ok" }
+    #     run Startback::Web::HealthCheck.new { "Ok" }
     #
     #     # Re-raises the exception
-    #     run Startback::HealthCheck.new { raise "Something bad" }
+    #     run Startback::Web::HealthCheck.new { raise "Something bad" }
     #
     # Please note that this rack app is not 100% Rack compliant, since it raises
     # any error that the block itself raises. This class aims at being backed up
