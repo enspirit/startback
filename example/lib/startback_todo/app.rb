@@ -9,6 +9,10 @@ module StartbackTodo
       run StartbackTodo::Errors
     end
 
+    map '/api' do
+      run StartbackTodo::Api
+    end
+
     run Startback::Web::HealthCheck.new {
       "StartbackTodo v#{Startback::VERSION}"
     }

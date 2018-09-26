@@ -2,6 +2,7 @@ module Startback
   module Web
     class Api < Sinatra::Base
       include Support
+      include Errors
 
       set :raise_errors, true
       set :show_exceptions, false
@@ -46,7 +47,7 @@ module Startback
       end
 
       def file_body(file, ctype)
-        unsupported_content_type(ctype)
+        raise UnsupportedMediaTypeError, "Unable to use `#{ctype}` as input data"
       end
 
       ###
@@ -66,22 +67,6 @@ module Startback
           content_type ct
           entity.to_json
         end
-      end
-
-      ###
-      ### Easier error handling for sub classes
-      ###
-
-      def user_error(msg)
-        raise UserError, msg
-      end
-
-      def server_error(msg)
-        raise ServerError, msg
-      end
-
-      def unsupported_content_type(type)
-        raise UnsupportedContentTypeError, "Unable to use `#{type}` as input data"
       end
 
     end # class Api

@@ -1,0 +1,34 @@
+---
+name: |-
+  Todos collection
+
+url: |-
+  /api/todos/
+
+services:
+- method: |-
+    GET
+
+  description: |-
+    Returns the collection of current todos
+
+  input_schema: |-
+    {
+    }
+
+  output_schema: |-
+    [{id: Integer, description: String}]
+
+  error_schema: |-
+    { code: String, description: String }
+
+  examples:
+
+    - description: |-
+        when requested
+      params: {}
+      expected:
+        content_type: application/json
+        status: 200
+      assert:
+        - size(1)
