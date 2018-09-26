@@ -1,10 +1,11 @@
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'startback/version'
+require 'date'
 
 Gem::Specification.new do |s|
   s.name        = 'startback'
   s.version     = Startback::VERSION
-  s.date        = '2018-08-30'
+  s.date        = Date.today
   s.summary     = "Got Your Ruby Back"
   s.description = "Yet another ruby backend framework, I'm afraid"
   s.authors     = ["Bernard Lambeau"]
