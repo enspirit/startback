@@ -3,6 +3,8 @@ module StartbackTodo
     use Startback::Web::CatchAll
     use Startback::Web::Shield
 
+    use Startback::Context::Middleware
+
     map '/errors' do
       run StartbackTodo::Errors
     end

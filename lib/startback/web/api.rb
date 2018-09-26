@@ -13,7 +13,7 @@ module Startback
       ###
 
       def context
-        env['SAMBACK_CONTEXT']
+        env[Startback::Context::Middleware::RACK_ENV_KEY]
       end
 
       ###
