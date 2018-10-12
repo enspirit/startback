@@ -1,3 +1,8 @@
+## 0.3.0 - 2018/10/12
+
+* Enhanced CatchAll to support an `error_handler` on the context. Fatal
+  exceptions are passed to the error handler when provided.
+
 ## 0.2.0 - 2018/09/26
 
 * Context::Middleware now accepts a `context_class` option allowing
