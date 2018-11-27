@@ -1,3 +1,7 @@
+## 0.3.1 - 2018/11/27
+
+* Subclassing error classes keep orginal status codes, unless overriden
+
 ## 0.3.0 - 2018/10/12
 
 * Enhanced CatchAll to support an `error_handler` on the context. Fatal

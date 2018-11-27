@@ -5,7 +5,11 @@ module Startback
       class << self
 
         def status(code = nil)
-          @code = code || @code
+          if code.nil?
+            @code || (superclass.respond_to?(:status) ? superclass.status : 500)
+          else
+            @code = code || @code
+          end
         end
 
         def keep_error(keep = nil)

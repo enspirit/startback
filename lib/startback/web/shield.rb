@@ -26,7 +26,9 @@ module Startback
       self.on(Finitio::TypeError)  { 400 }
 
       # Various other codes for the framework specific error classes
-      self.on(Startback::Errors::Error) {|ex| ex.class.status }
+      self.on(Startback::Errors::Error) {|ex|
+        ex.class.status
+      }
 
       # A bit of logic to choose the best error message for the user
       # according to the error class
