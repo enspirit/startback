@@ -69,6 +69,14 @@ module Startback
         end
       end
 
+      ###
+      ### Easier error handling for sub classes
+      ###
+
+      def unsupported_content_type(type)
+        raise UnsupportedContentTypeError, "Unable to use `#{type}` as input data"
+      end
+
     end # class Api
   end # module Web
 end # module Startback

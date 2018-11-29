@@ -69,6 +69,10 @@ module Startback
         status 415
       end
 
+      class UnsupportedContentTypeError < BadRequestError
+        status 415
+      end
+
       class ExpectationFailedError < BadRequestError
         status 417
       end
