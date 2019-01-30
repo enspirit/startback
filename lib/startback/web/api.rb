@@ -36,7 +36,8 @@ module Startback
         when /json/
           json_body
         when /multipart\/form-data/
-          file_body params[:file], Path(file[:filename]).extname
+          file = params[:file]
+          file_body file, Path(file[:filename]).extname
         else
           unsupported_content_type(ctype)
         end
