@@ -1,6 +1,10 @@
-## 0.3.1 - 2018/11/27
+## 0.3.2 - 2018/11/27
 
 * Subclassing error classes keep orginal status codes, unless overriden
+
+## 0.3.1 - 2019/01/30
+
+* Fix file upload raising an exception about `file` not being defined.
 
 ## 0.3.0 - 2018/10/12
 
