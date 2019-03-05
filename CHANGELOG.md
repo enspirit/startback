@@ -1,3 +1,10 @@
+## 0.4.0
+
+* Add a Startback::Web::AutoCaching rack middleware to help setting
+  the Cache-Control header in development/production environments,
+  according to middleware construction parameters and/or environment
+  variables.
+
 ## 0.3.2 - 2018/11/27
 
 * Subclassing error classes keep orginal status codes, unless overriden
