@@ -5,6 +5,13 @@ module Startback
       Startback::LOGGER
     end
 
+    def deep_merge(h1, h2)
+      h1.merge(h2){|k,v1,v2|
+        v1.is_a?(Hash) && v2.is_a?(Hash) ? deep_merge(v1, v2) : v2
+      }
+    end
+    module_function :deep_merge
+
   end # module Support
 end # module Startback
 require_relative 'support/logger'

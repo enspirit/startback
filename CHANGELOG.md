@@ -5,6 +5,11 @@
   according to middleware construction parameters and/or environment
   variables.
 
+* Add a Startback::Web::CorsHeaders rack middleware to help setting
+  the various Cross-Origin Response Headers correctly, while supporting
+  good default values and configuration through middleware construction
+  parameters and/or environment variables.
+
 ## 0.3.2 - 2018/11/27
 
 * Subclassing error classes keep orginal status codes, unless overriden
