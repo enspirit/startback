@@ -1,5 +1,8 @@
 ## 0.4.0
 
+* BREAKING CHANGE: the various web components are not longer required by
+  default. The user must require each component it uses.
+
 * Add a Startback::Web::AutoCaching rack middleware to help setting
   the Cache-Control header in development/production environments,
   according to middleware construction parameters and/or environment

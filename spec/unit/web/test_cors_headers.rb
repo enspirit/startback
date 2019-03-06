@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'singleton'
+require 'startback/web/cors_headers'
 
 module Startback
   module Web

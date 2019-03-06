@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'singleton'
 require 'startback/web/magic_assets'
 
 module Startback

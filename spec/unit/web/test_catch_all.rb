@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'singleton'
+require 'startback/web/catch_all'
 
 module Startback
   module Web

@@ -1,6 +1,0 @@
-require_relative 'web/shield'
-require_relative 'web/catch_all'
-require_relative 'web/health_check'
-require_relative 'web/auto_caching'
-require_relative 'web/cors_headers'
-require_relative 'web/api'

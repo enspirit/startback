@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'startback/web/health_check'
 
 module Startback
   module Web

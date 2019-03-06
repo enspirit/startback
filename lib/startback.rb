@@ -30,7 +30,6 @@ module Startback
   require_relative 'startback/support'
   require_relative 'startback/context'
   require_relative 'startback/operation'
-  require_relative 'startback/web'
 
   # Logger instance to use for the application
   LOGGER = ::Startback::Support::Logger.new

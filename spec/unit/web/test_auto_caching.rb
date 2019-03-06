@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'singleton'
+require 'startback/web/auto_caching'
 
 module Startback
   module Web
