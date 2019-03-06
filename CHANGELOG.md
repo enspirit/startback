@@ -10,6 +10,9 @@
   good default values and configuration through middleware construction
   parameters and/or environment variables.
 
+* Add a Startback::Web::MagicAssets middleware and application, to help
+  managing js/css assets using Sprockets.
+
 ## 0.3.2 - 2018/11/27
 
 * Subclassing error classes keep orginal status codes, unless overriden

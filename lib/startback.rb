@@ -2,6 +2,7 @@ require 'sinatra'
 require 'rack/robustness'
 require 'finitio'
 require 'logger'
+require 'path'
 # Provides a reusable backend framework for backend components written
 # in ruby.
 #

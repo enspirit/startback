@@ -16,10 +16,13 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
+  s.add_development_dependency "rack-test"
+
+  s.add_development_dependency "sprockets", "~> 4.0.0.beta8"
+  s.add_development_dependency "babel-transpiler"
 
   s.add_runtime_dependency "sinatra", "~> 2.0"
   s.add_runtime_dependency "rack-robustness", "~> 1.1"
-  s.add_runtime_dependency "finitio", "~> 0.6"
+  s.add_runtime_dependency "finitio", ">= 0.6"
   s.add_runtime_dependency "path", ">= 1.3"
-  s.add_runtime_dependency "rack-test"
 end
