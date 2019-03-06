@@ -1,4 +1,4 @@
-## 0.4.0
+## 0.4.0 - 2019/03/06
 
 * BREAKING CHANGE: the various web components are not longer required by
   default. The user must require each component it uses.
