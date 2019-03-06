@@ -1,4 +1,4 @@
-## 0.4.1
+## 0.4.1 - 2019/03/06
 
 * Add a NgHtmlTransformer tool to MagicAssets. Useful for angular assets
   with a component folder structure.
