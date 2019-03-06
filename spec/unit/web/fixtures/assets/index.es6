@@ -1,1 +1,1 @@
-//= require ./app/hello
+//= require_tree ./app

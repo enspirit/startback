@@ -34,7 +34,8 @@ module Startback
     class MagicAssets
 
       DEFAULT_OPTIONS = {
-        sprockets: {}
+        sprockets: {},
+        plugins: {}
       }
 
       def initialize(app, options = {})
@@ -84,6 +85,9 @@ module Startback
           end
           @options[:sprockets].each_pair do |k,v|
             s.public_send(:"#{k}=", v)
+          end
+          @options[:plugins].each do |p|
+            p.install(s)
           end
         }
       end
