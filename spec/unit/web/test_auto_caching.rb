@@ -62,6 +62,20 @@ module Startback
         end
       end
 
+      context 'when a Cache-Control header is already set by the app' do
+        def app
+          Rack::Builder.new do
+            use AutoCaching
+            run ->(env){ [200, {"Cache-Control" => "priority"}, ["Hello error"]] }
+          end
+        end
+
+        it 'sets the production Cache-Control' do
+          get '/'
+          expect(last_response['Cache-Control']). to eql("priority")
+        end
+      end
+
     end # CatchAll
   end # module Web
 end # module Startback

@@ -1,3 +1,8 @@
+## 0.4.2 - 2019/03/08
+
+* Startback::Web::AutoCaching no longer overrides Cache-Control headers
+  set down the middleware chain. It trusts existing headers by default.
+
 ## 0.4.1 - 2019/03/06
 
 * Add a NgHtmlTransformer tool to MagicAssets. Useful for angular assets

@@ -54,7 +54,7 @@ module Startback
     protected
 
       def patch_response_headers(hs)
-        hs.merge(development? ? @cache_headers[:development] : @cache_headers[:production])
+        (development? ? @cache_headers[:development] : @cache_headers[:production]).merge(hs)
       end
 
       def development?
