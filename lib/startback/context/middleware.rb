@@ -48,6 +48,10 @@ module Startback
         @app.call(env)
       end
 
+      def self.context(env)
+        env[RACK_ENV_KEY]
+      end
+
     end # class Middleware
   end # class Context
 end # module Startback

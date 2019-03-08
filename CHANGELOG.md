@@ -1,3 +1,9 @@
+## 0.4.3
+
+* `Context::Middleware.context(env)` can now be used to return the context
+  installed on an environment. To avoid having to know the key itself that
+  might change in the future.
+
 ## 0.4.2 - 2019/03/08
 
 * Startback::Web::AutoCaching no longer overrides Cache-Control headers
