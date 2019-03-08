@@ -1,4 +1,4 @@
-## 0.4.3
+## 0.4.3 - 2019/03/08
 
 * `Context::Middleware.context(env)` can now be used to return the context
   installed on an environment. To avoid having to know the key itself that
