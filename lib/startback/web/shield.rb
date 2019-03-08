@@ -23,7 +23,8 @@ module Startback
       self.content_type 'application/json'
 
       # Decoding errors from json and csv are considered user's fault
-      self.on(Finitio::TypeError)  { 400 }
+      self.on(Finitio::TypeError){ 400 }
+      self.on(::NotImplementedError){ 501 }
 
       # Various other codes for the framework specific error classes
       self.on(Startback::Errors::Error) {|ex|

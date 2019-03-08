@@ -39,7 +39,7 @@ module Startback
           file = params[:file]
           file_body file, Path(file[:filename]).extname
         else
-          unsupported_content_type(ctype)
+          unsupported_media_type_error!(ctype)
         end
       end
 

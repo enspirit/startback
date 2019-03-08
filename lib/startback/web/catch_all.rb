@@ -36,7 +36,7 @@ module Startback
         if context && context.respond_to?(:error_handler) && context.error_handler
           context.error_handler.fatal(ex)
         else
-          Startback::LOGGER.fatal(ex)
+          Startback::LOGGER.fatal(ex.message + "\n" + ex.backtrace.join("\n"))
         end
       end
 

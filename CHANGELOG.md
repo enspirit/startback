@@ -4,6 +4,20 @@
   installed on an environment. To avoid having to know the key itself that
   might change in the future.
 
+* The Errors module now expose many utility methods to raise errors without
+  having to know all error classes. Those methods are available in Operation
+  and Api instances. The module can also be included by users to get the new
+  methods available elsewhere.
+
+* The error `No method unsupported_content_type` is now fixed when a media
+  type is unsupported. A correct 415 HTTP error is returned instead.
+
+* Ruby's NotImplementedError are now catched by the Shield and transformed
+  to a 501 HTPP response.
+
+* Severe errors catched by CatchAll are not logged with both the message and
+  the full stack trace.
+
 ## 0.4.2 - 2019/03/08
 
 * Startback::Web::AutoCaching no longer overrides Cache-Control headers
