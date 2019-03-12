@@ -1,3 +1,8 @@
+## 0.4.4
+
+* Startback::Web::HealthCheck correctly returns an empty array as third
+  rack 204 response, to meet the spec and avoid crashes with webrick.
+
 ## 0.4.3 - 2019/03/08
 
 * `Context::Middleware.context(env)` can now be used to return the context
