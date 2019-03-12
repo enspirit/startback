@@ -1,4 +1,4 @@
-## 0.4.4
+## 0.4.4 - 2019/03/12
 
 * Startback::Web::HealthCheck correctly returns an empty array as third
   rack 204 response, to meet the spec and avoid crashes with webrick.
