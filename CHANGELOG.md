@@ -1,3 +1,8 @@
+## 0.4.5 - 2019/06/24
+
+* [CatchAll] Log error message and error backtrace as two different lines,
+  to avoid message being stripped because the stacktrace is too long.
+
 ## 0.4.4 - 2019/03/12
 
 * Startback::Web::HealthCheck correctly returns an empty array as third
