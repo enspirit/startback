@@ -1,3 +1,12 @@
+## 0.5.0
+
+* Add support for run `around` hooks in `Web::Api`, through an
+  OperationRunner support module.
+
+* Introduce an `operation_world` overridable method to participate
+  to the world construction in `Web::Api`. This aims at preventing
+  `run` cowboy overriding.
+
 ## 0.4.5 - 2019/06/24
 
 * [CatchAll] Log error message and error backtrace as two different lines,

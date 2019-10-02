@@ -7,28 +7,27 @@ url: |-
 
 services:
 - method: |-
-    GET
+    POST
 
   description: |-
-    Returns the collection of current todos
+    Creates a new todo
 
   input_schema: |-
-    {
-    }
+    Todo
 
   output_schema: |-
-    [Todo]
+    Todo
 
   error_schema: |-
-    { code: String, description: String }
+    ErrorSchema
 
   examples:
 
     - description: |-
         when requested
-      params: {}
+      params:
+        id: 9876545
+        description: "Do something"
       expected:
         content_type: application/json
-        status: 200
-      assert:
-        - size(1)
+        status: 201

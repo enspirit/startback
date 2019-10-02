@@ -20,11 +20,10 @@ module Startback
       ###
       ### Facade over third party tools
       ###
+      include Support::OperationRunner
 
-      def run(operation)
-        operation
-          .bind({ context: context })
-          .call
+      def operation_world(op)
+        { context: context }
       end
 
       ###

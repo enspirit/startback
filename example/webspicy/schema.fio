@@ -1,0 +1,11 @@
+@import finitio/data
+
+Todo = {
+  id: Integer
+  description: String
+}
+
+ErrorSchema = {
+  code: String
+  description: String
+}
