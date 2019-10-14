@@ -7,6 +7,10 @@
   to the world construction in `Web::Api`. This aims at preventing
   `run` cowboy overriding.
 
+* Add Startback::Web::Middleware helper module, that gives access to the
+  running context installed by Startback::Context::Middleware under a
+  simple `context` method.
+
 ## 0.4.5 - 2019/06/24
 
 * [CatchAll] Log error message and error backtrace as two different lines,
