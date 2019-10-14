@@ -1,6 +1,7 @@
 module Startback
   class Operation
     include Errors
+    include Support::OperationRunner
 
     attr_accessor :world
 
@@ -21,8 +22,8 @@ module Startback
 
   protected
 
-    def run(operation)
-      operation.bind(self.world).call
+    def operation_world(op)
+      self.world
     end
 
   end # class Operation

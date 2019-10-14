@@ -1,7 +1,8 @@
 ## 0.5.0
 
 * Add support for run `around` hooks in `Web::Api`, through an
-  OperationRunner support module.
+  OperationRunner support module. The same module is included by
+  the `Operation` class itself, since it can run sub operations.
 
 * Introduce an `operation_world` overridable method to participate
   to the world construction in `Web::Api`. This aims at preventing
