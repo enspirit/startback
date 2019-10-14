@@ -85,7 +85,7 @@ module Startback
                        ? superclass.send(:arounds, true).dup \
                        : []
           end
-          @arounds || []
+          @arounds || (superclass.respond_to?(:arounds, true) ? superclass.send(:arounds, true) : [])
         end
 
       end
