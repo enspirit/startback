@@ -1,6 +1,7 @@
 module Startback
   #
-  # Defines an execution context for Startback applications.
+  # Defines an execution context for Startback applications, and provides
+  # a cached factory for related abstractions (see `factor`).
   #
   # In web application, an instance of a context can be set on the Rack
   # environment, using Context::Middleware.
@@ -29,7 +30,6 @@ module Startback
   #       end
   #     end
   #
-  #
   class Context
     attr_accessor :original_rack_env
 
@@ -40,6 +40,7 @@ module Startback
     # Fatal errors catched by Web::CatchAll are sent on `error_handler#fatal`
     attr_accessor :error_handler
 
+    # Implementation of the `h` information contract
     class << self
 
       def h(hash)
@@ -78,6 +79,16 @@ module Startback
         h_dumpers << dumper
       end
 
+    end # class << self
+
+    # Factors an instance of `clazz`, which must be a Context-related
+    # abstraction (i.e. its constructor takes the context as last parameters).
+    #
+    # Factored abstractions are cached for a given context & arguments.
+    def factor(clazz, *args)
+      @factored ||= {}
+      key = args.empty? ? clazz : [clazz] + args
+      @factored[key] ||= clazz.new(*(args << self))
     end
 
     def to_h

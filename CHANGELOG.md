@@ -17,8 +17,12 @@
   to the world construction in `Web::Api`. This aims at preventing
   `run` cowboy overriding.
 
-* The Context abstraction now has a dump & reload protocol that allows
+* The `Context` abstraction now has a dump & reload protocol that allows
   being passed around in a distributed architecture.
+
+* The `Context` abstraction now acts as a factory for related abstractions.
+  That factory has a caching mechanism, to prevent creating the same classes
+  over and over again and reduce memory footprint.
 
 * Add Startback::Web::Middleware helper module, that gives access to the
   running context installed by Startback::Context::Middleware under a
