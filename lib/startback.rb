@@ -3,6 +3,7 @@ require 'rack/robustness'
 require 'finitio'
 require 'logger'
 require 'path'
+require 'ostruct'
 # Provides a reusable backend framework for backend components written
 # in ruby.
 #

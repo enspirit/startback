@@ -24,6 +24,9 @@
   running context installed by Startback::Context::Middleware under a
   simple `context` method.
 
+* Add eventing support through the `Startback::Event` and `Startback::Bus`
+  abstractions. Please `require 'startback/bus'` explicitely to use them.
+
 ## 0.4.5 - 2019/06/24
 
 * [CatchAll] Log error message and error backtrace as two different lines,
