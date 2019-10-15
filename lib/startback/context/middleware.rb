@@ -42,7 +42,7 @@ module Startback
       attr_reader :options
 
       def call(env)
-        env[RACK_ENV_KEY] ||= options[:context_class].new.tap{|c|
+        env[RACK_ENV_KEY] ||= options[:context_class].h({}).tap{|c|
           c.original_rack_env = env.dup
         }
         @app.call(env)

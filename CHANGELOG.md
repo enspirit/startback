@@ -1,5 +1,8 @@
 ## 0.5.0
 
+* The Context abstraction now has a dump & reload protocol that allows
+  being passed around in a distributed architecture.
+
 * Add support for run `around` hooks in `Web::Api`, through an
   OperationRunner support module. The same module is included by
   the `Operation` class itself, since it can run sub operations.
