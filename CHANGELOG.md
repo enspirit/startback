@@ -1,15 +1,24 @@
 ## 0.5.0
 
-* The Context abstraction now has a dump & reload protocol that allows
-  being passed around in a distributed architecture.
+* BREAKING CHANGE: Operation#bind no longer returns new operation
+  instances, it mutates the operation on which it is called. This is to
+  prevent counterintuitive behaviors when operations are passed around
+  while binding is actually rather hidden.
 
 * Add support for run `around` hooks in `Web::Api`, through an
   OperationRunner support module. The same module is included by
   the `Operation` class itself, since it can run sub operations.
 
+* Before (resp. after) hooks are added to the `Operation` abstraction.
+  They are called right before (resp. after) `call` by operation runners,
+  that is `Web::Api` and `Operation` itself.
+
 * Introduce an `operation_world` overridable method to participate
   to the world construction in `Web::Api`. This aims at preventing
   `run` cowboy overriding.
+
+* The Context abstraction now has a dump & reload protocol that allows
+  being passed around in a distributed architecture.
 
 * Add Startback::Web::Middleware helper module, that gives access to the
   running context installed by Startback::Context::Middleware under a

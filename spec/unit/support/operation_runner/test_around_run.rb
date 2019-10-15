@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'singleton'
 module Startback
   module Support
-    describe "OperationRunner" do
+    describe OperationRunner, "around_run" do
 
       class OperationTest < Startback::Operation
 
@@ -154,3 +154,4 @@ module Startback
     end # module OperationRunner
   end # module Support
 end # module Startback
+

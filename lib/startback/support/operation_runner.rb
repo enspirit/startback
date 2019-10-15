@@ -103,7 +103,10 @@ module Startback
       def run(operation)
         op_world = operation_world(operation)
         op_bound = operation.bind(op_world)
-        _run_with_arounds(op_bound, self.class.send(:arounds))
+        _run_befores(op_bound)
+        r = _run_with_arounds(op_bound, self.class.send(:arounds))
+        _run_afters(op_bound)
+        r
       end
 
     protected
@@ -117,6 +120,10 @@ module Startback
       end
 
     private
+
+      def _run_befores(op_bound)
+        op_bound.before_call if op_bound.respond_to?(:before_call)
+      end
 
       def _run_with_arounds(operation, arounds = [])
         if arounds.empty?
@@ -132,6 +139,10 @@ module Startback
             arounder.call(self, operation, &after_first)
           end
         end
+      end
+
+      def _run_afters(op_bound)
+        op_bound.after_call if op_bound.respond_to?(:after_call)
       end
 
     end # module OperationRunner

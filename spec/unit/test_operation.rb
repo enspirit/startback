@@ -21,10 +21,7 @@ module Startback
       foo1.foo = :bar1
 
       foo2 = foo1.bind({ db: :bar })
-      expect(foo1 == foo2).to eql(false)
       expect(foo2.foo).to eql(:bar1)
-
-      expect(->(){ foo1.db }).to raise_error(NoMethodError)
       expect(foo2.db).to eql(:bar)
     end
 
