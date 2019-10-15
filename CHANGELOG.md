@@ -27,6 +27,10 @@
 * Add eventing support through the `Startback::Event` and `Startback::Bus`
   abstractions. Please `require 'startback/bus'` explicitely to use them.
 
+* Add `Startback::Caching::EntityCache` abstraction and protocol for making
+  caching and invalidation easier on individual objects.
+  Please `require 'startback/caching/entity_cache'` explicitely to use them.
+
 ## 0.4.5 - 2019/06/24
 
 * [CatchAll] Log error message and error backtrace as two different lines,
