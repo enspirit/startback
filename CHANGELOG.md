@@ -39,6 +39,10 @@
   caching and invalidation easier on individual objects.
   Please `require 'startback/caching/entity_cache'` explicitely to use them.
 
+* Add log & audit trail abstractions, through the `Stackback::Audit::Trailer`
+  class. The class can be registered as an operation's around callback and
+  will dump a json log of operation executions and their timing.
+
 ## 0.4.5 - 2019/06/24
 
 * [CatchAll] Log error message and error backtrace as two different lines,
