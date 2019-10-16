@@ -37,7 +37,7 @@ module Startback
           context.error_handler.fatal(ex)
         else
           Startback::LOGGER.fatal(ex.message)
-          Startback::LOGGER.fatal(ex.backtrace.join("\n"))
+          Startback::LOGGER.fatal(ex.backtrace[0..10].join("\n"))
         end
       end
 

@@ -5,6 +5,10 @@
   prevent counterintuitive behaviors when operations are passed around
   while binding is actually rather hidden.
 
+* BREAKING CHANGE: Web::CatchAll only dumps 10 stacktrace lines, to
+  prevent logs from growing too much, and make sure that logs under
+  passenger do not end up being broken.
+
 * Add support for run `around` hooks in `Web::Api`, through an
   OperationRunner support module. The same module is included by
   the `Operation` class itself, since it can run sub operations.
