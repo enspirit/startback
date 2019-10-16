@@ -56,6 +56,7 @@ module Startback
   # cases though.
   #
   class Bus
+    include Support::Robustness
 
     def initialize(sync = Memory::Sync.new, async = nil)
       @sync = sync
@@ -68,8 +69,15 @@ module Startback
     # @arg event an event, should be an Event instance (through duck
     #      typing is allowed)
     def emit(event)
-      sync.emit(event)
-      async.emit(event) if async
+      monitor({
+        op: "Startback::Bus#emit",
+        op_data: {
+          event: { type: event.type }
+        }
+      }, event.context) do
+        sync.emit(event)
+        async.emit(event) if async
+      end
     end
 
     # Registers `listener` as being interested in receiving events of
@@ -83,5 +91,4 @@ module Startback
 
   end # class Bus
 end # module Klaro
-require_relative 'bus/helpers'
 require_relative 'bus/memory'

@@ -34,7 +34,7 @@ module Startback
       end
       expect {
         subject.emit(Event.new("user_changed", {id: 12}))
-      }.not_to raise_error("An error occured")
+      }.not_to raise_error
     end
 
   end

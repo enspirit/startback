@@ -6,6 +6,7 @@ module Startback
       # components sharing the same process.
       #
       class Sync
+        include Support::Robustness
 
         def initialize
           @listeners = {}

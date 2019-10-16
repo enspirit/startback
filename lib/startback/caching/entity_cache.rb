@@ -22,7 +22,7 @@ module Startback
         attr_writer :default_ttl
 
         def default_ttl
-          @default_ttl || (superclass.respond_to?(:default_ttl) && superclass.default_ttl) || 3600
+          @default_ttl || (superclass.respond_to?(:default_ttl, true) && superclass.default_ttl) || 3600
         end
 
       end # class DSL

@@ -15,5 +15,6 @@ module Startback
   end # module Support
 end # module Startback
 require_relative 'support/logger'
+require_relative 'support/robustness'
 require_relative 'support/hooks'
 require_relative 'support/operation_runner'

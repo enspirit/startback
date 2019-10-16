@@ -21,16 +21,16 @@ module Startback
         by.instance_eval %Q{
           def __befores(create = false)
             if create
-              @__befores ||= (superclass.respond_to?(:__befores) ? superclass.__befores.dup : [])
+              @__befores ||= (superclass.respond_to?(:__befores, false) ? superclass.__befores.dup : [])
             end
-            @__befores || (superclass.respond_to?(:__befores) ? superclass.__befores : [])
+            @__befores || (superclass.respond_to?(:__befores, false) ? superclass.__befores : [])
           end
 
           def __afters(create = false)
             if create
-              @__afters ||= (superclass.respond_to?(:__afters) ? superclass.__afters.dup : [])
+              @__afters ||= (superclass.respond_to?(:__afters, false) ? superclass.__afters.dup : [])
             end
-            @__afters || (superclass.respond_to?(:__afters) ? superclass.__afters : [])
+            @__afters || (superclass.respond_to?(:__afters, false) ? superclass.__afters : [])
           end
 
           def before_#{suffix}(&bl)

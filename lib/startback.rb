@@ -4,6 +4,7 @@ require 'finitio'
 require 'logger'
 require 'path'
 require 'ostruct'
+require 'benchmark'
 # Provides a reusable backend framework for backend components written
 # in ruby.
 #

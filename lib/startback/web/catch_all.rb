@@ -19,6 +19,7 @@ module Startback
     #
     class CatchAll < Rack::Robustness
       include Errors
+      include Support::Robustness
 
       FATAL_ERROR = {
         code: "Startback::Errors::InternalServerError",
@@ -32,12 +33,18 @@ module Startback
       self.body FATAL_ERROR
 
       self.ensure(true) do |ex|
+        STDERR.puts(ex.message)
         context = env[Context::Middleware::RACK_ENV_KEY]
-        if context && context.respond_to?(:error_handler) && context.error_handler
-          context.error_handler.fatal(ex)
-        else
-          Startback::LOGGER.fatal(ex.message)
-          Startback::LOGGER.fatal(ex.backtrace[0..10].join("\n"))
+        begin
+          if context && context.respond_to?(:error_handler, true) && context.error_handler
+            context.error_handler.fatal(ex)
+          else
+            log(:fatal, self, "ensure", error: ex)
+          end
+        rescue => ex2
+          STDERR.puts(ex2.message)
+          STDERR.puts(ex2.backtrace[0..10].join("\n"))
+          raise
         end
       end
 

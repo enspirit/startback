@@ -122,7 +122,7 @@ module Startback
     private
 
       def _run_befores(op_bound)
-        op_bound.before_call if op_bound.respond_to?(:before_call)
+        op_bound.before_call if op_bound.respond_to?(:before_call, true)
       end
 
       def _run_with_arounds(operation, arounds = [])
@@ -142,7 +142,7 @@ module Startback
       end
 
       def _run_afters(op_bound)
-        op_bound.after_call if op_bound.respond_to?(:after_call)
+        op_bound.after_call if op_bound.respond_to?(:after_call, true)
       end
 
     end # module OperationRunner

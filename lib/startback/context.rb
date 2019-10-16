@@ -38,7 +38,15 @@ module Startback
     # instance, simply.
     #
     # Fatal errors catched by Web::CatchAll are sent on `error_handler#fatal`
+    #
+    # Deprecated, use the logger below instead.
     attr_accessor :error_handler
+
+    # A logger can be provided on the context, and will be used for everything
+    # related to logging, audit trailing and robustness. The logger receives
+    # object following the log & trail conventions of Startback, and must
+    # convert them to wathever log format is necessary.
+    attr_accessor :logger
 
     # Implementation of the `h` information contract
     class << self

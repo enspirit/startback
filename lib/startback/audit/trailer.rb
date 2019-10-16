@@ -1,9 +1,9 @@
-require 'benchmark'
+require 'forwardable'
 module Startback
   module Audit
     #
     # Log & Audit trail abstraction, that can be registered as an around
-    # hook on OperationRunner.
+    # hook on OperationRunner and as an actual logger on Context instances.
     #
     # The trail is outputted as JSON lines, using a Logger on the "device"
     # passed at construction. The following JSON entries are dumped:
@@ -45,10 +45,15 @@ module Startback
     # input at construction time.
     #
     class Trailer
+      extend Forwardable
+      def_delegators :@logger, :debug, :info, :warn, :error, :fatal
 
       class Formatter
 
         def call(severity, time, progname, msg)
+          if msg[:error] && msg[:error].respond_to?(:message, true)
+            msg[:error] = msg[:error].message
+          end
           {
             severity: severity,
             time: time,
@@ -77,31 +82,41 @@ module Startback
         logger.info(op_to_trail(op, time))
         result
       rescue => ex
-        logger.error(op_to_trail(op, time).merge(error: ex.message))
+        logger.error(op_to_trail(op, time, ex))
         raise
       end
 
     protected
 
-      def op_to_trail(op, time)
-        {
+      def op_to_trail(op, time, ex = nil)
+        log_msg = {
           op_took: time ? time.round(8) : nil,
-          op: op.class.name,
+          op: op_name(op),
           context: op_context(op),
           op_data: op_data(op)
         }
+        log_msg[:error] = ex if ex
+        log_msg
+      end
+
+      def op_name(op)
+        case op
+        when String then op
+        when Class  then op.name
+        else op.class.name
+        end
       end
 
       def op_context(op)
-        sanitize(op.respond_to?(:context) ? op.context.to_h : {})
+        sanitize(op.respond_to?(:context, false) ? op.context.to_h : {})
       end
 
       def op_data(op)
-        data = if op.respond_to?(:to_trail)
+        data = if op.respond_to?(:to_trail, false)
           op.to_trail
-        elsif op.respond_to?(:input)
+        elsif op.respond_to?(:input, false)
           op.input
-        elsif op.respond_to?(:request)
+        elsif op.respond_to?(:request, false)
           op.request
         end
         sanitize(data)

@@ -10,7 +10,7 @@ module Startback
       # implementation that is truly asynchronous and relies on RabbitMQ.
       #
       class Async
-        include Bus::Helpers
+        include Support::Robustness
 
         DEFAULT_OPTIONS = {
         }
@@ -22,7 +22,7 @@ module Startback
 
         def emit(event)
           (@listeners[event.type.to_s] || []).each do |l|
-            with_error_handling {
+            stop_errors(self, "emit", event) {
               l.call(event)
             }
           end
