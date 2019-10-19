@@ -22,7 +22,12 @@ module Startback
     # An EntityCache takes an actual store at construction. The object must meet the
     # specification writtern in Store. The 'cache' ruby gem can be used in practice.
     #
+    # Cache hits, outdated and miss are logged in debug, info, and info severity.
+    # The `cache_hit`, `cache_outdated`, `cache_miss` protected methods MAY be
+    # overriden to change that behavior.
+    #
     class EntityCache
+      include Support::Robustness
 
       class << self
 
@@ -50,8 +55,14 @@ module Startback
         cache_key = encode_key(context_free_key(pkey))
         if store.exist?(cache_key)
           cached = store.get(cache_key)
-          return cached if valid?(pkey, cached)
+          if valid?(pkey, cached)
+            cache_hit(pkey, cached)
+            return cached
+          else
+            cache_outdated(pkey, cached)
+          end
         end
+        cache_miss(pkey)
         load_entity(pkey).tap{|to_cache|
           store.set(cache_key, to_cache, caching_options)
         }
@@ -65,6 +76,18 @@ module Startback
       end
 
     protected
+
+      def cache_hit(pkey, cached)
+        log(:debug, self, "cache_hit", op_data: pkey)
+      end
+
+      def cache_outdated(pkey, cached)
+        log(:info, self, "cache_outdated", op_data: pkey)
+      end
+
+      def cache_miss(pkey)
+        log(:info, self, "cache_miss", op_data: pkey)
+      end
 
       def default_caching_options
         { ttl: self.class.default_ttl }

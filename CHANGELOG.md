@@ -8,6 +8,9 @@
   compatible way to `primary_key` and `load_entity`, respectively. The
   old methods will be removed in 0.6.0.
 
+* Improved `EntityCache` with logging. Cache hits are logged in debug.
+  Cache miss & outdated are logged in info.
+
 * Fine-tuned `Robustness`, log & audit trail to make them easier to use.
   In particular, the 25 lines of the backtrace are dumped in `op_data`
   on fatal errors.
