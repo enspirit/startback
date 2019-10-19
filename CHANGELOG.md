@@ -1,4 +1,4 @@
-## 0.5.1
+## 0.5.1 - 2019/10/19
 
 * Improved `EntityCache` with a protocol to convert candidate keys to
   primary keys. The class documentation and vocabulary has been improved
@@ -15,7 +15,7 @@
   In particular, the 25 lines of the backtrace are dumped in `op_data`
   on fatal errors.
 
-## 0.5.0
+## 0.5.0 - 2019/10/16
 
 * BREAKING CHANGE: Operation#bind no longer returns new operation
   instances, it mutates the operation on which it is called. This is to
