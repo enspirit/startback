@@ -1,3 +1,13 @@
+## 0.5.1
+
+* Improved `EntityCache` with a protocol to convert candidate keys to
+  primary keys. The class documentation and vocabulary has been improved
+  to be more intuitive for users with a relational database background.
+
+  Methods `full_key` and `load_raw_data` are renamed in a backwards
+  compatible way to `primary_key` and `load_entity`, respectively. The
+  old methods will be removed in 0.6.0.
+
 ## 0.5.0
 
 * BREAKING CHANGE: Operation#bind no longer returns new operation

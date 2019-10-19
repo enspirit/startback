@@ -16,6 +16,18 @@ module Startback
 
       protected
 
+        def primary_key(ckey)
+          case ckey
+          when Integer then "a key"
+          when String then ckey
+          else
+            raise "Invalid key `#{ckey}`"
+          end
+        end
+
+        # We use the deprecated methods below to test
+        # backward compatibility with 0.5.0.
+
         def full_key(key)
           { k: key }
         end
@@ -69,6 +81,21 @@ module Startback
         }
 
         it 'yields to load_raw_data only once with the short key' do
+          expect(subject).to eql("a value")
+          expect(subject).to eql("a value")
+          expect(cache.called).to eql(1)
+          expect(cache.last_key).to eql("a key")
+        end
+
+      end
+
+      describe "primary_key" do
+
+        subject{
+          cache.get(12)
+        }
+
+        it 'allows using candidate keys' do
           expect(subject).to eql("a value")
           expect(subject).to eql("a value")
           expect(cache.called).to eql(1)
