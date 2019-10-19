@@ -33,7 +33,6 @@ module Startback
       self.body FATAL_ERROR
 
       self.ensure(true) do |ex|
-        STDERR.puts(ex.message)
         context = env[Context::Middleware::RACK_ENV_KEY]
         begin
           if context && context.respond_to?(:error_handler, true) && context.error_handler

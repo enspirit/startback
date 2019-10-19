@@ -61,7 +61,7 @@ module Startback
               seen += 1
               raise "Test"
             end
-          }.to raise_error
+          }.to raise_error("Test")
           expect(seen).to eql(2)
           expect(the_logger.last_msg.keys).to eql([:op, :op_took, :error])
         end
@@ -112,6 +112,16 @@ module Startback
             op: "AClass#method"
           }
           log_msg, logger = parse_args("AClass", "method")
+          expect(log_msg).to eql(expected)
+          expect(logger).to be_a(::Logger)
+        end
+
+        it 'works fine with an string, a method name, and a message' do
+          expected = {
+            op: "AClass#method",
+            op_data: { message: "Hello world" }
+          }
+          log_msg, logger = parse_args("AClass", "method", "Hello world")
           expect(log_msg).to eql(expected)
           expect(logger).to be_a(::Logger)
         end

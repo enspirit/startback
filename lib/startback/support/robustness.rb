@@ -24,12 +24,13 @@ module Startback
     #
     # Examples:
     #
-    #     log(op: "hello", op_data: {foo: 12}) => logged as such on STDOUT
-    #     log("A simple message")              => { op: "A simple message" } on STDOUT
-    #     log(Startback, "hello")              => { op: "Startback#hello"  } on STDOUT
-    #     log(Event.new, "hello")              => { op: "Event#hello" }      on STDOUT
-    #     log(self, context)                   => { op: "..." } on context's logger or STDOUT
-    #     log(self, event)                     => { op: "..." } on event context's logger or STDOUT
+    #     log(:info, op: "hello", op_data: {foo: 12})    => logged as such on STDOUT
+    #     log(:info, "A simple message")                 => { op: "A simple message" } on STDOUT
+    #     log(:info, Startback, "hello")                 => { op: "Startback#hello"  } on STDOUT
+    #     log(:info, Event.new, "hello")                 => { op: "Event#hello" }      on STDOUT
+    #     log(:info, Event.new, "hello", "hello world")  => { op: "Event#hello", op_data: { message: "hello world" } } on STDOUT
+    #     log(:info, self, context)                      => { op: "..." } on context's logger or STDOUT
+    #     log(:info, self, event)                        => { op: "..." } on event context's logger or STDOUT
     #     ...
     #
     module Robustness
@@ -41,7 +42,6 @@ module Startback
         def default_logger
           @@default_logger ||= ::Logger.new(STDOUT)
           from = caller.reject{|x| x =~ /lib\/startback/ }.first
-          @@default_logger.debug("Watch out, using default logger from: #{from}")
           @@default_logger
         end
         module_function :default_logger
@@ -56,7 +56,8 @@ module Startback
 
         def parse_args(log_msg, method = nil, context = nil, extra = nil)
           method, context, extra = nil, method, context unless method.is_a?(String)
-          context, extra = nil, context if context.is_a?(Hash) && extra.nil?
+          context, extra = nil, context if context.is_a?(Hash) || context.is_a?(String) && extra.nil?
+          extra = { op_data: { message: extra } } if extra.is_a?(String)
           logger = logger_for(context) || logger_for(log_msg)
           log_msg = if log_msg.is_a?(Hash)
             log_msg.dup
@@ -98,10 +99,9 @@ module Startback
         took = Benchmark.realtime {
           result = bl.call
         }
-        Tools.debug(args, op_took: took)
+        Tools.info(args, op_took: took)
         result
       rescue => ex
-        Tools.error(args, error: ex)
         raise
       end
 
@@ -117,7 +117,7 @@ module Startback
         }
         result
       rescue => ex
-        Tools.error(args, op_took: took, error: ex)
+        Tools.fatal(args, op_took: took, error: ex)
         nil
       end
 
