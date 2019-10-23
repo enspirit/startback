@@ -1,3 +1,8 @@
+## 0.5.3 - 2019/10/23
+
+* Added a `Startback::Caching::NoStore` abstraction, the easiest way
+  to disable caching in practice.
+
 ## 0.5.2 - 2019/10/23
 
 * Fine-tuned `Robustness` once again, to trace when default logger is
