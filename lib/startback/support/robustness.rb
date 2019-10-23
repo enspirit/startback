@@ -40,8 +40,12 @@ module Startback
       module Tools
 
         def default_logger
-          @@default_logger ||= ::Logger.new(STDOUT)
-          from = caller.reject{|x| x =~ /lib\/startback/ }.first
+          @@default_logger ||= begin
+            l = ::Logger.new(STDOUT)
+            l.formatter = LogFormatter.new
+            l.warn(op: "#{self}", op_data: { msg: "Using default logger", trace: caller })
+            @@default_logger = l
+          end
           @@default_logger
         end
         module_function :default_logger
@@ -74,7 +78,7 @@ module Startback
 
         [:debug, :info, :warn, :error, :fatal].each do |meth|
           define_method(meth) do |args, extra = nil, &bl|
-            act_args = args + [extra]
+            act_args = (args + [extra]).compact
             log_msg, logger = parse_args(*act_args)
             logger.send(meth, log_msg)
           end

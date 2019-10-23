@@ -78,15 +78,15 @@ module Startback
     protected
 
       def cache_hit(pkey, cached)
-        log(:debug, self, "cache_hit", op_data: pkey)
+        log(:debug, self, "cache_hit", context, op_data: pkey)
       end
 
       def cache_outdated(pkey, cached)
-        log(:info, self, "cache_outdated", op_data: pkey)
+        log(:info, self, "cache_outdated", context, op_data: pkey)
       end
 
       def cache_miss(pkey)
-        log(:info, self, "cache_miss", op_data: pkey)
+        log(:info, self, "cache_miss", context, op_data: pkey)
       end
 
       def default_caching_options

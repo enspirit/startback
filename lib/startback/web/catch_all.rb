@@ -38,7 +38,7 @@ module Startback
           if context && context.respond_to?(:error_handler, true) && context.error_handler
             context.error_handler.fatal(ex)
           else
-            log(:fatal, self, "ensure", error: ex)
+            log(:fatal, self, "ensure", context, error: ex)
           end
         rescue => ex2
           STDERR.puts(ex2.message)

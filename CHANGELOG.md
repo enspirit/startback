@@ -1,3 +1,8 @@
+## 0.5.2
+
+* Fine-tuned `Robustness` once again, to trace when default logger is
+  (incorrectly?) used.
+
 ## 0.5.1 - 2019/10/19
 
 * Improved `EntityCache` with a protocol to convert candidate keys to

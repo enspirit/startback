@@ -48,21 +48,6 @@ module Startback
       extend Forwardable
       def_delegators :@logger, :debug, :info, :warn, :error, :fatal
 
-      class Formatter
-
-        def call(severity, time, progname, msg)
-          if msg[:error] && msg[:error].respond_to?(:message, true)
-            msg[:backtrace] = msg[:error].backtrace[0..25] if severity == "FATAL"
-            msg[:error] = msg[:error].message
-          end
-          {
-            severity: severity,
-            time: time,
-          }.merge(msg).to_json << "\n"
-        end
-
-      end # class Formatter
-
       DEFAULT_OPTIONS = {
 
         # Words used to stop dumping for, e.g., security reasons
@@ -73,7 +58,7 @@ module Startback
       def initialize(device, options = {})
         @options = DEFAULT_OPTIONS.merge(options)
         @logger = ::Logger.new(device, 'daily')
-        @logger.formatter = Formatter.new
+        @logger.formatter = Support::LogFormatter.new
       end
       attr_reader :logger, :options
 
