@@ -1,7 +1,10 @@
-## 0.5.2
+## 0.5.2 - 2019/10/23
 
 * Fine-tuned `Robustness` once again, to trace when default logger is
   (incorrectly?) used.
+
+* Fixed `EntityCache` and `CatchAll` logging to use the context when
+  defined and avoid therefore to end up on the default logger.
 
 ## 0.5.1 - 2019/10/19
 
