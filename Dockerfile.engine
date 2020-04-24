@@ -1,3 +1,3 @@
-FROM enspirit/startback-2.7
+FROM enspirit/startback-base-2.7
 
 CMD bundle exec ruby engine.rb
