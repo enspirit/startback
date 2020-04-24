@@ -1,3 +1,7 @@
+.env
 pkg
 vendor
 .bundle
+Dockerfile.*.log
+Dockerfile.*.built
+Dockerfile.*.pushed
