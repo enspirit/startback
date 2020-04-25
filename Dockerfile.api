@@ -1,3 +1,5 @@
 FROM enspirit/startback-base-2.7
 
+USER app
+
 CMD bundle exec puma -t 1:5 -w 1 --preload -p 80
