@@ -1,3 +1,12 @@
+## 0.5.5
+
+* All docker images now run the software as app:app, for improved security.
+
+## 0.5.4
+
+* Docker images added for the various variants we have: base, api, web,
+  engine.
+
 ## 0.5.3 - 2019/10/23
 
 * Added a `Startback::Caching::NoStore` abstraction, the easiest way
