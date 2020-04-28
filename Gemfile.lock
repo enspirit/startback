@@ -23,7 +23,7 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     path (2.0.1)
-    rack (2.0.7)
+    rack (2.2.2)
     rack-protection (2.0.8.1)
       rack
     rack-robustness (1.1.0)
