@@ -1,5 +1,12 @@
 FROM enspirit/startback-base-2.7
 
+COPY . /tmp/startback
+RUN cd /tmp/startback && \
+    mkdir /tmp/startback/pkg && \
+    gem build -o pkg/startback-api.gem startback-api.gemspec && \
+    gem install pkg/startback-api.gem && \
+    rm -rf /tmp/startback
+
 USER app
 
 CMD bundle exec puma -t 1:5 -w 1 --preload -p 80

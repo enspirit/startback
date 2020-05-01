@@ -1,3 +1,10 @@
+## 0.6.0
+
+* Docker images now have the startback gem install together with all
+  dependencies. This saves build time of image users, since many gems
+  that require native extensions are already installed and will be
+  reused by bundler.
+
 ## 0.5.5
 
 * All docker images now run the software as app:app, for improved security.

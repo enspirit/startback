@@ -1,11 +1,21 @@
 FROM enspirit/startback-base-2.7
 
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update -qq \
  && apt-get install -qq --no-install-recommends \
     nodejs \
     yarn \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY . /tmp/startback
+RUN cd /tmp/startback && \
+    mkdir /tmp/startback/pkg && \
+    gem build -o pkg/startback-web.gem startback-web.gemspec && \
+    gem install pkg/startback-web.gem && \
+    rm -rf /tmp/startback
 
 USER app
 

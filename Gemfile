@@ -1,2 +1,3 @@
 source "https://rubygems.org"
-gemspec
+gem 'startback', path: "."
+gemspec :name => 'startback-web'
