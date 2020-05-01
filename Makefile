@@ -8,12 +8,12 @@ IMAGES := base api web engine
 -include .env
 
 # Specify which docker tag is to be used
-DOCKER_TAG := $(or ${DOCKER_TAG},${DOCKER_TAG},latest)
+VERSION := $(or ${VERSION},${VERSION},latest)
 DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io)
 
 K8S_NAMESPACE := $(or ${K8S_NAMESPACE},${K8S_NAMESPACE},stg-klaro)
 
-TINY = ${DOCKER_TAG}
+TINY = ${VERSION}
 MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 # not used until 1.0
 # MAJOR = $(shell echo '${MINOR}' | cut -f'1-2' -d'.')
@@ -21,15 +21,27 @@ MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 ### global
 
 clean:
-	rm -rf Dockerfile.*.log Dockerfile.*.built
+	rm -rf Gemfile.lock Dockerfile.*.log Dockerfile.*.built pkg/* example/Gemfile.lock
+
+Gemfile.lock: Gemfile *.gemspec lib/**/*
+	bundle install
+
+example/Gemfile.lock: Gemfile.lock example/Gemfile
+	cd example && bundle install
+
+test: Gemfile.lock example/Gemfile.lock
+	bundle exec rake test
 
 images: $(addsuffix .image,$(IMAGES))
-push-images: $(addsuffix .push,$(IMAGES))
+push-images: $(addsuffix .push-image,$(IMAGES))
+
+gem: $(addsuffix .gem,$(IMAGES))
+push-gem: $(addsuffix .push-gem,$(IMAGES))
 
 ### specific
 
 define make-goal
-Dockerfile.$1.built: Dockerfile.$1
+Dockerfile.$1.built: Dockerfile.$1 startback-$1.gemspec
 	docker build -t enspirit/startback-$1-2.7 -f Dockerfile.$1 .  | tee Dockerfile.$1.log
 	touch Dockerfile.$1.built
 
@@ -45,6 +57,14 @@ Dockerfile.$1.pushed: Dockerfile.$1.built
 	# docker push $(DOCKER_REGISTRY)/enspirit/startback-$1-2.7:$(MAJOR) | tee -a Dockerfile.$1.log
 	touch Dockerfile.$1.pushed
 
-$1.push: Dockerfile.$1.pushed
+$1.push-image: Dockerfile.$1.pushed
+
+pkg/startback-$1.${VERSION}.gem: startback-$1.gemspec startback.gemspec.rb lib/**/*
+	gem build -o pkg/startback-$1.${VERSION}.gem startback-$1.gemspec
+
+$1.gem: pkg/startback-$1.${VERSION}.gem
+
+$1.push-gem: pkg/startback-$1.${VERSION}.gem
+	gem push pkg/startback-$1.${VERSION}.gem
 endef
 $(foreach image,$(IMAGES),$(eval $(call make-goal,$(image))))

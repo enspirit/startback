@@ -5,3 +5,5 @@ vendor
 Dockerfile.*.log
 Dockerfile.*.built
 Dockerfile.*.pushed
+rspec.xml
+rspec-unit.xml
