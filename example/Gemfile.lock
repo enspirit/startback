@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    startback (0.6.0)
+    startback (0.6.1)
       bmg (>= 0.16.4, < 0.17.0)
       bunny (>= 2.14, < 3.0)
       finitio (>= 0.8, < 0.9)

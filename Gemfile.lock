@@ -1,18 +1,18 @@
 PATH
   remote: .
   specs:
-    startback-web (0.6.0)
+    startback-web (0.6.1)
       babel-transpiler
       sass (>= 3.7, < 4.0)
       sassc (>= 2.3, < 3.0)
       sprockets (>= 4.0, < 5.0)
-      startback (= 0.6.0)
+      startback (= 0.6.1)
       uglifier (>= 3.1, < 4.0)
 
 PATH
   remote: .
   specs:
-    startback (0.6.0)
+    startback (0.6.1)
       bmg (>= 0.16.4, < 0.17.0)
       bunny (>= 2.14, < 3.0)
       finitio (>= 0.8, < 0.9)
