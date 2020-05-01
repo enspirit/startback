@@ -26,6 +26,7 @@ WORKDIR /home/app
 
 COPY . /tmp/startback
 RUN cd /tmp/startback && \
+    mkdir /tmp/startback/pkg && \
     gem build -o pkg/startback-base.gem startback-base.gemspec && \
     gem install pkg/startback-base.gem && \
     rm -rf /tmp/startback

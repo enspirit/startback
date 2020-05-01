@@ -12,6 +12,7 @@ RUN apt-get update -qq \
 
 COPY . /tmp/startback
 RUN cd /tmp/startback && \
+    mkdir /tmp/startback/pkg && \
     gem build -o pkg/startback-web.gem startback-web.gemspec && \
     gem install pkg/startback-web.gem && \
     rm -rf /tmp/startback
