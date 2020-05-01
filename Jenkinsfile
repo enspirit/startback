@@ -7,7 +7,7 @@ pipeline {
   }
 
   environment {
-    DOCKER_TAG = get_docker_tag()
+    VERSION = get_docker_tag()
     DOCKER_REGISTRY = 'q8s.quadrabee.com'
     SLACK_CHANNEL = 'opensource-cicd'
   }
