@@ -12,9 +12,9 @@ def gemspec
     s.homepage    = 'http://www.enspirit.be'
     s.license     = 'MIT'
 
-    s.add_development_dependency 'rspec', '~> 3.6'
-    s.add_development_dependency 'rspec_junit_formatter'
-    s.add_development_dependency "webspicy", ">= 0.15.2"
+    s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
+    s.add_development_dependency 'rspec_junit_formatter', [">= 0.4.1", "< 0.5"]
+    s.add_development_dependency "webspicy", [">= 0.15.2", "< 0.16"]
     s.add_development_dependency "rack-test"
     s.add_development_dependency "rake"
 
