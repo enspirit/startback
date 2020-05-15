@@ -24,10 +24,12 @@ clean:
 	rm -rf Gemfile.lock Dockerfile.*.log Dockerfile.*.built pkg/* example/Gemfile.lock
 
 Gemfile.lock: Gemfile *.gemspec lib/**/*
-	bundle install
+	bundle install --path vendor/bundle
 
 example/Gemfile.lock: Gemfile.lock example/Gemfile
-	cd example && bundle install
+	cd example && bundle install --path vendor/bundle
+
+bundle: Gemfile.lock example/Gemfile.lock
 
 test: Gemfile.lock example/Gemfile.lock
 	bundle exec rake test

@@ -1,3 +1,8 @@
+## 0.7.0
+
+* Bumped bmg dependency to 0.17.x to get recent optimizations and bug
+  fixes.
+
 ## 0.6.0
 
 * Docker images now have the startback gem install together with all
