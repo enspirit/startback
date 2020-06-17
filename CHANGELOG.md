@@ -1,3 +1,7 @@
+## 0.7.1
+
+* Context#dup now correctly cleans all factored abstractions.
+
 ## 0.7.0
 
 * Bumped bmg dependency to 0.17.x to get recent optimizations and bug

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Startback
-  describe Context do
+  describe Context, "factor" do
 
     let(:context) {
       Context.new

@@ -99,12 +99,24 @@ module Startback
       @factored[key] ||= clazz.new(*(args << self))
     end
 
+    def clean_factored!
+      @factored = {}
+    end
+    private :clean_factored!
+
     def to_h
       self.class.h_dump!(self)
     end
 
     def to_json(*args, &bl)
       to_h.to_json(*args, &bl)
+    end
+
+    def dup
+      super.tap{|c|
+        c.send(:clean_factored!)
+        yield(c) if block_given?
+      }
     end
 
   end # class Context

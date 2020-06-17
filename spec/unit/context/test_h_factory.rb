@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Startback
-  describe Context do
+  describe Context, "h information contract" do
 
     it "has a to_json that dumps it" do
       expect(Context.new.to_json).to eql("{}")
@@ -16,7 +16,7 @@ module Startback
         h.merge!("foo" => foo)
       end
     end
- 
+
     class SubContext
       attr_accessor :bar
       h_factory do |c,h|
