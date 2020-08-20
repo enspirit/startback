@@ -17,6 +17,14 @@ module Startback
         env[Startback::Context::Middleware::RACK_ENV_KEY]
       end
 
+      def with_context(ctx)
+        old_context = self.context
+        env[Startback::Context::Middleware::RACK_ENV_KEY] = ctx
+        result = yield
+        env[Startback::Context::Middleware::RACK_ENV_KEY] = old_context
+        result
+      end
+
       ###
       ### Facade over third party tools
       ###
