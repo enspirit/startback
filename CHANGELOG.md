@@ -1,3 +1,25 @@
+## 0.7.2
+
+* Api#with_context and Operation#with_context allow running a block
+  with an ephemeral context. The original one is restored after the
+  block execution.
+
+      # With an explicit context created from scratch
+      ctx = ...
+      with_context(ctx) do
+        # will be run using `ctx`, instead of the original one
+        run MyOperation.new
+      end
+      ... # original context is restored here
+
+      # With a context dup
+      with_context do |ctx|
+        ctx.foo = "bar"
+        # will be run using `ctx`, instead of the original one
+        run MyOperation.new
+      end
+      ... # original context restored; foo=bar is no longer true
+
 ## 0.7.1
 
 * Context#dup now correctly cleans all factored abstractions.

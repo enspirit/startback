@@ -52,6 +52,14 @@ module Startback
       super || (world && world.has_key?(name))
     end
 
+    def with_context(ctx = nil)
+      old_world = self.world
+      self.world = self.world.merge(context: ctx || old_world.context.dup)
+      result = ctx ? yield : yield(self.world.context)
+      self.world = old_world
+      result
+    end
+
   protected
 
     def operation_world(op)
