@@ -23,6 +23,8 @@
 * DateTime and Time monkey patches are corrected regarding `to_s`
   when the latter takes a parameter (activesupport does).
 
+* Bmg "0.17.5" is now a minimum.
+
 ## 0.7.1
 
 * Context#dup now correctly cleans all factored abstractions.
