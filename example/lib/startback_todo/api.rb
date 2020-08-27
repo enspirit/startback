@@ -5,12 +5,16 @@ module StartbackTodo
       serve "Todos", db.todos
     end
 
+    get '/todos/:id' do |id|
+      todo = db.todos.restrict(id: Integer(id)).one_or_nil
+      serve "Todo", todo
+    end
+
     post '/todos/' do
       todo = json_body
       run CreateTodo.new(todo)
       status 201
-      content_type :json
-      todo.to_json
+      serve "Toto", todo
     end
 
   private

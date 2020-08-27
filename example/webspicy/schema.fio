@@ -6,6 +6,6 @@ Todo = {
 }
 
 ErrorSchema = {
-  code: String
+  code:? String
   description: String
 }

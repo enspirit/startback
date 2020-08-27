@@ -3,10 +3,17 @@ module StartbackTodo
 
     def initialize
       @todos ||= [
-        {id: 1, description: "Write more code"}
+        { id: 1, description: "Write more code" }
       ]
     end
-    attr_reader :todos
+
+    def todos
+      Model::Todos.new Bmg::Relation.new(@todos)
+    end
+
+    def insert_todo(todo)
+      @todos << todo.to_h
+    end
 
     def transaction
       yield

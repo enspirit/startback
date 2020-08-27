@@ -1,0 +1,46 @@
+---
+name: |-
+  Todos item
+
+url: |-
+  /api/todos/{id}
+
+services:
+- method: |-
+    GET
+
+  description: |-
+    Returns a particular todo
+
+  input_schema: |-
+    {
+      id: Integer
+    }
+
+  output_schema: |-
+    Todo
+
+  error_schema: |-
+    ErrorSchema
+
+  examples:
+
+    - description: |-
+        when requested with an existing todo
+      params:
+        id: 1
+      expected:
+        content_type: application/json
+        status: 200
+      assert:
+        - pathFD('', :id => 1)
+
+  examples:
+
+    - description: |-
+        when requested with an unexisting todo
+      params:
+        id: 1654651
+      expected:
+        content_type: application/json
+        status: 404

@@ -67,13 +67,17 @@ module Startback
         [ 204, {}, [] ]
       end
 
-      def serve(entity_description, entity, ct = :json)
+      def serve(entity_description, entity, ct = nil)
         if entity.nil?
           status 404
           content_type :json
           { description: "#{entity_description} not found" }.to_json
-        else
+        elsif entity.respond_to?(:to_dto)
+          ct, body = entity.to_dto(context).to(env['HTTP_ACCEPT'], ct)
           content_type ct
+          body
+        else
+          content_type ct || "application/json"
           entity.to_json
         end
       end

@@ -20,7 +20,7 @@ services:
     [Todo]
 
   error_schema: |-
-    { code: String, description: String }
+    ErrorSchema
 
   examples:
 
@@ -32,3 +32,16 @@ services:
         status: 200
       assert:
         - size(1)
+
+    - description: |-
+        when requested in csv format
+      tags:
+        - csv
+      headers:
+        Accept: text/csv
+      params: {}
+      expected:
+        content_type: text/csv
+        status: 200
+      assert:
+        - match(/1,Write more code/)

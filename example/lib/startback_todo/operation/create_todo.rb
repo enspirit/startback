@@ -6,7 +6,7 @@ module StartbackTodo
     end
 
     def call
-      db.todos << @todo
+      db.insert_todo(@todo)
     end
 
   end

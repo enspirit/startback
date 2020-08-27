@@ -19,7 +19,7 @@ services:
     .
 
   error_schema: |-
-    String
+    ErrorSchema
 
   examples:
 
