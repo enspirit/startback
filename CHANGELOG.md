@@ -1,4 +1,4 @@
-## 0.7.2
+## 0.7.2 - 2020/08/27
 
 * Api#with_context and Operation#with_context allow running a block
   with an ephemeral context. The original one is restored after the
