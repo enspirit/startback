@@ -12,6 +12,7 @@ namespace :test do
   task :example do
     Bundler.with_original_env do
       system("cd example && bundle exec rake")
+      abort("Example tests failed") unless $?.exitstatus == 0
     end
   end
 

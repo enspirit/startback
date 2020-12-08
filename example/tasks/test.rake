@@ -8,7 +8,8 @@ namespace :test do
   desc "Runs the webspicy functional tests"
   task :webspicy do
     require "webspicy"
-    Webspicy::Tester.new(Path.dir.parent/'webspicy').call
+    res = Webspicy::Tester.new(Path.dir.parent/'webspicy').call
+    abort("Webspicy tests failed") unless res == 0
   end
 
   task :all => [:unit, :webspicy]

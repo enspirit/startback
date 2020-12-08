@@ -2,9 +2,7 @@ module StartbackTodo
   class Database
 
     def initialize
-      @todos ||= [
-        { id: 1, description: "Write more code" }
-      ]
+      reset
     end
 
     def todos
@@ -17,6 +15,12 @@ module StartbackTodo
 
     def transaction
       yield
+    end
+
+    def reset
+      @todos = [
+        { id: 1, description: "Write more code" }
+      ]
     end
 
   end
