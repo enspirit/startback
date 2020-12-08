@@ -1,4 +1,5 @@
-IMAGES := base api web engine
+IMAGES := base api web engine tests
+PUSH_IMAGES := base api web engine
 
 ################################################################################
 #### Config variables
@@ -34,11 +35,14 @@ bundle: Gemfile.lock example/Gemfile.lock
 test: Gemfile.lock example/Gemfile.lock
 	bundle exec rake test
 
-images: $(addsuffix .image,$(IMAGES))
-push-images: $(addsuffix .push-image,$(IMAGES))
+ci: Dockerfile.tests.built
+	docker run enspirit/startback-tests-2.7
 
-gem: $(addsuffix .gem,$(IMAGES))
-push-gem: $(addsuffix .push-gem,$(IMAGES))
+images: $(addsuffix .image,$(IMAGES))
+push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
+
+gem: $(addsuffix .gem,$(PUSH_IMAGES))
+push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES))
 
 ### specific
 
@@ -71,6 +75,7 @@ $1.push-gem: pkg/startback-$1.${VERSION}.gem
 endef
 $(foreach image,$(IMAGES),$(eval $(call make-goal,$(image))))
 
+Dockerfile.tests.built: Dockerfile.tests $(shell find lib spec example -type f | grep -v "Gemfile.*")
 Dockerfile.api.built: Dockerfile.base.built
 Dockerfile.web.built: Dockerfile.base.built
 Dockerfile.engine.built: Dockerfile.base.built

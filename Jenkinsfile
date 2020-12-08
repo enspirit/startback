@@ -28,6 +28,14 @@ pipeline {
       }
     }
 
+    stage ('Running tests') {
+      steps {
+        container('builder') {
+          sh 'make ci'
+        }
+      }
+    }
+
     stage ('Pushing Docker Images') {
       when {
         anyOf {
