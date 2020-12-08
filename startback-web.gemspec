@@ -10,4 +10,5 @@ gemspec do |s|
   s.add_runtime_dependency 'sass', [">= 3.7", "< 4.0"]
   s.add_runtime_dependency 'babel-transpiler'
   s.add_runtime_dependency 'uglifier', [">= 3.1", "< 4.0"]
+  s.add_runtime_dependency "prometheus-client", [">= 2.1"]
 end

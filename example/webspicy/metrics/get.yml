@@ -1,0 +1,33 @@
+---
+name: |-
+  Prometheus metrics exporter
+
+url: |-
+  /metrics
+
+services:
+- method: |-
+    GET
+
+  description: |-
+    Returns prometheus metrics
+
+  input_schema: |-
+    {}
+
+  output_schema: |-
+    .
+
+  error_schema: |-
+    ErrorSchema
+
+  examples:
+
+    - description: |-
+        when requested
+      params: {}
+      expected:
+        content_type: text/plain
+        status: 200
+      assert:
+        - match(/TYPE operation_calls histogram/)

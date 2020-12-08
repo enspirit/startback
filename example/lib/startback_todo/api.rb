@@ -31,5 +31,7 @@ module StartbackTodo
       super(op).merge(db: db)
     end
 
+    around_run(PROMETHEUS)
+
   end # class Api
 end # module StartbackTodo
