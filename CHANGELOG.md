@@ -1,3 +1,14 @@
+## 0.7.3 - 2020/12/08
+
+* Add prometheus auditor and rack middleware exposing metrics for
+  operations. The auditor implements the around_run contract.
+
+      # Usage example:
+      around_run(Startback::Audit::Prometheus.new)
+
+      # ... in api (exposing /metrics endpoint)
+      use Startback::Web::Prometheus
+
 ## 0.7.2 - 2020/08/27
 
 * Api#with_context and Operation#with_context allow running a block
