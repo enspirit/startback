@@ -2,10 +2,14 @@ require 'bmg'
 require 'startback'
 require 'startback/web/catch_all'
 require 'startback/web/shield'
+require 'startback/web/prometheus'
 require 'startback/web/api'
 require 'startback/web/health_check'
+require 'startback/audit'
 
 module StartbackTodo
+
+  PROMETHEUS = ::Startback::Audit::Prometheus.new
 
   require_relative 'startback_todo/errors'
   require_relative 'startback_todo/model'
