@@ -19,4 +19,5 @@ gemspec do |s|
   s.add_runtime_dependency "tzinfo-data"
   s.add_runtime_dependency "i18n", [">= 1.0", "< 2.0"]
   s.add_runtime_dependency "mustache", [">= 1.0", "< 2.0"]
+  s.add_runtime_dependency "prometheus-client", [">= 2.1"]
 end
