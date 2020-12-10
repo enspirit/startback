@@ -1,7 +1,16 @@
 pipeline {
-
-  agent any
-
+  agent {
+    kubernetes {
+      label 'ruby-2.7'
+      containerTemplate {
+          name 'ruby'
+          image 'ruby:2.7'
+          ttyEnabled true
+          command 'cat'
+      }
+    }
+  }
+  
   triggers {
     issueCommentTrigger('.*test this please.*')
   }
@@ -14,52 +23,23 @@ pipeline {
 
   stages {
 
-    stage ('Start') {
+    stage ('Bundle install') {
       steps {
-        sendNotifications('STARTED', SLACK_CHANNEL)
-      }
-    }
-
-    stage ('Building Docker Images') {
-      steps {
-        container('builder') {
-          sh 'make -j images'
-        }
-      }
-    }
-
-    stage ('Pushing Docker Images') {
-      when {
-        anyOf {
-          branch 'master'
-          buildingTag()
-        }
-      }
-      steps {
-        container('builder') {
+        container('ruby') {
           script {
-            docker.withRegistry('https://q8s.quadrabee.com', 'q8s-deploy-enspirit-be') {
-              sh 'make push-images'
-            }
+            sh 'bundle install'
           }
         }
       }
     }
-  }
-
-  post {
-    always {
-      container('builder') {
-        junit keepLongStdio: true,
-          testResults: '**/rspec*.xml',
-          allowEmptyResults: true
+    stage ('Rake test') {
+      steps {
+        container('ruby') {
+          script {
+            sh 'bundle exec rake test'
+          }
+        }
       }
-    }
-    success {
-      sendNotifications('SUCCESS', SLACK_CHANNEL)
-    }
-    failure {
-      sendNotifications('FAILED', SLACK_CHANNEL)
     }
   }
 }
