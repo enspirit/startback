@@ -1,3 +1,7 @@
+## 0.7.4 - 2020/12/10
+
+* Move prometheus-client as a dependency for base.
+
 ## 0.7.3 - 2020/12/08
 
 * Add prometheus auditor and rack middleware exposing metrics for
