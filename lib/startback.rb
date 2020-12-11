@@ -5,6 +5,7 @@ require 'logger'
 require 'path'
 require 'ostruct'
 require 'benchmark'
+
 # Provides a reusable backend framework for backend components written
 # in ruby.
 #
@@ -27,6 +28,7 @@ module Startback
     end
   end
 
+  require_relative 'startback/version'
   require_relative 'startback/ext'
   require_relative 'startback/errors'
   require_relative 'startback/support'
