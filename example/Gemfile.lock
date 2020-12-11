@@ -11,6 +11,7 @@ PATH
       mustache (>= 1.0, < 2.0)
       nokogiri (>= 1.0, < 2.0)
       path (>= 2.0, < 3.0)
+      prometheus-client (>= 2.1)
       puma (>= 4.3, < 5.0)
       rack-robustness (>= 1.0, < 2.0)
       sinatra (>= 2.0, < 3.0)
@@ -18,7 +19,6 @@ PATH
       tzinfo-data
     startback-web (0.7.4)
       babel-transpiler
-      prometheus-client (>= 2.1)
       sass (>= 3.7, < 4.0)
       sassc (>= 2.3, < 3.0)
       sprockets (>= 4.0, < 5.0)

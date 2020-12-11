@@ -18,6 +18,9 @@ services:
   output_schema: |-
     .
 
+  preconditions:
+    - Given a CreateTodo operation has run
+
   error_schema: |-
     ErrorSchema
 
@@ -30,4 +33,7 @@ services:
         content_type: text/plain
         status: 200
       assert:
-        - match(/TYPE operation_calls histogram/)
+        - match(/TYPE example_operation_calls histogram/)
+        - match(/example_operation_calls_bucket/)
+        - match(/operation="StartbackTodo::CreateTodo"/)
+        - match(/startback_version=".*"/)

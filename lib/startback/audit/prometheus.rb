@@ -25,30 +25,61 @@ module Startback
     class Prometheus
 
       def initialize(options = {})
+        @prefix = options[:prefix] || "startback"
+        @options = options
         @registry = ::Prometheus::Client.registry
+        all_labels = [:operation, :startback_version] + option_labels.keys
         @errors = @registry.counter(
-          :operation_errors,
+          :"#{prefix}_operation_errors",
           docstring: 'A counter of operation errors',
-          labels: [:operation])
+          labels: all_labels)
         @calls = @registry.histogram(
-          :operation_calls,
+          :"#{prefix}_operation_calls",
           docstring: 'A histogram of operation latency',
-          labels: [:operation])
+          labels: all_labels)
       end
-      attr_reader :registry, :calls, :errors
+      attr_reader :registry, :calls, :errors, :options, :prefix
 
       def call(runner, op)
         name = op_name(op)
         result = nil
-        time = Benchmark.realtime{ result = yield }
-        @calls.observe(time, labels: { operation: name }) rescue nil
+        time = Benchmark.realtime{
+          result = yield
+        }
+        ignore_safely {
+          @calls.observe(time, labels: get_labels(name))
+        }
         result
       rescue => ex
-        @errors.increment(labels: { operation: name }) rescue nil
+        ignore_safely {
+          @errors.increment(labels: get_labels(name))
+        }
         raise
       end
 
     protected
+
+      def ignore_safely
+        yield
+      rescue => ex
+        puts ex.class.to_s + "\n" + ex.message + "\n" + ex.backtrace.join("\n")
+        nil
+      end
+
+      def get_labels(op_name)
+        option_labels.merge({
+          operation: op_name,
+          startback_version: version
+        })
+      end
+
+      def option_labels
+        @options[:labels] || {}
+      end
+
+      def version
+        Startback::VERSION
+      end
 
       def op_name(op)
         case op
