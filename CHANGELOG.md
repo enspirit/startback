@@ -1,3 +1,7 @@
+## 0.7.5 - 2020/12/11
+
+* Prometheus metrics include startback_version and have customisable with prefix and labels.
+
 ## 0.7.4 - 2020/12/10
 
 * Move prometheus-client as a dependency for base.
