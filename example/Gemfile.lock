@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    startback (0.7.5)
+    startback (0.7.6)
       bmg (>= 0.17.5, < 0.18.0)
       bunny (>= 2.14, < 3.0)
       finitio (>= 0.8, < 0.9)
@@ -17,12 +17,12 @@ PATH
       sinatra (>= 2.0, < 3.0)
       tzinfo (>= 1.2, < 2.0)
       tzinfo-data
-    startback-web (0.7.5)
+    startback-web (0.7.6)
       babel-transpiler
       sass (>= 3.7, < 4.0)
       sassc (>= 2.3, < 3.0)
       sprockets (>= 4.0, < 5.0)
-      startback (= 0.7.5)
+      startback (= 0.7.6)
       uglifier (>= 3.1, < 4.0)
 
 GEM

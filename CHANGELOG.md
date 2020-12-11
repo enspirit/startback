@@ -1,3 +1,7 @@
+## 0.7.6 - 2020/12/11
+
+* Include version.
+
 ## 0.7.5 - 2020/12/11
 
 * Prometheus metrics include startback_version and have customisable with prefix and labels.
