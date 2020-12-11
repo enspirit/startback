@@ -6,4 +6,5 @@ Webspicy::Configuration.new(Path.dir) do |c|
     StartbackTodo::DB.reset
   end
   c.client = Webspicy::RackTestClient.for(StartbackTodo::App)
+  c.precondition AnOperationHasRun
 end

@@ -9,7 +9,9 @@ require 'startback/audit'
 
 module StartbackTodo
 
-  PROMETHEUS = ::Startback::Audit::Prometheus.new
+  PROMETHEUS = ::Startback::Audit::Prometheus.new({
+    prefix: "example"
+  })
 
   require_relative 'startback_todo/errors'
   require_relative 'startback_todo/model'
