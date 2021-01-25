@@ -7,3 +7,5 @@ Dockerfile.*.built
 Dockerfile.*.pushed
 rspec.xml
 rspec-unit.xml
+Gemfile.lock
+examples/
