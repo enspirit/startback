@@ -35,7 +35,7 @@ services:
       assert:
         - pathFD('', :id => 1)
 
-  examples:
+  counterexamples:
 
     - description: |-
         when requested with an unexisting todo

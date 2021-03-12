@@ -14,7 +14,7 @@ def gemspec
 
     s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
     s.add_development_dependency 'rspec_junit_formatter', [">= 0.4.1", "< 0.5"]
-    s.add_development_dependency "webspicy", [">= 0.15.2", "< 0.16"]
+    s.add_development_dependency "webspicy", [">= 0.20", "< 0.21"]
     s.add_development_dependency "rack-test"
     s.add_development_dependency "rake"
 

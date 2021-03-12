@@ -1,3 +1,9 @@
+## 0.8.0 - 2021/03/12
+
+- Bumped finitio to 0.10
+- Bumped webspicy to 0.20
+- Bumped bmg to 0.18
+
 ## 0.7.6 - 2020/12/11
 
 * Include version.
