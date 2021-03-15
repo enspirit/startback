@@ -4,5 +4,5 @@ gem 'startback-web', path: '..'
 
 group :test do
   gem 'rake'
-  gem 'webspicy', '~> 0.20.0'
+  gem 'webspicy', '~> 0.20.0', '>= 0.20.5'
 end

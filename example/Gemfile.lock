@@ -42,7 +42,6 @@ GEM
     bunny (2.17.0)
       amq-protocol (~> 2.3, >= 2.3.1)
     citrus (3.0.2)
-    colorize (0.8.1)
     commonmarker (0.21.2)
       ruby-enum (~> 0.5)
     concurrent-ruby (1.1.8)
@@ -81,6 +80,7 @@ GEM
     openapi3_parser (0.8.2)
       commonmarker (~> 0.17)
       psych (~> 3.1)
+    paint (2.2.1)
     path (2.0.1)
     predicate (2.5.0)
       sexpr (~> 0.6.0)
@@ -96,7 +96,7 @@ GEM
     rack-robustness (1.1.0)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rake (12.3.3)
+    rake (13.0.3)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -130,13 +130,13 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.7)
-    webspicy (0.20.1)
-      colorize (~> 0.8.1)
+    webspicy (0.20.5)
       finitio (~> 0.10.0)
       http (>= 4)
       mustermann (~> 1.0)
       mustermann-contrib
       openapi3_parser (~> 0.8.2)
+      paint (~> 2.2)
       path (~> 2.0)
       rack-robustness (~> 1.1, >= 1.1.0)
       rack-test (~> 0.6.3)
@@ -147,7 +147,7 @@ PLATFORMS
 DEPENDENCIES
   rake
   startback-web!
-  webspicy (~> 0.20.0)
+  webspicy (~> 0.20.0, >= 0.20.5)
 
 BUNDLED WITH
    2.2.11
