@@ -1,3 +1,8 @@
+## 0.8.1
+
+* Web::Api#serve not support Path instances as entities to serve. Sinatra's send_file is
+  then used on the path. DTOs returning Path instances are supported too.
+
 ## 0.8.0 - 2021/03/12
 
 - Bumped finitio to 0.10

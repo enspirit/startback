@@ -75,10 +75,21 @@ module Startback
         elsif entity.respond_to?(:to_dto)
           ct, body = entity.to_dto(context).to(env['HTTP_ACCEPT'], ct)
           content_type ct
-          body
+          _serve(body)
+        elsif entity.is_a?(Path)
+          _serve(entity)
         else
           content_type ct || "application/json"
           entity.to_json
+        end
+      end
+
+      def _serve(body)
+        case body
+        when Path
+          send_file(body)
+        else
+          body
         end
       end
 
