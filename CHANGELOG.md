@@ -1,3 +1,7 @@
+## 0.8.2
+
+* Release gem in jenkins pipeline.
+
 ## 0.8.1
 
 * Web::Api#serve not support Path instances as entities to serve. Sinatra's send_file is
