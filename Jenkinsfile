@@ -20,6 +20,25 @@ pipeline {
       }
     }
 
+    stage ('Clean') {
+      steps {
+        container('builder') {
+          script { sh 'make clean' }
+        }
+      }
+    }
+
+    stage ('Building Gems') {
+      steps {
+        container ('builder') {
+          sh 'make base.gem'
+          sh 'make api.gem'
+          sh 'make web.gem'
+          sh 'make engine.gem'
+        }
+      }
+    }
+
     stage ('Building Docker Images') {
       steps {
         container('builder') {
