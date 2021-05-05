@@ -39,6 +39,17 @@ pipeline {
       }
     }
 
+    stage ('Pushing Gems') {
+      steps {
+        container ('builder') {
+          sh 'make base.push-gem'
+          sh 'make api.push-gem'
+          sh 'make web.push-gem'
+          sh 'make engine.push-gem'
+        }
+      }
+    }
+
     stage ('Building Docker Images') {
       steps {
         container('builder') {
