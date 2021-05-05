@@ -20,6 +20,14 @@ pipeline {
       }
     }
 
+    stage ('Clean') {
+      steps {
+        container('builder') {
+          script { sh 'make clean' }
+        }
+      }
+    }
+
     stage ('Building Docker Images') {
       steps {
         container('builder') {
@@ -35,6 +43,28 @@ pipeline {
         }
       }
     }
+
+    stage ('Building and Publishing Gems') {
+      environment {
+        GEM_HOST_API_KEY = credentials('jenkins-rubygems-api-key')
+      }      
+      when {
+        buildingTag()
+      }
+      steps {
+        container ('builder') {
+          sh 'make base.gem'
+          sh 'make api.gem'
+          sh 'make web.gem'
+          sh 'make engine.gem'
+          sh 'make base.push-gem'
+          sh 'make api.push-gem'
+          sh 'make web.push-gem'
+          sh 'make engine.push-gem'
+        }
+      }
+    }
+
 
     stage ('Pushing Docker Images') {
       when {

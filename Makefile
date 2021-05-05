@@ -66,12 +66,12 @@ Dockerfile.$1.pushed: Dockerfile.$1.built
 $1.push-image: Dockerfile.$1.pushed
 
 pkg/startback-$1.${VERSION}.gem: startback-$1.gemspec startback.gemspec.rb lib/**/*
-	gem build -o pkg/startback-$1.${VERSION}.gem startback-$1.gemspec
+	docker run --rm -t -v ${PWD}/:/app -w /app ruby bash -c 'gem build -o pkg/startback-$1.${VERSION}.gem startback-$1.gemspec'
 
 $1.gem: pkg/startback-$1.${VERSION}.gem
 
 $1.push-gem: pkg/startback-$1.${VERSION}.gem
-	gem push pkg/startback-$1.${VERSION}.gem
+	docker run --rm -t -v ${PWD}/:/app -w /app -e GEM_HOST_API_KEY=${GEM_HOST_API_KEY} ruby bash -c 'gem push pkg/startback-$1.${VERSION}.gem'
 endef
 $(foreach image,$(IMAGES),$(eval $(call make-goal,$(image))))
 
