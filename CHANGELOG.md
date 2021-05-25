@@ -1,3 +1,7 @@
+## 0.8.3
+
+* Update dependencies for security patches.
+
 ## 0.8.2
 
 * Release gem in jenkins pipeline.
