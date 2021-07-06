@@ -8,7 +8,7 @@ pipeline {
 
   environment {
     VERSION = get_docker_tag()
-    DOCKER_REGISTRY = 'q8s.quadrabee.com'
+    DOCKER_REGISTRY = 'q8s.dev/enspirit'
     SLACK_CHANNEL = 'opensource-cicd'
   }
 
@@ -76,7 +76,7 @@ pipeline {
       steps {
         container('builder') {
           script {
-            docker.withRegistry('https://q8s.quadrabee.com', 'q8s-deploy-enspirit-be') {
+            docker.withRegistry('https://q8s.dev', 'jenkins-startback-builds') {
               sh 'make push-images'
             }
           }

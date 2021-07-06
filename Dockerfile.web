@@ -1,4 +1,4 @@
-FROM enspirit/startback-base-2.7
+FROM startback/base-2.7
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
