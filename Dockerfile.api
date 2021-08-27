@@ -9,4 +9,4 @@ RUN cd /tmp/startback && \
 
 USER app
 
-CMD bundle exec puma -t 1:5 -w 1 --preload -p 80
+CMD bundle exec puma -t 1:5 -w 1 --preload -p 3000

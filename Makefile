@@ -75,7 +75,7 @@ $1.push-gem: pkg/startback-$1.${VERSION}.gem
 endef
 $(foreach image,$(IMAGES),$(eval $(call make-goal,$(image))))
 
-Dockerfile.tests.built: Dockerfile.tests $(shell find lib spec example -type f | grep -v "Gemfile.*")
+Dockerfile.tests.built: Dockerfile.tests $(shell find lib spec example -type f | grep -v "Gemfile.*" | grep -v vendor)
 Dockerfile.api.built: Dockerfile.base.built
 Dockerfile.web.built: Dockerfile.base.built
 Dockerfile.engine.built: Dockerfile.base.built

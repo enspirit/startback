@@ -1,3 +1,9 @@
+## 0.9.0
+
+* BREAKING CHANGE: all docker images now run Puma as app on port 3000 instead
+of root on port 80.
+
+* Upgrades uglify.js to 4.2, to enable support for ES6.
 ## 0.8.3
 
 * Update dependencies for security patches.
