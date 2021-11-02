@@ -1,0 +1,67 @@
+name: Release Gems
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+jobs:
+  Tests:
+    uses: enspirit/startback/.github/workflows/integration.yml@master
+
+  RubyGems:
+    needs: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: act10ns/slack@v1
+        with:
+          status: starting
+          channel: '#opensource-cicd'
+
+      - uses: actions/checkout@v2
+
+      - name: Build packages
+        id: build-gems
+        run: make gem
+
+      - name: Push Gems
+        id: push-gems
+        run: make push-gem
+
+      - uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: '#opensource-cicd'
+        if: always()
+
+  Github:
+    needs: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: act10ns/slack@v1
+        with:
+          status: starting
+          channel: '#opensource-cicd'
+
+      - uses: actions/checkout@v2
+
+      - run: make gem
+        id: build-gem
+
+      - uses: ncipollo/release-action@v1
+        id: create-release
+        with:
+          artifacts: "pkg/startback*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: '#opensource-cicd'
+        if: always()
