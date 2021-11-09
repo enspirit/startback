@@ -10,7 +10,7 @@ PUSH_IMAGES := base api web engine
 
 # Specify which docker tag is to be used
 VERSION := $(or ${VERSION},${VERSION},latest)
-DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},https://q8s.dev/enspirit)
+DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},q8s.dev/enspirit)
 
 K8S_NAMESPACE := $(or ${K8S_NAMESPACE},${K8S_NAMESPACE},stg-klaro)
 
