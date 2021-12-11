@@ -35,6 +35,8 @@ module Startback
       class Async
         include Support::Robustness
 
+        CHANNEL_KEY = 'Startback::Bus::Bunny::Async::ChannelKey'
+
         DEFAULT_OPTIONS = {
           # (optional) The URL to use for connecting to RabbitMQ.
           url: ENV['STARTBACK_BUS_BUNNY_ASYNC_URL'],
@@ -65,11 +67,15 @@ module Startback
           try_max_times(10) do
             @bunny = ::Bunny.new(conn)
             @bunny.start
-            @channel = @bunny.create_channel
+            channel
             log(:info, {op: "#{self.class.name}#connect", op_data: conn}, options[:context])
           end
         end
-        attr_reader :channel, :options
+        attr_reader :options
+
+        def channel
+          Thread.current[CHANNEL_KEY] ||= @bunny.create_channel
+        end
 
         def emit(event)
           stop_errors(self, "emit", event.context) do
