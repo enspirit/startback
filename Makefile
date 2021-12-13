@@ -44,7 +44,7 @@ test: Gemfile.lock example/Gemfile.lock
 	bundle exec rake test
 
 ci: Dockerfile.tests.built
-	docker run enspirit/startback/tests-ruby${MRI_VERSION}
+	docker run enspirit/startback:tests
 
 images: $(addsuffix .image,$(IMAGES))
 push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
