@@ -15,6 +15,9 @@ PUSH_IMAGES := base api web engine
 # Load them from an optional .env file
 -include .env
 
+# Specify which ruby version is used as base
+MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},2.7)
+
 # Specify which docker tag is to be used
 VERSION := $(or ${VERSION},${VERSION},latest)
 DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
@@ -41,7 +44,7 @@ test: Gemfile.lock example/Gemfile.lock
 	bundle exec rake test
 
 ci: Dockerfile.tests.built
-	docker run enspirit/startback/tests-ruby2.7
+	docker run enspirit/startback/tests-ruby${MRI_VERSION}
 
 images: $(addsuffix .image,$(IMAGES))
 push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
@@ -53,7 +56,7 @@ push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES))
 
 define make-goal
 Dockerfile.$1.built: Dockerfile.$1 startback-$1.gemspec
-	docker build -t enspirit/startback:$1 -f Dockerfile.$1 .  | tee Dockerfile.$1.log
+	docker build -t enspirit/startback:$1 -f Dockerfile.$1 --build-arg MRI_VERSION=${MRI_VERSION} . | tee Dockerfile.$1.log
 	touch Dockerfile.$1.built
 
 $1.image: Dockerfile.$1.built
@@ -66,15 +69,15 @@ Dockerfile.$1.pushed: Dockerfile.$1.built
 	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}
 	docker push enspirit/startback:$1-$(MINOR) | tee -a Dockerfile.$1.log
 	# With ruby suffix
-	docker tag enspirit/startback:$1 enspirit/startback:$1-ruby2.7
-	docker push enspirit/startback:$1-ruby2.7
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}-ruby2.7
-	docker push enspirit/startback:$1-$(TINY)-ruby2.7 | tee -a Dockerfile.$1.log
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}-ruby2.7
-	docker push enspirit/startback:$1-$(MINOR)-ruby2.7 | tee -a Dockerfile.$1.log
+	docker tag enspirit/startback:$1 enspirit/startback:$1-ruby${MRI_VERSION}
+	docker push enspirit/startback:$1-ruby${MRI_VERSION}
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}-ruby${MRI_VERSION}
+	docker push enspirit/startback:$1-$(TINY)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}-ruby${MRI_VERSION}
+	docker push enspirit/startback:$1-$(MINOR)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
 	# not used until 1.0
-	# docker tag enspirit/startback:$1-ruby2.7 enspirit/startback:$1-${MAJOR}-ruby2.7
-	# docker push enspirit/startback:$1-$(MAJOR)-ruby2.7 | tee -a Dockerfile.$1.log
+	# docker tag enspirit/startback:$1-ruby${MRI_VERSION} enspirit/startback:$1-${MAJOR}-ruby${MRI_VERSION}
+	# docker push enspirit/startback:$1-$(MAJOR)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
 	touch Dockerfile.$1.pushed
 
 $1.push-image: Dockerfile.$1.pushed

@@ -1,4 +1,5 @@
-FROM ruby:2.7
+ARG MRI_VERSION
+FROM ruby:${MRI_VERSION}
 
 LABEL maintainer=blambeau@enspirit.be
 
