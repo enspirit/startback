@@ -4,3 +4,4 @@ contrib
 vendor
 Dockerfile*
 pkg/*
+Makefile

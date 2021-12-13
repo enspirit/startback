@@ -1,3 +1,10 @@
+SHELL := bash
+.ONESHELL:
+.SHELLFLAGS := -eu -o pipefail -c
+.DELETE_ON_ERROR:
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
+
 IMAGES := base api web engine tests
 PUSH_IMAGES := base api web engine
 
@@ -10,9 +17,7 @@ PUSH_IMAGES := base api web engine
 
 # Specify which docker tag is to be used
 VERSION := $(or ${VERSION},${VERSION},latest)
-DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},q8s.dev/enspirit)
-
-K8S_NAMESPACE := $(or ${K8S_NAMESPACE},${K8S_NAMESPACE},stg-klaro)
+DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
 
 TINY = ${VERSION}
 MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
@@ -36,7 +41,7 @@ test: Gemfile.lock example/Gemfile.lock
 	bundle exec rake test
 
 ci: Dockerfile.tests.built
-	docker run startback/tests-2.7
+	docker run enspirit/startback/tests-ruby2.7
 
 images: $(addsuffix .image,$(IMAGES))
 push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
@@ -48,19 +53,28 @@ push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES))
 
 define make-goal
 Dockerfile.$1.built: Dockerfile.$1 startback-$1.gemspec
-	docker build -t startback/$1-2.7 -f Dockerfile.$1 .  | tee Dockerfile.$1.log
+	docker build -t enspirit/startback:$1 -f Dockerfile.$1 .  | tee Dockerfile.$1.log
 	touch Dockerfile.$1.built
 
 $1.image: Dockerfile.$1.built
 
 Dockerfile.$1.pushed: Dockerfile.$1.built
-	docker tag startback/$1-2.7 $(DOCKER_REGISTRY)/startback/$1-2.7:${TINY}
-	docker push $(DOCKER_REGISTRY)/startback/$1-2.7:$(TINY) | tee -a Dockerfile.$1.log
-	docker tag startback/$1-2.7 $(DOCKER_REGISTRY)/startback/$1-2.7:${MINOR}
-	docker push $(DOCKER_REGISTRY)/startback/$1-2.7:$(MINOR) | tee -a Dockerfile.$1.log
+	# Without ruby suffix
+	docker push enspirit/startback:$1 | tee -a Dockerfile.$1.log
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}
+	docker push enspirit/startback:$1-$(TINY) | tee -a Dockerfile.$1.log
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}
+	docker push enspirit/startback:$1-$(MINOR) | tee -a Dockerfile.$1.log
+	# With ruby suffix
+	docker tag enspirit/startback:$1 enspirit/startback:$1-ruby2.7
+	docker push enspirit/startback:$1-ruby2.7
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}-ruby2.7
+	docker push enspirit/startback:$1-$(TINY)-ruby2.7 | tee -a Dockerfile.$1.log
+	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}-ruby2.7
+	docker push enspirit/startback:$1-$(MINOR)-ruby2.7 | tee -a Dockerfile.$1.log
 	# not used until 1.0
-	# docker tag startback/$1-2.7 $(DOCKER_REGISTRY)/startback/$1-2.7:${MAJOR}
-	# docker push $(DOCKER_REGISTRY)/startback/$1-2.7:$(MAJOR) | tee -a Dockerfile.$1.log
+	# docker tag enspirit/startback:$1-ruby2.7 enspirit/startback:$1-${MAJOR}-ruby2.7
+	# docker push enspirit/startback:$1-$(MAJOR)-ruby2.7 | tee -a Dockerfile.$1.log
 	touch Dockerfile.$1.pushed
 
 $1.push-image: Dockerfile.$1.pushed
