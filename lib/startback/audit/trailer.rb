@@ -74,13 +74,13 @@ module Startback
 
     protected
 
-      def op_to_trail(op, time, ex = nil)
+      def op_to_trail(op, time = nil, ex = nil)
         log_msg = {
           op_took: time ? time.round(8) : nil,
           op: op_name(op),
           context: op_context(op),
           op_data: op_data(op)
-        }
+        }.compact
         log_msg[:error] = ex if ex
         log_msg
       end
@@ -104,6 +104,8 @@ module Startback
           op.input
         elsif op.respond_to?(:request, false)
           op.request
+        elsif op.is_a?(Operation::MultiOperation)
+          op.ops.map{ |sub_op| op_to_trail(sub_op) }
         end
         sanitize(data)
       end

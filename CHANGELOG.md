@@ -2,6 +2,10 @@
 
 * Add support for operations's transaction policy and transaction
   manager helper
+
+* Fix audit trail on multi operations. The op_data recursively
+  collect data of sub operations.
+
 ## 0.9.1 - 2021-12-13
 
 * Fixing thread safetiness of async bus (bunny channels)
