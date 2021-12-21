@@ -1,10 +1,18 @@
-## 0.9.0
+## 0.10.0
+
+* Add support for operations's transaction policy and transaction
+  manager helper
+## 0.9.1 - 2021-12-13
+
+* Fixing thread safetiness of async bus (bunny channels)
+
+## 0.9.0 - 2021-08-27
 
 * BREAKING CHANGE: all docker images now run Puma as app on port 3000 instead
 of root on port 80.
 
 * Upgrades uglify.js to 4.2, to enable support for ES6.
-## 0.8.3
+## 0.8.3 - 2021-05-25
 
 * Update dependencies for security patches.
 

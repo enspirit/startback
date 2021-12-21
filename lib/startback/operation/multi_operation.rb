@@ -1,6 +1,6 @@
 module Startback
   class Operation
-    class MultiOperation
+    class MultiOperation < Operation
 
       def initialize(ops = [])
         @ops = ops

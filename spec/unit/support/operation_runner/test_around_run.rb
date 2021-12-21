@@ -68,7 +68,7 @@ module Startback
       end
 
       context 'the around feature with a class' do
-        class TransactionManager
+        class SomeTransactionManager
           include Singleton
 
           def initialize
@@ -87,7 +87,7 @@ module Startback
 
         class RunnerTest3
           include OperationRunner
-          around_run TransactionManager.instance
+          around_run SomeTransactionManager.instance
 
           def operation_world(op)
             { hello: "world" }
@@ -97,7 +97,7 @@ module Startback
         it 'calls the proc with expected parameters' do
           test = RunnerTest3.new
           got = test.run(op)
-          expect(TransactionManager.instance.called).to eql(true)
+          expect(SomeTransactionManager.instance.called).to eql(true)
           expect(got).to eql({
             seen_hello: "world"
           })
@@ -154,4 +154,3 @@ module Startback
     end # module OperationRunner
   end # module Support
 end # module Startback
-

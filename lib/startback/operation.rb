@@ -29,6 +29,7 @@ module Startback
   #     end
   #
   class Operation
+    extend Support::TransactionPolicy
     include Errors
     include Support::OperationRunner
     include Support::Hooks.new(:call)
