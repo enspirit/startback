@@ -1,8 +1,11 @@
+require 'rspec/core/rake_task'
+
 namespace :test do
 
   desc "Run RSpec unit tests"
-  task :unit do
-    system("rspec --fail-fast=1 -Ilib -Ispec --pattern 'spec/unit/**/test_*.rb' --color --backtrace --fail-fast")
+  RSpec::Core::RakeTask.new(:unit) do |t|
+    t.pattern = "spec/unit/**/test_*.rb"
+    t.rspec_opts = %{-Ilib -Ispec --color --backtrace --format progress --format RspecJunitFormatter --out spec/rspec-unit.xml}
   end
 
   desc "Runs the webspicy functional tests"
