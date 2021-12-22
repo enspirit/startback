@@ -1,4 +1,4 @@
-## 0.10.0
+## 0.10.0 - 2021-12-22
 
 * Add support for operations's transaction policy and transaction
   manager helper
