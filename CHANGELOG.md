@@ -1,3 +1,10 @@
+## 0.10.1
+
+* Add support for causes in Startback::Errors::Error
+
+* The Shield rack middleware dumps the causes to json, provided
+  they are subclasses of Startback::Error.
+
 ## 0.10.0 - 2021-12-22
 
 * Add support for operations's transaction policy and transaction

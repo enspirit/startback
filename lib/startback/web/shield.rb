@@ -34,9 +34,24 @@ module Startback
       # A bit of logic to choose the best error message for the user
       # according to the error class
       self.body{|ex|
-        ex = ex.root_cause if ex.is_a?(Finitio::TypeError)
-        { code: ex.class.name, description: ex.message }.to_json
+        body_for(ex).to_json
       }
+
+      def body_for(ex)
+        ex = ex.root_cause if ex.is_a?(Finitio::TypeError)
+        body = { code: ex.class.name, description: ex.message }
+        return body unless ex.is_a?(Startback::Errors::Error)
+        return body unless ex.has_causes?
+
+        body[:causes] = ex.causes
+          .filter{|cause|
+            cause.is_a?(Startback::Errors::Error)
+          }
+          .map{|cause|
+            body_for(cause)
+          }
+        body
+      end
 
     end # class Shield
   end # module Web

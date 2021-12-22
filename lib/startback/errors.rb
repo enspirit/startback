@@ -2,8 +2,13 @@ module Startback
   module Errors
 
     class Error < StandardError
-      class << self
+      def initialize(message = nil, causes = nil)
+        super(message)
+        @causes = Array(causes)
+      end
+      attr_reader :causes
 
+      class << self
         def status(code = nil)
           if code.nil?
             @code || (superclass.respond_to?(:status) ? superclass.status : 500)
@@ -22,10 +27,18 @@ module Startback
         msg = super
         return msg unless msg == self.class.name
         parts = self.class.name.split('::').last.gsub(/[A-Z]/){|x|
-          " #{x.downcase}" 
+          " #{x.downcase}"
         }.strip.split(" ")
         parts = parts[0...-1] unless self.class.keep_error
         parts.join(" ").capitalize
+      end
+
+      def has_causes?
+        causes && !causes.empty?
+      end
+
+      def cause
+        causes&.first
       end
     end
 
