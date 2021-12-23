@@ -5,6 +5,9 @@
 * The Shield rack middleware dumps the causes to json, provided
   they are subclasses of Startback::Error.
 
+* Error & their causes are now properly dumped in the audit
+  trail.
+
 ## 0.10.0 - 2021-12-22
 
 * Add support for operations's transaction policy and transaction
