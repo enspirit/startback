@@ -1,4 +1,8 @@
-## 0.10.1
+## 0.11.0 - 2022-04-21
+
+* Require bmg >= 0.19.0
+
+## 0.10.1 - 2021-12-23
 
 * Add support for causes in Startback::Errors::Error
 
