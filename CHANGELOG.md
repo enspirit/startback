@@ -1,4 +1,4 @@
-## 0.11.2
+## 0.11.2 - 2022-05-10
 
 * Audit::Trailer and Audit::Prometheus support any op object
   responding to `op_name` and `op_data` and use them in
@@ -7,7 +7,7 @@
   Their `#call` method are now part of the public API and
   can thus be called by end-user code.
 
-## 0.11.1
+## 0.11.1 - 2022-05-10
 
 * We no longer let the Sinatra layer dump errors in log.
 
