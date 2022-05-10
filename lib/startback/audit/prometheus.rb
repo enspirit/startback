@@ -1,3 +1,4 @@
+require_relative 'shared'
 require 'prometheus/client'
 
 module Startback

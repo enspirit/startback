@@ -1,3 +1,4 @@
+require_relative 'shared'
 require 'forwardable'
 module Startback
   module Audit

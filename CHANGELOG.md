@@ -1,3 +1,8 @@
+## 0.11.3 - 2022-05-10
+
+* Keep allowing `require 'audit/trailer'` alone without an
+  error.
+
 ## 0.11.2 - 2022-05-10
 
 * Audit::Trailer and Audit::Prometheus support any op object
