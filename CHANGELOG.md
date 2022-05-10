@@ -1,3 +1,12 @@
+## 0.11.2
+
+* Audit::Trailer and Audit::Prometheus support any op object
+  responding to `op_name` and `op_data` and use them in
+  priority over dedicated logic to extract logging info.
+
+  Their `#call` method are now part of the public API and
+  can thus be called by end-user code.
+
 ## 0.11.1
 
 * We no longer let the Sinatra layer dump errors in log.

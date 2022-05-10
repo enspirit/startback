@@ -45,6 +45,7 @@ module Startback
     # input at construction time.
     #
     class Trailer
+      include Shared
       extend Forwardable
       def_delegators :@logger, :debug, :info, :warn, :error, :fatal
 
@@ -85,20 +86,14 @@ module Startback
         log_msg
       end
 
-      def op_name(op)
-        case op
-        when String then op
-        when Class  then op.name
-        else op.class.name
-        end
-      end
-
       def op_context(op)
         sanitize(op.respond_to?(:context, false) ? op.context.to_h : {})
       end
 
       def op_data(op)
-        data = if op.respond_to?(:to_trail, false)
+        data = if op.respond_to?(:op_data, false)
+          op.op_data
+        elsif op.respond_to?(:to_trail, false)
           op.to_trail
         elsif op.respond_to?(:input, false)
           op.input

@@ -23,6 +23,7 @@ module Startback
     # input at construction time.
     #
     class Prometheus
+      include Shared
 
       def initialize(options = {})
         @prefix = options[:prefix] || "startback"
@@ -78,14 +79,6 @@ module Startback
 
       def version
         Startback::VERSION
-      end
-
-      def op_name(op)
-        case op
-        when String then op
-        when Class  then op.name
-        else op.class.name
-        end
       end
 
     end # class Prometheus

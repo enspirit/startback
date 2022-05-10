@@ -8,13 +8,30 @@ module Startback
         Trailer.new("/tmp/trail.log")
       }
 
+      describe "op_name" do
+
+        def op_name(op, trailer = self.trailer)
+          trailer.send(:op_name, op)
+        end
+
+        it 'uses op_name in priority if provided' do
+          op = OpenStruct.new(op_name: "foo")
+          expect(op_name(op)).to eql("foo")
+        end
+      end
+
       describe "op_data" do
 
         def op_data(op, trailer = self.trailer)
           trailer.send(:op_data, op)
         end
 
-        it 'uses to_trail in priority if provided' do
+        it 'uses op_data in priority if provided' do
+          op = OpenStruct.new(op_data: { foo: "bar" }, input: 12, request: 13)
+          expect(op_data(op)).to eql({ foo: "bar" })
+        end
+
+        it 'uses to_trail then' do
           op = OpenStruct.new(to_trail: { foo: "bar" }, input: 12, request: 13)
           expect(op_data(op)).to eql({ foo: "bar" })
         end
