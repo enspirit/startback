@@ -1,3 +1,7 @@
+## 0.11.1
+
+* We no longer let the Sinatra layer dump errors in log.
+
 ## 0.11.0 - 2022-04-21
 
 * Require bmg >= 0.19.0

@@ -62,7 +62,6 @@ module Startback
       def ignore_safely
         yield
       rescue => ex
-        puts ex.class.to_s + "\n" + ex.message + "\n" + ex.backtrace.join("\n")
         nil
       end
 

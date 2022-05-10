@@ -6,6 +6,7 @@ module Startback
 
       set :raise_errors, true
       set :show_exceptions, false
+      set :dump_errors, false
 
     protected
 
