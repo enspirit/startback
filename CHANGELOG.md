@@ -1,4 +1,4 @@
-## 0.11.4
+## 0.11.4 - 2022-05-18
 
 * Allow logging Strings & Exceptions directly in both trailer
   and Robusness helpers.
