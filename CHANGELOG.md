@@ -3,6 +3,9 @@
 * Add Startback::Support::Env with `env` and `env!` helper
   methods.
 
+* Startback no longer includes a trace in the warning message
+  sometimes seen because one uses the default logger.
+
 ## 0.11.4 - 2022-05-18
 
 * Allow logging Strings & Exceptions directly in both trailer
