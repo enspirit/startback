@@ -6,6 +6,13 @@
 * Startback no longer includes a trace in the warning message
   sometimes seen because one uses the default logger.
 
+* Added Startback::Event::Agent class, for agents reacting to
+  events on a bus.
+
+* Added Startback::Event::Engine class, that runs an infinite
+  loop using ServerEngine and includes a Webrick small rack
+  app with a default and overridable healthcheck behavior.
+
 ## 0.11.4 - 2022-05-18
 
 * Allow logging Strings & Exceptions directly in both trailer

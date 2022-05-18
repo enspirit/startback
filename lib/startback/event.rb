@@ -41,3 +41,5 @@ module Startback
 
   end # class Event
 end # module Startback
+require_relative 'event/agent'
+require_relative 'event/engine'
