@@ -67,6 +67,8 @@ module Startback
             log_msg.dup
           elsif log_msg.is_a?(String)
             log_msg = { op: "#{log_msg}#{method.nil? ? '' : '#'+method.to_s}" }
+          elsif log_msg.is_a?(Exception)
+            log_msg = { error: log_msg }
           else
             log_msg = log_msg.class unless log_msg.is_a?(Module)
             log_msg = { op: "#{log_msg.name}##{method}" }

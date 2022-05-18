@@ -135,6 +135,16 @@ module Startback
           expect(logger).to be_a(::Logger)
         end
 
+        it 'works fine with a Exception only' do
+          exception = StandardError.new('hello')
+          expected = {
+            error: exception
+          }
+          log_msg, logger = parse_args(exception)
+          expect(log_msg).to eql(expected)
+          expect(logger).to be_a(::Logger)
+        end
+
         it 'works fine with a string and a context with logger' do
           expected = {
             op: "a message"

@@ -1,3 +1,8 @@
+## 0.11.4
+
+* Allow logging Strings & Exceptions directly in both trailer
+  and Robusness helpers.
+
 ## 0.11.3 - 2022-05-10
 
 * Keep allowing `require 'audit/trailer'` alone without an

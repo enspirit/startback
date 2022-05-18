@@ -3,6 +3,8 @@ module Startback
     class LogFormatter
 
       def call(severity, time, progname, msg)
+        msg = { message: msg } if msg.is_a?(String)
+        msg = { error: msg } if msg.is_a?(Exception)
         {
           severity: severity,
           time: time
