@@ -1,9 +1,19 @@
+## 0.12.1
+
+* See 0.12.0, same release
+
 ## 0.12.0 - 2022-05-19
 
 This release enhances the event layer of Startback with the
 Event, Bus, Engine and Agent collaborating classes.
 
 Unfortunately it comes with a couple of BREAKING changes:
+
+* `Context::Middleware` now longer takes a context_class
+  option, but simply a Context instance (or subclass). That
+  instance will be duped and result installed in Rack env.
+  Doing so allows building a default context instance with,
+  e.g. a logger, and make sure it will be properly reused.
 
 * `Startback::Bus` is moved to `Startback::Event::Bus`
 

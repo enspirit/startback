@@ -10,18 +10,18 @@ module Startback
       include Rack::Test::Methods
 
       def app
-        opts = middleware_options
+        build_args = self.build_args
         Rack::Builder.new do
-          use Middleware, opts
+          use Middleware, *build_args
           run ->(env){
-            ctx = env[Startback::Context::Middleware::RACK_ENV_KEY] 
+            ctx = env[Startback::Context::Middleware::RACK_ENV_KEY]
             [200, {}, ctx.class.to_s]
           }
         end
       end
 
-      context 'when used without option' do
-        let(:middleware_options){ nil }
+      context 'when used without context' do
+        let(:build_args){ [] }
 
         it 'sets the default context class' do
           get '/'
@@ -31,9 +31,7 @@ module Startback
       end
 
       context 'when specifying the context class' do
-        let(:middleware_options){{
-          context_class: MyContextSubClass
-        }}
+        let(:build_args){ [MyContextSubClass.new] }
 
         it 'sets the default context class' do
           get '/'

@@ -18,7 +18,7 @@ module Startback
     #
     #     # Use a user defined context class
     #     Rack::Builder.new do
-    #       use Startback::Context::Middleware, context_class: MyContextClass
+    #       use Startback::Context::Middleware, MyContextClass.new
     #
     #       run ->(env){
     #         ctx = env[Startback::Context::Middleware::RACK_ENV_KEY]
@@ -31,18 +31,14 @@ module Startback
 
       RACK_ENV_KEY = 'SAMBACK_CONTEXT'
 
-      DEFAULT_OPTIONS = {
-        context_class: Context
-      }
-
-      def initialize(app, options = {})
+      def initialize(app, context = Context.new)
         @app = app
-        @options = DEFAULT_OPTIONS.merge(options || {})
+        @context = context
       end
-      attr_reader :options
+      attr_reader :context
 
       def call(env)
-        env[RACK_ENV_KEY] ||= options[:context_class].h({}).tap{|c|
+        env[RACK_ENV_KEY] ||= context.dup.tap{|c|
           c.original_rack_env = env.dup
         }
         @app.call(env)

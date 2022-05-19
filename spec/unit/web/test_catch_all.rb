@@ -53,7 +53,7 @@ module Startback
 
         def app
           Rack::Builder.new do
-            use Context::Middleware, context_class: MyContextWithErrorHandler
+            use Context::Middleware, MyContextWithErrorHandler.new
             use CatchAll
             run ->(env){ raise AnError, "Hello error" }
           end
