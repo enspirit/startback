@@ -1,3 +1,11 @@
+## 0.12.0
+
+* Extend the Bus abstraction with connect/disconnect.
+
+* The Bunny::Async bus now has an autoconnect option (defaulting
+  to true for backward compatibility) that can be used to avoid
+  connecting too early.
+
 ## 0.11.5 - 2022-05-18
 
 * Add Startback::Support::Env with `env` and `env!` helper

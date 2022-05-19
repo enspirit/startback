@@ -54,7 +54,11 @@ module Startback
           event_factory: nil,
 
           # (optional) A default context to use for general logging
-          context: nil
+          context: nil,
+
+          # (optional) Whether connection occurs immediately,
+          # or on demand later
+          autoconnect: true
         }
 
         # Creates a bus instance, using the various options provided to
@@ -62,18 +66,34 @@ module Startback
         def initialize(options = {})
           options = { url: options } if options.is_a?(String)
           @options = DEFAULT_OPTIONS.merge(options)
-          retried = 0
+          connect if @options[:autoconnect]
+        end
+        attr_reader :options
+
+        def connect
+          disconnect
           conn = options[:connection_options] || options[:url]
           try_max_times(10) do
             @bunny = ::Bunny.new(conn)
             @bunny.start
-            channel
+            channel # make sure we already create the channel
             log(:info, {op: "#{self.class.name}#connect", op_data: conn}, options[:context])
           end
         end
-        attr_reader :options
+
+        def disconnect
+          if channel = Thread.current[CHANNEL_KEY]
+            channel.close
+            Thread.current[CHANNEL_KEY] = nil
+          end
+          @bunny.close if @bunny
+        end
 
         def channel
+          unless @bunny
+            raise Startback::Errors::Error, "Please connect your bus first, or use autoconnect: true"
+          end
+
           Thread.current[CHANNEL_KEY] ||= @bunny.create_channel
         end
 
@@ -86,6 +106,7 @@ module Startback
 
         def listen(type, processor = nil, listener = nil, &bl)
           raise ArgumentError, "A listener must be provided" unless listener || bl
+
           fanout = channel.fanout(type.to_s, fanout_options)
           queue = channel.queue((processor || "main").to_s, queue_options)
           queue.bind(fanout)

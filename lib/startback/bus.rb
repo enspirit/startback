@@ -10,7 +10,7 @@ module Startback
   # * A synchronous bus MUST call the listeners as part of emitting
   #   process, and MUST re-raise any error occuring during that process.
   #   See, e.g. Startback::Bus::Memory::Sync
-  #  
+  #
   # * An asynchronous bus MAY call the listeners later, but MUST hide
   #   errors to the emitter.
   #   See, e.g. Startback::Bus::Memory::Async
@@ -27,13 +27,13 @@ module Startback
   #     bus.emit(event)
   #
   #     # This only reaches sync listeners
-  #     bus.sync.emit(event) 
+  #     bus.sync.emit(event)
   #
   #     # This only reaches async listeners (an async bus must be set)
   #     bus.async.emit(event)
   #
   # Please note that there is currently no way to reach sync listeners
-  # without having to implement error handling on the emitter side. 
+  # without having to implement error handling on the emitter side.
   #
   # For listeners:
   #
@@ -44,7 +44,7 @@ module Startback
   #     end
   #
   #     # It is a shortcut for:
-  #     bus.sync.listen(event_type) do |event| ... end 
+  #     bus.sync.listen(event_type) do |event| ... end
   #
   #     This will listen asynchronously and could not make the emitter
   #     fail if something goes wrong with the callback.
@@ -63,6 +63,11 @@ module Startback
       @async = async
     end
     attr_reader :sync, :async
+
+    def connect
+      sync.connect if sync
+      async.connect if async
+    end
 
     # Emits a particular event to the listeners.
     #
@@ -84,7 +89,7 @@ module Startback
     # a specific type.
     #
     # @arg type: Symbol, the type of event the listener is interested in.
-    # @arg listener: Proc, the listener itself. 
+    # @arg listener: Proc, the listener itself.
     def listen(type, processor = nil, listener = nil, &bl)
       sync.listen(type, processor, listener, &bl)
     end

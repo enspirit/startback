@@ -12,6 +12,9 @@ module Startback
           @listeners = {}
         end
 
+        def connect
+        end
+
         def emit(event)
           (@listeners[event.type.to_s] || []).each do |l|
             l.call(event)
