@@ -1,10 +1,15 @@
-## 0.12.0
+## 0.11.6 - Unreleased
 
 * Extend the Bus abstraction with connect/disconnect.
 
-* The Bunny::Async bus now has an autoconnect option (defaulting
-  to true for backward compatibility) that can be used to avoid
-  connecting too early.
+* Bunny::Async now has an autoconnect option (defaulting to true
+  for backward compatibility) that can be used to avoid connecting
+  too early.
+
+* Bunny::Async now has `:abort_on_exception` and
+  `:consumer_pool_size` options that control the main channel
+  behavior. Their default values are chosen to stay backward
+  compatible.
 
 ## 0.11.5 - 2022-05-18
 

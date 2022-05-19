@@ -56,6 +56,13 @@ module Startback
           # (optional) A default context to use for general logging
           context: nil,
 
+          # (optional) Size of consumer pool
+          consumer_pool_size: 1,
+
+          # (optional) Whether the program must be aborted on consumption
+          # error
+          abort_on_exception: false,
+
           # (optional) Whether connection occurs immediately,
           # or on demand later
           autoconnect: true
@@ -94,7 +101,11 @@ module Startback
             raise Startback::Errors::Error, "Please connect your bus first, or use autoconnect: true"
           end
 
-          Thread.current[CHANNEL_KEY] ||= @bunny.create_channel
+          Thread.current[CHANNEL_KEY] ||= @bunny.create_channel(
+            nil,
+            consumer_pool_size, # consumer_pool_size
+            abort_on_exception? # consumer_pool_abort_on_exception
+          )
         end
 
         def emit(event)
@@ -121,6 +132,14 @@ module Startback
         end
 
       protected
+
+        def consumer_pool_size
+          options[:consumer_pool_size]
+        end
+
+        def abort_on_exception?
+          options[:abort_on_exception]
+        end
 
         def fanout_options
           options[:fanout_options]

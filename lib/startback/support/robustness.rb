@@ -107,8 +107,6 @@ module Startback
         }
         Tools.info(args, op_took: took)
         result
-      rescue => ex
-        raise
       end
 
       # Executes the block without letting errors propagate.
