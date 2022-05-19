@@ -1,8 +1,8 @@
 module Startback
   module Version
     MAJOR = 0
-    MINOR = 11
-    TINY  = 5
+    MINOR = 12
+    TINY  = 0
   end
   VERSION = "#{Version::MAJOR}.#{Version::MINOR}.#{Version::TINY}"
 end

@@ -1,4 +1,4 @@
-## 0.12.0
+## 0.12.0 - 2022-05-19
 
 This release enhances the event layer of Startback with the
 Event, Bus, Engine and Agent collaborating classes.
