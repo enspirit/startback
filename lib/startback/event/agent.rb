@@ -16,9 +16,12 @@ module Startback
 
       def initialize(engine)
         @engine = engine
+        @context = nil
         install_listeners
       end
       attr_reader :engine
+      attr_accessor :context
+      protected :context=
 
     protected
 
@@ -40,7 +43,7 @@ module Startback
       def async(exchange, queue)
         bus.async.listen(exchange, queue) do |event_data|
           event = engine.factor_event(event_data)
-          dup.call(event)
+          with_context(event.context).call(event)
         end
       end
 
@@ -50,7 +53,7 @@ module Startback
       def sync(exchange, queue)
         bus.listen(exchange, queue) do |event_data|
           event = engine.factor_event(event_data)
-          dup.call(event)
+          with_context(event.context).call(event)
         end
       end
 
@@ -66,6 +69,14 @@ module Startback
           backtrace: caller
         })
         raise NotImplementedError
+      end
+
+      def with_context(context)
+        dup.tap{|a| a.send(:context=, context) }
+      end
+
+      def operation_world(op)
+        super(op).merge(context: ctx)
       end
 
     end # class Agent
