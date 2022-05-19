@@ -123,11 +123,8 @@ module Startback
             queue = channel.queue((processor || "main").to_s, queue_options)
             queue.bind(fanout)
             queue.subscribe do |delivery_info, properties, body|
-              event = stop_errors(self, "listen") do
-                factor_event(body)
-              end
-              stop_errors(self, "listen", event.context) do
-                (listener || bl).call(event)
+              stop_errors(self, "listen") do
+                (listener || bl).call(body)
               end
             end
           end

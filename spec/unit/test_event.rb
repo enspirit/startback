@@ -4,7 +4,7 @@ module Startback
   describe Event do
 
     subject{
-      Event.new("user_changed", { "foo" => "bar" })
+      Event.new("User::Changed", { "foo" => "bar" })
     }
 
     it 'presents an ostruct on top of its data' do
@@ -15,7 +15,7 @@ module Startback
 
       JSON_SRC = <<-JSON.gsub(/\s+/, "")
         {
-          "type": "user_changed",
+          "type": "User::Changed",
           "data": {
             "foo": "bar"
           }
@@ -27,10 +27,10 @@ module Startback
       end
 
       it 'has a to_json that dumps the context if any' do
-        evt = Event.new("user_changed", { "foo" => "bar" }, { "baz": "context" })
+        evt = Event.new("User::Changed", { "foo" => "bar" }, { "baz": "context" })
         expect(evt.to_json).to eql(<<-JSON.gsub(/\s+/, ""))
           {
-            "type": "user_changed",
+            "type": "User::Changed",
             "data": {
               "foo": "bar"
             },
@@ -43,26 +43,16 @@ module Startback
 
 
       it 'has a json class method that works as expected' do
-        evt = Event.json(JSON_SRC)
+        evt = Event.json(JSON_SRC, nil)
         expect(evt).to be_a(Event)
-        expect(evt.type).to eql("user_changed")
+        expect(evt.type).to eql("User::Changed")
         expect(evt.data).to eql(subject.data)
       end
 
-      it 'accepts an explicit context in the world' do
-        evt = Event.json(JSON_SRC, context: 12)
+      it 'accepts an explicit context as second argument' do
+        evt = Event.json(JSON_SRC, 12)
         expect(evt.context).to eql(12)
       end
-
-      it 'accepts an context factory in the world' do
-        cf = ->(arg) {
-          expect(arg).to eql(JSON.parse(JSON_SRC))
-          12
-        }
-        evt = Event.json(JSON_SRC, context_factory: cf)
-        expect(evt.context).to eql(12)
-      end
-
     end
 
   end

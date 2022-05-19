@@ -20,14 +20,10 @@ module Startback
     end
     attr_reader :context, :type, :data
 
-    def self.json(src, world = {})
+    def self.json(src, context)
       parsed = JSON.parse(src)
-      context = if world[:context]
-        world[:context]
-      elsif world[:context_factory]
-        world[:context_factory].call(parsed)
-      end
-      Event.new(parsed['type'], parsed['data'], context)
+      klass = Kernel.const_get(parsed['type'])
+      klass.new(parsed['type'], parsed['data'], context)
     end
 
     def to_json(*args, &bl)
@@ -41,6 +37,8 @@ module Startback
 
   end # class Event
 end # module Startback
+require_relative 'event/ext/context'
+require_relative 'event/ext/operation'
 require_relative 'event/agent'
 require_relative 'event/bus'
 require_relative 'event/engine'

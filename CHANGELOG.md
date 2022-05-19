@@ -17,6 +17,12 @@ Unfortunately it comes with a couple of BREAKING changes:
 
 * `Startback::Bus` is moved to `Startback::Event::Bus`
 
+* `Startback::Event.json` contract has changed. The default
+  contract expects the event type to be a fully classified
+  class name (subclass of Event) and will attempt to factor
+  one. The second argument is no longer a world (Hash) but
+  a context instance to attach to the event (a dup is made).
+
 * `Startback::Engine` constructor takes ServerEngine options
   under a `:server_engine` key (was the options themselves).
 

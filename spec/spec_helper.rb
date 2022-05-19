@@ -10,3 +10,8 @@ end
 RSpec.configure do |c|
   c.include SpecHelpers
 end
+
+class User
+  class Changed < Startback::Event
+  end
+end

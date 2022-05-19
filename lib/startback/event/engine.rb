@@ -36,6 +36,7 @@ module Startback
       def initialize(options = {}, context = Context.new)
         @options = DEFAULT_OPTIONS.merge(options)
         @context = context
+        @context.engine = self
       end
       attr_reader :options, :context
 
@@ -82,6 +83,10 @@ module Startback
           .each_object(Class)
           .select { |klass| klass < parent }
           .each { |klass| klass.new(self) }
+      end
+
+      def factor_event(event_data)
+        Event.json(event_data, context.dup)
       end
 
       class Runner

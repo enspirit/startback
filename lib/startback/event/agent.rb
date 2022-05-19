@@ -38,7 +38,8 @@ module Startback
       #
       # See Bus#listen
       def async(exchange, queue)
-        bus.async.listen(exchange, queue) do |event|
+        bus.async.listen(exchange, queue) do |event_data|
+          event = engine.factor_event(event_data)
           dup.call(event)
         end
       end
@@ -47,7 +48,8 @@ module Startback
       #
       # See Bus#listen
       def sync(exchange, queue)
-        bus.listen(exchange, queue) do |event|
+        bus.listen(exchange, queue) do |event_data|
+          event = engine.factor_event(event_data)
           dup.call(event)
         end
       end
