@@ -1,3 +1,22 @@
+## 0.12.0
+
+This release enhances the event layer of Startback with the
+Event, Bus, Engine and Agent collaborating classes.
+
+Unfortunately it comes with a couple of BREAKING changes:
+
+* `Startback::Bus` is moved to `Startback::Event::Bus`
+
+* `Startback::Engine` constructor takes ServerEngine options
+  under a `:server_engine` key (was the options themselves).
+
+* `Startback::Agent` has a new protocol that relies on agent
+  instances and the presence of an `Engine`. The `listen` class
+  method no longer exists. You must use the `sync` and `async`
+  instance methods instead. Your agent instance should be
+  created withing the engine (see `create_agents` and
+  `auto_create_agents` there)
+
 ## 0.11.6 - Unreleased
 
 * Extend the Bus abstraction with connect/disconnect.

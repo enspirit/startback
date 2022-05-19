@@ -59,7 +59,7 @@ module Startback
       end
 
       def bus
-        Bus.new
+        ::Startback::Event::Bus.new
       end
 
       def connect
