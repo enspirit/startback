@@ -62,11 +62,11 @@ module Startback
 
             # (optional) Whether the program must be aborted on consumption
             # error
-            abort_on_exception: false,
+            abort_on_exception: true,
 
             # (optional) Whether connection occurs immediately,
             # or on demand later
-            autoconnect: true
+            autoconnect: false
           }
 
           # Creates a bus instance, using the various options provided to

@@ -17,6 +17,13 @@ Unfortunately it comes with a couple of BREAKING changes:
   created withing the engine (see `create_agents` and
   `auto_create_agents` there)
 
+* `Bus::Bunny` now has `autoconnect: false` by default. You
+  should explicit connect your engine instance instead.
+
+* `Bus::Bunny` now has `abort_on_exception: true` by default.
+  It's much safer but you need a supervisor like Kubernetes
+  in pratice.
+
 ## 0.11.6 - Unreleased
 
 * Extend the Bus abstraction with connect/disconnect.
