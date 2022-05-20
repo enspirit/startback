@@ -112,6 +112,13 @@ module Startback
       to_h.to_json(*args, &bl)
     end
 
+    def fork(h = nil)
+      dup.tap{|duped|
+        self.class.h_factor!(duped, h) if h
+        yield(duped) if block_given?
+      }
+    end
+
     def dup
       super.tap{|c|
         c.send(:clean_factored!)

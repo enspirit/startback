@@ -86,7 +86,7 @@ module Startback
       end
 
       def factor_event(event_data)
-        Event.json(event_data, context.dup)
+        Event.json(event_data, context)
       end
 
       class Runner

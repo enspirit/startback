@@ -21,7 +21,9 @@ Unfortunately it comes with a couple of BREAKING changes:
   contract expects the event type to be a fully classified
   class name (subclass of Event) and will attempt to factor
   one. The second argument is no longer a world (Hash) but
-  a context instance to attach to the event (a dup is made).
+  a context instance to attach to the event. A context fork
+  is made, using the event context data passed through the
+  Context h_factory (if event contains context info).
 
 * `Startback::Engine` constructor takes ServerEngine options
   under a `:server_engine` key (was the options themselves).

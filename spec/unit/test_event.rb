@@ -50,8 +50,11 @@ module Startback
       end
 
       it 'accepts an explicit context as second argument' do
-        evt = Event.json(JSON_SRC, 12)
-        expect(evt.context).to eql(12)
+        c = SubContext.new.tap{|x| x.foo = 'hello' }
+        evt = Event.json(JSON_SRC, c)
+        expect(evt.context).not_to be(c)
+        expect(evt.context).to be_a(SubContext)
+        expect(evt.context.foo).to eql('hello')
       end
     end
 

@@ -7,26 +7,6 @@ module Startback
       expect(Context.new.to_json).to eql("{}")
     end
 
-    class SubContext < Context
-      attr_accessor :foo
-      h_factory do |c,h|
-        c.foo = h["foo"]
-      end
-      h_dump do |h|
-        h.merge!("foo" => foo)
-      end
-    end
-
-    class SubContext
-      attr_accessor :bar
-      h_factory do |c,h|
-        c.bar = h["bar"]
-      end
-      h_dump do |h|
-        h.merge!("bar" => bar)
-      end
-    end
-
     it 'allows installing factories' do
       expect(Context.h_factories).to be_empty
       expect(SubContext.h_factories.size).to eql(2)

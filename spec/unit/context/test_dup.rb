@@ -3,12 +3,8 @@ require 'spec_helper'
 module Startback
   describe Context, "dup" do
 
-    class Subcontext < Context
-      attr_accessor :foo
-    end
-
     let(:context) {
-      Subcontext.new.tap{|s| s.foo = "bar" }
+      SubContext.new.tap{|s| s.foo = "bar" }
     }
 
     class ContextRelatedAbstraction
@@ -27,7 +23,7 @@ module Startback
         expect(x).not_to be(context)
       }
       expect(seen).to be(got)
-      expect(got).to be_a(Subcontext)
+      expect(got).to be_a(SubContext)
       expect(got).not_to be(context)
       expect(got.foo).to eql("bar")
     end

@@ -23,6 +23,7 @@ module Startback
     def self.json(src, context)
       parsed = JSON.parse(src)
       klass = Kernel.const_get(parsed['type'])
+      context = context.fork(parsed['context']) if context
       klass.new(parsed['type'], parsed['data'], context)
     end
 
