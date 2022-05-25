@@ -21,6 +21,8 @@ module Startback
     attr_reader :context, :type, :data
 
     def self.json(src, context)
+      return src if src.is_a?(Event)
+
       parsed = JSON.parse(src)
       klass = Kernel.const_get(parsed['type'])
       context = context.fork(parsed['context']) if context

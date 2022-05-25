@@ -1,3 +1,7 @@
+## 0.12.3 - 2022-05-25
+
+* Event.json is idempotent.
+
 ## 0.12.2 - 2022-05-20
 
 * See 0.12.0, same release
