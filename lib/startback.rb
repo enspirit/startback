@@ -32,6 +32,7 @@ module Startback
   require_relative 'startback/ext'
   require_relative 'startback/errors'
   require_relative 'startback/support'
+  require_relative 'startback/model'
   require_relative 'startback/context'
   require_relative 'startback/operation'
 
