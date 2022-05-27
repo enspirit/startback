@@ -1,4 +1,5 @@
 require 'rspec/core/rake_task'
+require 'path'
 
 namespace :test do
 
@@ -16,6 +17,21 @@ namespace :test do
     end
   end
 
-  task :all => [:unit, :example]
+  contribs = (Path.dir.parent/"contrib").glob("*").map do |sub|
+    next unless sub.directory?
+    name = sub.basename.to_sym
+
+    desc "Run tests for #{sub}"
+    task name do
+      Bundler.with_original_env do
+        system("cd #{sub} && bundle exec rake")
+        abort("#{sub} tests failed") unless $?.exitstatus == 0
+      end
+    end
+
+    name
+  end
+
+  task :all => [:unit, :example] + contribs
 end
 task :test => :'test:all'
