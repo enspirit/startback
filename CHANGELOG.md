@@ -4,6 +4,12 @@
 
 * Context.new yields the context instance if a block is given
 
+* POSSIBLY BREAKING: Operation now has a default constructor that
+  expects a Hash and installs it under `@input` with an attr_reader.
+
+  This may break the audit trailer and/or bus dump for legacy
+  operations that named their input `request`.
+
 ## 0.12.3 - 2022-05-25
 
 * Event.json is idempotent.

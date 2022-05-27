@@ -37,6 +37,11 @@ module Startback
     attr_accessor :world
     protected :world=
 
+    def initialize(input = {})
+      @input = input
+    end
+    attr_reader :input
+
     def bind(world)
       return self unless world
       self.world = world
