@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "webspicy", [">= 0.20.5", "< 0.21"]
   s.add_development_dependency "rake"
   s.add_development_dependency "rack-test"
+  s.add_development_dependency "bmg"
 
   s.add_runtime_dependency "startback", "~> 0.12.3"
 end
