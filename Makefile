@@ -8,6 +8,8 @@ MAKEFLAGS += --no-builtin-rules
 IMAGES := base api web engine tests
 PUSH_IMAGES := base api web engine
 
+CONTRIBS = startback-jobs
+
 ################################################################################
 #### Config variables
 ###
@@ -29,7 +31,7 @@ MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 
 ### global
 
-clean:
+clean: $(addsuffix .clean,$(CONTRIBS))
 	rm -rf Gemfile.lock Dockerfile.*.log Dockerfile.*.built pkg/* example/Gemfile.lock
 
 Gemfile.lock: Gemfile *.gemspec lib/**/*
@@ -38,9 +40,9 @@ Gemfile.lock: Gemfile *.gemspec lib/**/*
 example/Gemfile.lock: Gemfile.lock example/Gemfile
 	cd example && bundle install --path vendor/bundle
 
-bundle: Gemfile.lock example/Gemfile.lock
+bundle: Gemfile.lock example/Gemfile.lock $(addprefix contrib/,$(addsuffix /Gemfile.lock,$(CONTRIBS)))
 
-test: Gemfile.lock example/Gemfile.lock
+test: Gemfile.lock example/Gemfile.lock $(addprefix contrib/,$(addsuffix /Gemfile.lock,$(CONTRIBS)))
 	bundle exec rake test
 
 ci: Dockerfile.tests.built
@@ -49,8 +51,30 @@ ci: Dockerfile.tests.built
 images: $(addsuffix .image,$(IMAGES))
 push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
 
-gem: $(addsuffix .gem,$(PUSH_IMAGES))
+gem: $(addsuffix .gem,$(PUSH_IMAGES)) $(addsuffix .gem,$(CONTRIBS))
 push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES))
+
+### contribs
+
+define make-contrib-targets
+
+$1.clean:
+	rm contrib/$1/Gemfile.lock contrib/$1/pkg/*
+
+contrib/$1/Gemfile.lock: contrib/$1/Gemfile contrib/$1/$1.gemspec
+	cd contrib/$1
+	bundle install
+
+contrib/$1/pkg/$1.${VERSION}.gem: contrib/$1/$1.gemspec contrib/$1/lib/**/*
+	docker run --rm -t -v ${PWD}:/app -w /app ruby bash -c 'cd contrib/$1 && gem build -o pkg/$1.${VERSION}.gem $1.gemspec'
+
+$1.gem: contrib/$1/pkg/$1.${VERSION}.gem
+
+$1.push-gem: contrib/$1/pkg/$1.${VERSION}.gem
+	docker run --rm -t -v ${PWD}:/app -w /app -e GEM_HOST_API_KEY=${GEM_HOST_API_KEY} ruby bash -c 'cd contrib/$1 && gem push pkg/$1.${VERSION}.gem'
+
+endef
+$(foreach contrib,$(CONTRIBS),$(eval $(call make-contrib-targets,$(contrib))))
 
 ### specific
 
