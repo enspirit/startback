@@ -2,9 +2,12 @@ module Startback
   module Support
     module DataObject
 
-      def initialize(data)
+      def initialize(data = {})
         @_data = data.dup.freeze
       end
+
+      attr_writer :_data
+      protected :_data=
 
       def method_missing(name, *args, &bl)
         return super unless args.empty? && bl.nil?
@@ -26,6 +29,7 @@ module Startback
       def to_data
         @_data
       end
+      alias :to_h :to_data
 
       def to_json(*args, &bl)
         to_data.to_json(*args, &bl)
@@ -33,7 +37,7 @@ module Startback
 
     private
 
-      def _data_key_for(key, try_camelize = true, try_query = true)
+      def _data_key_for(key, try_camelize = _data_allow_camelize, try_query = _data_allow_query)
         if @_data.key?(key)
           [key, false]
         elsif @_data.key?(key.to_s)
@@ -45,12 +49,23 @@ module Startback
           _data_key_for(cam, false, true)
         elsif try_query && key.to_s =~ /\?$/
           got = _data_key_for(key[0...-1].to_sym, false, false)
-          got ? [got.first, true] : nil
+          got ? [got.first, true] : _data_key_not_found(key)
         else
-          nil
+          _data_key_not_found(key)
         end
       end
 
+      def _data_allow_camelize
+        true
+      end
+
+      def _data_allow_query
+        true
+      end
+
+      def _data_key_not_found(key)
+        nil
+      end
     end # module DataObject
   end # module Support
 end # module Startback

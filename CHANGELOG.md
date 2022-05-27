@@ -1,7 +1,10 @@
 ## 0.13.0
 
-* Contributes Startback::Model, Startback::Support::DataObject,
-  Startback::Services
+* Contributes Startback::Model, Startback::Services, as well
+  as Startback::Support::DataObject and Startback::Support::World
+
+* Added the notion of context world, through Context.world,
+  Context#world and Context#with_world.
 
 * Context.new yields the context instance if a block is given
 

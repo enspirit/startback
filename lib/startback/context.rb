@@ -1,7 +1,8 @@
 module Startback
   #
   # Defines an execution context for Startback applications, and provides
-  # a cached factory for related abstractions (see `factor`).
+  # a cached factory for related abstractions (see `factor`), and an
+  # extensible world, statically and dynamically.
   #
   # In web application, an instance of a context can be set on the Rack
   # environment, using Context::Middleware.
@@ -48,50 +49,35 @@ module Startback
     # convert them to wathever log format is necessary.
     attr_accessor :logger
 
-    # Implementation of the `h` information contract
-    class << self
-
-      def h(hash)
-        h_factor!(self.new, hash)
-      end
-
-      def h_factor!(context, hash)
-        h_factories.each do |f|
-          f.call(context, hash)
-        end
-        context
-      end
-
-      def h_factories
-        @h_factories ||= []
-      end
-
-      def h_factory(&factory)
-        h_factories << factory
-      end
-
-      ###
-
-      def h_dump!(context, hash = {})
-        h_dumpers.each do |d|
-          context.instance_exec(hash, &d)
-        end
-        hash
-      end
-
-      def h_dumpers
-        @h_dumpers ||= []
-      end
-
-      def h_dump(&dumper)
-        h_dumpers << dumper
-      end
-
-    end # class << self
+    require_relative 'context/h_factory'
+    extend(Context::HFactory)
 
     def initialize
       super
       yield(self) if block_given?
+    end
+
+    attr_writer :_world
+    protected :_world=
+
+    def self.world(who, &block)
+      @_world ||= Support::World.new
+      @_world = @_world.factory(who, &block)
+    end
+
+    def self.factor_world(context)
+      @_world ||= Support::World.new
+      @_world.with_scope(context)
+    end
+
+    def world
+      @_world ||= self.class.factor_world(self)
+    end
+
+    def with_world(world)
+      dup do |ctx|
+        ctx._world = self.world.with(world)
+      end
     end
 
     # Factors an instance of `clazz`, which must be a Context-related
