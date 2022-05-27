@@ -35,6 +35,7 @@ module Startback
   require_relative 'startback/model'
   require_relative 'startback/context'
   require_relative 'startback/operation'
+  require_relative 'startback/services'
 
   # Logger instance to use for the application
   LOGGER = ::Startback::Support::Logger.new

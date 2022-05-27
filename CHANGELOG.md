@@ -1,8 +1,11 @@
 ## 0.13.0
 
-* Contibutes Startback::Model and Startback::Support::DataObject
+* Contributes Startback::Model, Startback::Support::DataObject,
+  Startback::Services
 
 * Context.new yields the context instance if a block is given
+
+* Bmg minimal dependency is now 0.20.0
 
 * POSSIBLY BREAKING: Operation now has a default constructor that
   expects a Hash and installs it under `@input` with an attr_reader.
