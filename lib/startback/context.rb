@@ -89,6 +89,11 @@ module Startback
 
     end # class << self
 
+    def initialize
+      super
+      yield(self) if block_given?
+    end
+
     # Factors an instance of `clazz`, which must be a Context-related
     # abstraction (i.e. its constructor takes the context as last parameters).
     #

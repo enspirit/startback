@@ -2,6 +2,8 @@
 
 * Contibutes Startback::Model and Startback::Support::DataObject
 
+* Context.new yields the context instance if a block is given
+
 ## 0.12.3 - 2022-05-25
 
 * Event.json is idempotent.
