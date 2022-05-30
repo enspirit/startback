@@ -8,8 +8,7 @@ module Startback
       context.foo = ['hello']
 
       forked = context.fork
-      puts "Forked: #{forked.inspect}"
-      expect(fork).not_to be(context)
+      expect(forked).not_to be(context)
       expect(forked.foo).to eql(['hello'])
       expect(forked.foo).to be(context.foo)
     end
@@ -19,7 +18,7 @@ module Startback
 
       seen = false
       context.fork({ 'foo' => 'hello' }) do |forked|
-        expect(fork).not_to be(context)
+        expect(forked).not_to be(context)
         expect(forked.foo).to eql('hello')
         seen = true
       end
@@ -30,7 +29,7 @@ module Startback
       context = SubContext.new
 
       forked = context.fork({ 'foo' => 'hello' })
-      expect(fork).not_to be(context)
+      expect(forked).not_to be(context)
       expect(forked.foo).to eql('hello')
     end
 
