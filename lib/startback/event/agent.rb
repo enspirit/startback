@@ -76,7 +76,7 @@ module Startback
       end
 
       def operation_world(op)
-        super(op).merge(context: ctx)
+        super(op).merge(context: context)
       end
 
     end # class Agent
