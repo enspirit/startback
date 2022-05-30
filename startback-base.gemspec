@@ -14,7 +14,7 @@ gemspec do |s|
   s.add_runtime_dependency "nokogiri", [">= 1.11.4", "< 2.0"]
   s.add_runtime_dependency "puma", [">= 5.3.1", "< 6.0"]
   s.add_runtime_dependency "jwt", [">= 2.1", "< 3.0"]
-  s.add_runtime_dependency "bmg", [">= 0.19.0", "< 0.20.0"]
+  s.add_runtime_dependency "bmg", [">= 0.20.0", "< 0.21.0"]
   s.add_runtime_dependency "tzinfo", [">= 1.2", "< 2.0"]
   s.add_runtime_dependency "tzinfo-data"
   s.add_runtime_dependency "i18n", [">= 1.0", "< 2.0"]
