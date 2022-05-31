@@ -52,14 +52,14 @@ images: $(addsuffix .image,$(IMAGES))
 push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
 
 gem: $(addsuffix .gem,$(PUSH_IMAGES)) $(addsuffix .gem,$(CONTRIBS))
-push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES))
+push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES)) $(addsuffix .push-gem,$(CONTRIBS))
 
 ### contribs
 
 define make-contrib-targets
 
 $1.clean:
-	rm contrib/$1/Gemfile.lock contrib/$1/pkg/*
+	rm -rf contrib/$1/Gemfile.lock contrib/$1/pkg/*
 
 contrib/$1/Gemfile.lock: contrib/$1/Gemfile contrib/$1/$1.gemspec
 	cd contrib/$1
