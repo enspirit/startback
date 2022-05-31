@@ -66,7 +66,7 @@ contrib/$1/Gemfile.lock: contrib/$1/Gemfile contrib/$1/$1.gemspec
 	bundle install
 
 contrib/$1/pkg/$1.${VERSION}.gem: contrib/$1/$1.gemspec contrib/$1/lib/**/*
-	docker run --rm -t -v ${PWD}:/app -w /app ruby bash -c 'cd contrib/$1 && gem build -o pkg/$1.${VERSION}.gem $1.gemspec'
+	docker run --rm -t -v ${PWD}:/app -w /app ruby bash -c 'cd contrib/$1 && mkdir -p pkg && gem build -o pkg/$1.${VERSION}.gem $1.gemspec'
 
 $1.gem: contrib/$1/pkg/$1.${VERSION}.gem
 

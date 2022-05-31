@@ -38,30 +38,3 @@ jobs:
           steps: ${{ toJson(steps) }}
           channel: '#opensource-cicd'
         if: always()
-
-  Github:
-    needs: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: act10ns/slack@v1
-        with:
-          status: starting
-          channel: '#opensource-cicd'
-
-      - uses: actions/checkout@v2
-
-      - run: make gem
-        id: build-gem
-
-      - uses: ncipollo/release-action@v1
-        id: create-release
-        with:
-          artifacts: "pkg/startback*"
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: act10ns/slack@v1
-        with:
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-          channel: '#opensource-cicd'
-        if: always()
