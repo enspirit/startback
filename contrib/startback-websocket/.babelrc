@@ -1,0 +1,58 @@
+{
+  "env": {
+    "development": {
+      "presets": [
+        ["@babel/preset-env", {
+          "targets": {
+            "node": "6.10"
+          }
+          }]
+        ],
+        "plugins": [
+          "@babel/plugin-syntax-object-rest-spread",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/transform-runtime",
+          ["@babel/plugin-proposal-decorators", {
+            "decoratorsBeforeExport": false
+          }]
+        ]
+      },
+      "browser": {
+        "presets": [
+          ["@babel/preset-env", {
+            "targets": {
+              "browsers": "last 2 versions, ie 10-11"
+            },
+            "modules": false
+            }]
+          ],
+          "plugins": [
+            "@babel/plugin-syntax-object-rest-spread",
+            "@babel/plugin-proposal-class-properties",
+            "@babel/transform-runtime",
+            ["@babel/plugin-proposal-decorators", {
+              "decoratorsBeforeExport": false
+            }]
+          ]
+        },
+        "module": {
+          "presets": [
+            ["@babel/preset-env", {
+              "targets": {
+                "node": "6.10"
+              },
+              "modules": false
+              }]
+            ],
+            "plugins": [
+              "@babel/plugin-syntax-object-rest-spread",
+              "@babel/plugin-proposal-class-properties",
+              "@babel/transform-runtime",
+              ["@babel/plugin-proposal-decorators", {
+                "decoratorsBeforeExport": false
+              }]
+            ]
+          }
+        },
+        "sourceMaps": true
+      }

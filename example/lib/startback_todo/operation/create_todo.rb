@@ -9,5 +9,9 @@ module StartbackTodo
       db.insert_todo(@todo)
     end
 
+    emits(Event::TodoCreated) do
+      @todo
+    end
+
   end
 end
