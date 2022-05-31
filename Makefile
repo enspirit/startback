@@ -56,7 +56,11 @@ push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES)) $(addsuffix .push-gem,$(CONTRIBS
 
 ### contribs
 
+-include contrib/*/makefile.mk
+
 define make-contrib-targets
+
+$1_DEPS := $(or $${$1_DEPS},${$1_DEPS},)
 
 $1.clean:
 	rm -rf contrib/$1/Gemfile.lock contrib/$1/pkg/*
@@ -65,7 +69,7 @@ contrib/$1/Gemfile.lock: contrib/$1/Gemfile contrib/$1/$1.gemspec
 	cd contrib/$1
 	bundle install
 
-contrib/$1/pkg/$1.${VERSION}.gem: contrib/$1/$1.gemspec contrib/$1/lib/**/*
+contrib/$1/pkg/$1.${VERSION}.gem: $${$1_DEPS} contrib/$1/$1.gemspec contrib/$1/lib/**/*
 	docker run --rm -t -v ${PWD}:/app -w /app ruby bash -c 'cd contrib/$1 && mkdir -p pkg && gem build -o pkg/$1.${VERSION}.gem $1.gemspec'
 
 $1.gem: contrib/$1/pkg/$1.${VERSION}.gem
