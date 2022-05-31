@@ -60,7 +60,7 @@ module Startback
       end
 
       def bus
-        ::Startback::Event::Bus.new
+        @bus ||= ::Startback::Event::Bus.new
       end
 
       def connect
@@ -81,7 +81,7 @@ module Startback
 
         ObjectSpace
           .each_object(Class)
-          .select { |klass| klass < parent }
+          .select { |klass| klass <= parent }
           .each { |klass| klass.new(self) }
       end
 

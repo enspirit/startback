@@ -1,3 +1,8 @@
+## 0.13.1
+
+* Fix Engine: memoize the bus and run main agent class in
+  addition to its subclasses.
+
 ## 0.13.0 - 2022-05-31
 
 * Contributes Startback::Model, Startback::Services, as well
