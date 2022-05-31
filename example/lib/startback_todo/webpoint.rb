@@ -1,5 +1,5 @@
 module StartbackTodo
-  App = Rack::Builder.new do
+  Webpoint = Rack::Builder.new do
     use Startback::Web::CatchAll
     use Startback::Web::Shield
     use Startback::Web::Prometheus
