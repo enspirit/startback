@@ -1,10 +1,10 @@
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
-require 'startback/jobs/version'
+$LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+require 'startback/version'
 require 'date'
 
 Gem::Specification.new do |s|
   s.name        = 'startback-jobs'
-  s.version     = Startback::Jobs::VERSION
+  s.version     = Startback::VERSION
   s.date        = Date.today
   s.summary     = "Asynchronous jobs on top of Startback"
   s.description = "Asynchronous jobs on top of the Startback framework"
@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rack-test"
   s.add_development_dependency "bmg"
 
-  s.add_runtime_dependency "startback", "~> 0.12.3"
+  s.add_runtime_dependency "startback", "= #{Startback::VERSION}"
 end

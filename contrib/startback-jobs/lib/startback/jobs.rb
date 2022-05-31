@@ -6,7 +6,6 @@ require 'startback/web/api'
 
 module Startback
   module Jobs
-    require_relative 'jobs/version'
     require_relative 'jobs/support'
     require_relative 'jobs/model'
     require_relative 'jobs/event'
