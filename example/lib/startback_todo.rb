@@ -18,8 +18,8 @@ module StartbackTodo
   require_relative 'startback_todo/dto'
   require_relative 'startback_todo/database'
   require_relative 'startback_todo/operation'
-  require_relative 'startback_todo/app'
   require_relative 'startback_todo/api'
+  require_relative 'startback_todo/webpoint'
 
   DB = Database.new
 
