@@ -9,7 +9,7 @@ def gemspec
     s.summary     = "Got Your Ruby Back"
     s.authors     = ["Bernard Lambeau"]
     s.email       = 'blambeau@gmail.com'
-    s.homepage    = 'http://www.enspirit.be'
+    s.homepage    = 'https://www.enspirit.be'
     s.license     = 'MIT'
 
     s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']

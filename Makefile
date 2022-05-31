@@ -8,7 +8,12 @@ MAKEFLAGS += --no-builtin-rules
 IMAGES := base api web engine tests
 PUSH_IMAGES := base api web engine
 
-CONTRIBS = startback-jobs
+CONTRIBS = startback-jobs startback-websocket
+
+##
+## Debug
+##
+print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 
 ################################################################################
 #### Config variables
