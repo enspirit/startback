@@ -1,0 +1,40 @@
+name: Running tests
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_call:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ['2.7', '3.1']
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - uses: act10ns/slack@v1
+        with:
+          status: starting
+          channel: '#opensource-cicd'
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Set up nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Bundling
+        run: make bundles
+
+      - name: Run tests
+        run: make tests
