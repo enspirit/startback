@@ -3,7 +3,7 @@ name: |-
   Health check webservice of the app
 
 url: |-
-  /health
+  /health/
 
 services:
 - method: |-
