@@ -5,27 +5,88 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-IMAGES := base api web engine tests
-PUSH_IMAGES := base api web engine
-
-CONTRIBS = startback-jobs startback-websocket
-
 ##
 ## Debug
 ##
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 
-################################################################################
-#### Config variables
 ###
 
-# Load them from an optional .env file
--include .env
+GEMSPECS = $(shell find . -maxdepth 3 -name \*.gemspec | sed 's/^.\///g')
+GEMS = $(GEMSPECS:%.gemspec=%.gem)
+PROJECTS = $(shell find . -maxdepth 3 -name Rakefile -exec dirname {} \;)
+
+### GEM HANDLING
+
+# Build a .gem from a .gemspec
+%.gem: %.gemspec
+	@echo ===================================================================
+	@echo "Building gem $@"
+	@echo ===================================================================
+	@gem build -o $@ $^
+
+# Build all gems
+gems: $(GEMS)
+
+# Push a built gem
+%.gem.push: %.gem
+	echo gem push publishing $^
+
+# Push all gems
+gems.push: $(addsuffix .push, $(GEMS))
+
+# Remove built gems
+clean:
+	@rm -rf *.gem */**/*.gem
+
+### BUNDLES
+
+bundles: $(addsuffix .bundle,$(PROJECTS))
+
+define bundle-targets
+$1.bundle:
+	@echo ===================================================================
+	@echo "Bundling $1"
+	@echo ===================================================================
+	cd $1 && bundle install
+endef
+$(foreach project,$(PROJECTS),$(eval $(call bundle-targets,$(project))))
+
+#####
+### ADDITIONAL DEPS / TARGETS
+#####
+
+-include contrib/*/makefile.mk
+
+#####
+### TESTS
+#####
+
+tests: gems $(addsuffix .test,$(PROJECTS))
+
+define test-targets
+$1.test::
+	@echo ===================================================================
+	@echo "Executing $1 tests"
+	@echo ===================================================================
+	cd $1 && bundle exec rake test
+endef
+$(foreach project,$(PROJECTS),$(eval $(call test-targets,$(project))))
+
+# the websocket contrib has also tests for the javascript code base
+./contrib/startback-websocket.test:: ./contrib/startback-websocket/node_modules
+	@echo ===================================================================
+	@echo "Running javascript tests for ./contrib/startback-websocket"
+	@echo ===================================================================
+	@cd contrib/startback-websocket && npm run test
+
+#####
+### DOCKER
+#####
 
 # Specify which ruby version is used as base
 MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},2.7)
 
-# Specify which docker tag is to be used
 VERSION := $(or ${VERSION},${VERSION},latest)
 DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
 
@@ -34,98 +95,20 @@ MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 # not used until 1.0
 # MAJOR = $(shell echo '${MINOR}' | cut -f'1-2' -d'.')
 
-### global
+DOCKERFILES := $(wildcard Dockerfile.*)
+DOCKER_IMAGES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.built)
+DOCKER_PUSHES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.pushed)
 
-clean: $(addsuffix .clean,$(CONTRIBS))
-	rm -rf Gemfile.lock Dockerfile.*.log Dockerfile.*.built pkg/* example/Gemfile.lock
+images: ${DOCKER_IMAGES}
+images.push: ${DOCKER_PUSHES}
 
-Gemfile.lock: Gemfile *.gemspec lib/**/*
-	bundle install --path vendor/bundle
+.build/%/Dockerfile.built: Dockerfile.%
+	@docker build -t startback-$* -f $^ ./ --build-arg MRI_VERSION=${MRI_VERSION}
 
-example/Gemfile.lock: Gemfile.lock example/Gemfile
-	cd example && bundle install --path vendor/bundle
-
-bundle: Gemfile.lock example/Gemfile.lock $(addprefix contrib/,$(addsuffix /Gemfile.lock,$(CONTRIBS)))
-
-test: Gemfile.lock example/Gemfile.lock $(addprefix contrib/,$(addsuffix /Gemfile.lock,$(CONTRIBS)))
-	bundle exec rake test
-
-ci: Dockerfile.tests.built
-	docker run enspirit/startback:tests
-
-images: $(addsuffix .image,$(IMAGES))
-push-images: $(addsuffix .push-image,$(PUSH_IMAGES))
-
-gem: $(addsuffix .gem,$(PUSH_IMAGES)) $(addsuffix .gem,$(CONTRIBS))
-push-gem: $(addsuffix .push-gem,$(PUSH_IMAGES)) $(addsuffix .push-gem,$(CONTRIBS))
-
-### contribs
-
--include contrib/*/makefile.mk
-
-define make-contrib-targets
-
-$1_DEPS := $(or $${$1_DEPS},${$1_DEPS},)
-
-$1.clean:
-	rm -rf contrib/$1/Gemfile.lock contrib/$1/pkg/*
-
-contrib/$1/Gemfile.lock: contrib/$1/Gemfile contrib/$1/$1.gemspec
-	cd contrib/$1
-	bundle install
-
-contrib/$1/pkg/$1.${VERSION}.gem: $${$1_DEPS} contrib/$1/$1.gemspec contrib/$1/lib/**/*
-	docker run --rm -t -v ${PWD}:/app -w /app ruby bash -c 'cd contrib/$1 && mkdir -p pkg && gem build -o pkg/$1.${VERSION}.gem $1.gemspec'
-
-$1.gem: contrib/$1/pkg/$1.${VERSION}.gem
-
-$1.push-gem: contrib/$1/pkg/$1.${VERSION}.gem
-	docker run --rm -t -v ${PWD}:/app -w /app -e GEM_HOST_API_KEY=${GEM_HOST_API_KEY} ruby bash -c 'cd contrib/$1 && gem push pkg/$1.${VERSION}.gem'
-
-endef
-$(foreach contrib,$(CONTRIBS),$(eval $(call make-contrib-targets,$(contrib))))
-
-### specific
-
-define make-goal
-Dockerfile.$1.built: Dockerfile.$1 startback-$1.gemspec
-	docker build -t enspirit/startback:$1 -f Dockerfile.$1 --build-arg MRI_VERSION=${MRI_VERSION} . | tee Dockerfile.$1.log
-	touch Dockerfile.$1.built
-
-$1.image: Dockerfile.$1.built
-
-Dockerfile.$1.pushed: Dockerfile.$1.built
-	# Without ruby suffix
-	docker push enspirit/startback:$1 | tee -a Dockerfile.$1.log
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}
-	docker push enspirit/startback:$1-$(TINY) | tee -a Dockerfile.$1.log
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}
-	docker push enspirit/startback:$1-$(MINOR) | tee -a Dockerfile.$1.log
-	# With ruby suffix
-	docker tag enspirit/startback:$1 enspirit/startback:$1-ruby${MRI_VERSION}
-	docker push enspirit/startback:$1-ruby${MRI_VERSION}
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${TINY}-ruby${MRI_VERSION}
-	docker push enspirit/startback:$1-$(TINY)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
-	docker tag enspirit/startback:$1 enspirit/startback:$1-${MINOR}-ruby${MRI_VERSION}
-	docker push enspirit/startback:$1-$(MINOR)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
-	# not used until 1.0
-	# docker tag enspirit/startback:$1-ruby${MRI_VERSION} enspirit/startback:$1-${MAJOR}-ruby${MRI_VERSION}
-	# docker push enspirit/startback:$1-$(MAJOR)-ruby${MRI_VERSION} | tee -a Dockerfile.$1.log
-	touch Dockerfile.$1.pushed
-
-$1.push-image: Dockerfile.$1.pushed
-
-pkg/startback-$1.${VERSION}.gem: startback-$1.gemspec startback.gemspec.rb lib/**/*
-	docker run --rm -t -v ${PWD}/:/app -w /app ruby bash -c 'gem build -o pkg/startback-$1.${VERSION}.gem startback-$1.gemspec'
-
-$1.gem: pkg/startback-$1.${VERSION}.gem
-
-$1.push-gem: pkg/startback-$1.${VERSION}.gem
-	docker run --rm -t -v ${PWD}/:/app -w /app -e GEM_HOST_API_KEY=${GEM_HOST_API_KEY} ruby bash -c 'gem push pkg/startback-$1.${VERSION}.gem'
-endef
-$(foreach image,$(IMAGES),$(eval $(call make-goal,$(image))))
-
-Dockerfile.tests.built: Dockerfile.tests $(shell find lib spec example -type f | grep -v "Gemfile.*" | grep -v vendor)
-Dockerfile.api.built: Dockerfile.base.built
-Dockerfile.web.built: Dockerfile.base.built
-Dockerfile.engine.built: Dockerfile.base.built
+.build/%/Dockerfile.pushed: .build/%/Dockerfile.built
+	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*
+	@docker push $(DOCKER_REGISTRY)/startback-$*
+	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*:$(TINY)
+	@docker push $(DOCKER_REGISTRY)/startback-$*:$(TINY)
+	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*:$(MINOR)
+	@docker push $(DOCKER_REGISTRY)/startback-$*$(MINOR)

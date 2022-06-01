@@ -9,7 +9,7 @@ on:
 
 jobs:
   Tests:
-    uses: enspirit/startback/.github/workflows/integration.yml@master
+    uses: enspirit/startback/.github/workflows/tests.yml@master
 
   Release:
     needs: Tests
@@ -39,7 +39,7 @@ jobs:
 
       - name: Pushing images
         id: push-images
-        run: make push-images
+        run: make images.push
 
       - uses: act10ns/slack@v1
         with:

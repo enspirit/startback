@@ -11,7 +11,7 @@ env:
 
 jobs:
   Tests:
-    uses: enspirit/startback/.github/workflows/integration.yml@master
+    uses: enspirit/startback/.github/workflows/tests.yml@master
 
   RubyGems:
     needs: Tests
@@ -26,11 +26,11 @@ jobs:
 
       - name: Build packages
         id: build-gems
-        run: make gem
+        run: make gems
 
       - name: Push Gems
         id: push-gems
-        run: make push-gem
+        run: make gems.push
 
       - uses: act10ns/slack@v1
         with:
