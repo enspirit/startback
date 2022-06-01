@@ -24,6 +24,7 @@ module StartbackTodo
   require_relative 'startback_todo/database'
   require_relative 'startback_todo/operation'
   require_relative 'startback_todo/api'
+  require_relative 'startback_todo/websocket_app'
   require_relative 'startback_todo/webpoint'
   require_relative 'startback_todo/agent'
   require_relative 'startback_todo/engine'

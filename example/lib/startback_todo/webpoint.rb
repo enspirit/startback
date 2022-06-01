@@ -6,7 +6,6 @@ module StartbackTodo
 
     use Startback::Context::Middleware, DEFAULT_CONTEXT
 
-
     map '/errors' do
       run StartbackTodo::Errors
     end
@@ -16,25 +15,18 @@ module StartbackTodo
     end
 
     map '/ws' do
-      builder = Startback::Websocket::Hub::Builder.new(DEFAULT_CONTEXT) do
-
-        room 'notifications' do |room|
-          command :subscribe do |cmd, socket|
-            puts "Someone is subscribing to notifs"
-            room.add(socket)
-          end
-        end
-
-      end
-      run builder.to_app
+      run StartbackTodo::WebsocketApp
     end
-
-    use Rack::Static, :urls => [""], :root => 'public', :index => 'index.html'
 
     map '/health' do
       run Startback::Web::HealthCheck.new {
         "StartbackTodo v#{Startback::VERSION}"
       }
+    end
+
+    map '/' do
+      use Rack::Static, :urls => ["/"], :root => 'public', :index => 'index.html'
+      run ->(env) { [404, { 'Content-Type': 'text/plain' }, 'NotFound'] }
     end
 
   end.to_app
