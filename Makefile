@@ -37,7 +37,7 @@ gems.push: $(addsuffix .push, $(GEMS))
 
 # Remove built gems
 clean:
-	@rm -rf *.gem */**/*.gem
+	@rm -rf *.gem */**/*.gem .build
 
 ### BUNDLES
 
@@ -103,12 +103,26 @@ images: ${DOCKER_IMAGES}
 images.push: ${DOCKER_PUSHES}
 
 .build/%/Dockerfile.built: Dockerfile.%
-	@docker build -t startback-$* -f $^ ./ --build-arg MRI_VERSION=${MRI_VERSION}
+	@docker build -t startback:$* -f $< ./ --build-arg MRI_VERSION=${MRI_VERSION}
 
 .build/%/Dockerfile.pushed: .build/%/Dockerfile.built
-	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*
-	@docker push $(DOCKER_REGISTRY)/startback-$*
-	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*:$(TINY)
-	@docker push $(DOCKER_REGISTRY)/startback-$*:$(TINY)
-	@docker tag startback-$* $(DOCKER_REGISTRY)/startback-$*:$(MINOR)
-	@docker push $(DOCKER_REGISTRY)/startback-$*$(MINOR)
+	# without version
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*
+	@docker push $(DOCKER_REGISTRY)/startback:$*
+	# with tiny
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)
+	@docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY)
+	# with minor
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)
+	@docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR)
+	# with ruby version
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
+	@docker push $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
+	@docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
+	@docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
+	@docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
+
+.build/engine/Dockerfile.built: .build/base/Dockerfile.built
+.build/web/Dockerfile.built: .build/base/Dockerfile.built
+.build/api/Dockerfile.built: .build/base/Dockerfile.built

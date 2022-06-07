@@ -1,4 +1,4 @@
-## 0.14.0
+## 0.14.0 - 2022-06-07
 
 * Fix Engine: memoize the bus and run main agent class in
   addition to its subclasses.

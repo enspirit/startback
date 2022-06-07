@@ -1,4 +1,4 @@
-FROM enspirit/startback:base
+FROM startback:base
 
 COPY . /tmp/startback
 RUN cd /tmp/startback && \
