@@ -30,7 +30,10 @@ gems: $(GEMS)
 
 # Push a built gem
 %.gem.push: %.gem
-	echo gem push publishing $^
+	@echo ===================================================================
+	@echo "Building gem $@"
+	@echo ===================================================================
+	@gem push $^
 
 # Push all gems
 gems.push: $(addsuffix .push, $(GEMS))
