@@ -1,18 +1,14 @@
 require 'rack'
-require 'webrick'
 require 'startback'
 module Startback
   class Event
     #
     # This class is the starting point of event handling in
     # Startback. It holds a Bus instance to which emitters
-    # and listeners can connect, and the possibility for the
-    # the listening part to start an infinite loop (ServerEngine).
+    # and listeners can connect.
     #
-    # The Engine automatically runs a Webrick small webapp
-    # with a /healthcheck webservice. The class can be extended
-    # and method `on_health_check` overriden to run specific
-    # checks.
+    # The Engine exposes a rack app (.rack_app) with a /healthcheck webservice.
+    # It is supposed to be mounted to a webserver such as puma.
     #
     # This class goes hand in hand with the `startback:engine`
     # docker image. It can be extended by subclasses to override
@@ -22,14 +18,12 @@ module Startback
     #   - on_health_check to check specific health conditions
     #   - create_agents to instantiate all listening agents
     #     (unless auto_create_agents is used)
+    #   - rack_app if you want to customize the API running
     #
     class Engine
       include Support::Robustness
 
       DEFAULT_OPTIONS = {
-
-        # To be passed to ServerEngine
-        server_engine: {}
 
       }
 
@@ -68,14 +62,6 @@ module Startback
         bus.connect
       end
 
-      def run(options = {})
-        connect
-
-        log(:info, self, "Running agents and server engine!")
-        create_agents
-        Runner.new(self, options[:server_engine] || {}).run
-      end
-
       def create_agents
         return unless parent = self.class.auto_create_agents
 
@@ -89,88 +75,20 @@ module Startback
         Event.json(event_data, context)
       end
 
-      class Runner
+      def rack_app
+        engine = self
+        Rack::Builder.new do
+          use Startback::Web::CatchAll
 
-        DEFAULT_SERVER_ENGINE_OPTIONS = {
-          daemonize: false,
-          worker_type: 'process',
-          workers: 1
-        }
-
-        def initialize(engine, options = {})
-          raise ArgumentError if engine.nil?
-
-          @engine = engine
-          @options = DEFAULT_SERVER_ENGINE_OPTIONS.merge(options)
-          require 'serverengine'
+          map '/health-check' do
+            health = Startback::Web::HealthCheck.new {
+              engine.on_health_check
+            }
+            run(health)
+          end
         end
-        attr_reader :engine, :options
+      end
 
-        def run(options = {})
-          health = self.class.build_health_check(engine)
-          worker = self.class.build_worker(engine, health)
-          se = ServerEngine.create(nil, worker, options)
-          se.run
-          se
-        end
-
-        class << self
-          def run(*args, &bl)
-            new.run(*args, &bl)
-          end
-
-          def build_health_check(engine)
-            Rack::Builder.new do
-              map '/health-check' do
-                health = Startback::Web::HealthCheck.new {
-                  engine.on_health_check
-                }
-                run(health)
-              end
-            end
-          end
-
-          def build_worker(engine, health)
-            Module.new do
-              include Support::Env
-
-              def initialize
-                @stop_flag = ServerEngine::BlockingFlag.new
-              end
-
-              define_method(:health) do
-                health
-              end
-
-              define_method(:engine) do
-                engine
-              end
-
-              def run
-                ran = false
-                until @stop_flag.set?
-                  if ran
-                    engine.send(:log, :warn, engine, "Restarting internal loop")
-                  else
-                    engine.send(:log, :info, engine, "Starting internal loop")
-                  end
-                  Rack::Handler::WEBrick.run(health, {
-                    :Port => env('STARTBACK_ENGINE_PORT', '3000').to_i,
-                    :Host => env('STARTBACK_ENGINE_LISTEN', '0.0.0.0')
-                  })
-                  ran = true
-                end
-              end
-
-              def stop
-                engine.send(:log, :info, engine, "Stopping internal loop")
-                @stop_flag.set!
-                Rack::Handler::WEBrick.shutdown
-              end
-            end
-          end
-        end # class << self
-      end # class Runner
     end # class Engine
   end # class Event
 end # module Startback

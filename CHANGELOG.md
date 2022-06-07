@@ -1,7 +1,10 @@
-## 0.13.1
+## 0.14.0
 
 * Fix Engine: memoize the bus and run main agent class in
   addition to its subclasses.
+
+* BREAKING: Remove serverengine and webrick. Engines should now be started with
+  puma and a config.engine.ru instead of engine.rb
 
 ## 0.13.0 - 2022-05-31
 
