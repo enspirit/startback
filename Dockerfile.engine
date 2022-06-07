@@ -8,4 +8,5 @@ RUN cd /tmp/startback && \
     rm -rf /tmp/startback
 
 USER app
-CMD bundle exec ruby engine.rb
+
+CMD bundle exec puma -t 1:1 -w 1 -p 3000 config.engine.ru
