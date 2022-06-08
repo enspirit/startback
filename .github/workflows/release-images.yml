@@ -14,6 +14,10 @@ jobs:
   Release:
     needs: Tests
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ['2.7', '3.1']
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
@@ -26,6 +30,8 @@ jobs:
 
       - name: Get tag if exist
         run: echo "VERSION=$(git describe --contains || true)" >> $GITHUB_ENV
+
+      - run: echo "MRI_VERSION=${{ matrix.ruby-version }}" >> $GITHUB_ENV
 
       - name: Building images
         id: build-images
