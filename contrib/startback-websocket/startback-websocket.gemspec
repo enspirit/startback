@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
   s.description = "Websocket on top of the Startback framework"
   s.authors     = ["Bernard Lambeau"]
   s.email       = 'blambeau@gmail.com'
-  s.files       = Dir['Gemfile', 'Rakefile', '{lib,spec,tasks,dist}/**/*', 'README*'] & `git ls-files -z`.split("\0")
+  s.files       = Dir['Gemfile', 'Rakefile', '{lib,spec,tasks}/**/*', 'README*'] & `git ls-files -z`.split("\0")
+  s.files      += Dir['dist/**/*']
   s.homepage    = 'https://www.enspirit.be'
   s.license     = 'MIT'
 
