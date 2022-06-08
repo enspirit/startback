@@ -23,7 +23,8 @@ PROJECTS = $(shell find . -maxdepth 3 -name Rakefile -exec dirname {} \;)
 	@echo ===================================================================
 	@echo "Building gem $@"
 	@echo ===================================================================
-	@gem build -o $@ $^
+	@cd $(dir $@)
+	@gem build -o $(notdir $@) $(notdir $<)
 
 # Build all gems
 gems: $(GEMS)
