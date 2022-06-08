@@ -32,9 +32,9 @@ gems: $(GEMS)
 # Push a built gem
 %.gem.push: %.gem
 	@echo ===================================================================
-	@echo "Building gem $@"
+	@echo "Pushing gem $<"
 	@echo ===================================================================
-	@gem push $^
+	@gem push $<
 
 # Push all gems
 gems.push: $(addsuffix .push, $(GEMS))
