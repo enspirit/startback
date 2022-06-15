@@ -1,3 +1,11 @@
+## 0.15.0
+
+* POSSIBLY BREAKING: when a Finitio::TypeError is raised
+  (typically by an operation failing to validate its input),
+  the `location` field of the error is now dumped. This may
+  possibly break webspicy tests that validate error responses
+  very strictly.
+
 ## 0.14.4 - 2022-06-15
 
 * Removed startback-tests.gemspec that is not a valid gem

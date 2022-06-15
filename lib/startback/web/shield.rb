@@ -40,6 +40,7 @@ module Startback
       def body_for(ex)
         ex = ex.root_cause if ex.is_a?(Finitio::TypeError)
         body = { code: ex.class.name, description: ex.message }
+        body[:location] = ex.location if ex.is_a?(Finitio::TypeError)
         return body unless ex.is_a?(Startback::Errors::Error)
         return body unless ex.has_causes?
 
