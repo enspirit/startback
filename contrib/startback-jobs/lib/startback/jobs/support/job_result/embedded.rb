@@ -5,7 +5,11 @@ module Startback
         class Embedded < JobResult
 
           def api_serve(api)
-            [200, {}, [job.opResult]]
+            [
+              200,
+              {"Content-Type" => "application/json"},
+              [job.opResult.to_json]
+            ]
           end
 
         end # class Embedded

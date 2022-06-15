@@ -68,7 +68,7 @@ module Startback
         let(:override) do
           {
             isReady: true,
-            opResult: 'Hello!!',
+            opResult: { "foo" => 'Hello!!' },
             strategy: 'Embedded'
           }
         end
@@ -76,7 +76,7 @@ module Startback
         it 'works fine' do
           res = subject
           expect(res.status).to eql(200)
-          expect(res.body).to eql("Hello!!")
+          expect(res.body).to eql({ "foo" => 'Hello!!' }.to_json)
         end
       end
 

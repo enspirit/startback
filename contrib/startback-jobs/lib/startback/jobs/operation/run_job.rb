@@ -21,6 +21,7 @@ module Startback
         services.update_job!(input, {
           opResult: op_result,
           isReady: true,
+          strategy: 'Embedded',
         })
 
         op_result

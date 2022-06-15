@@ -1,3 +1,8 @@
+## 0.14.3
+
+* Fix startback-jobs, properly let inspect a job and its embedded
+  results.
+
 ## 0.14.0 - 2022-06-07
 
 * Fix Engine: memoize the bus and run main agent class in
