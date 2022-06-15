@@ -1,7 +1,16 @@
-## 0.14.3
+## 0.14.3 - 2022-06-15
 
-* Fix startback-jobs, properly let inspect a job and its embedded
+* [startback-jobs] properly let inspect a job and its embedded
   results.
+
+
+## 0.14.2 - 2022-06-08
+
+* [startback-websocket] Fix inclusion of javascript files in gem.
+
+## 0.14.1 - 2022-06-08
+
+* Fix the build chain: release of ruby gems.
 
 ## 0.14.0 - 2022-06-07
 
