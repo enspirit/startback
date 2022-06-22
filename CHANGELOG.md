@@ -6,6 +6,10 @@
   possibly break webspicy tests that validate error responses
   very strictly.
 
+* Web::CorsHeaders now support more bouncing options and can be
+  used to whitelist some urls (with wildcards) that are
+  authorized to bounce.
+
 ## 0.14.4 - 2022-06-15
 
 * Removed startback-tests.gemspec that is not a valid gem

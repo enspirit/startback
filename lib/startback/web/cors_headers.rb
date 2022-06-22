@@ -14,6 +14,12 @@ module Startback
     #     # as Access-Control-Allow-Origin response header
     #     use CorsHeaders, bounce: true
     #
+    #     # Force a bouncing of the origin, but only for whitelisted candidates
+    #     use CorsHeaders, bounce: ['https://*.test.com', 'https://*.test.devel']
+    #
+    #     # The option above also works with a comma-separated string
+    #     use CorsHeaders, bounce: 'https://*.test.com,https://*.test.devel'
+    #
     #     # Overrides a specific header
     #     use CorsHeaders, headers: { 'Access-Control-Allow-Methods' => 'POST' }
     #
@@ -47,6 +53,7 @@ module Startback
       def initialize(app, options = {})
         @app = app
         @options = Startback::Support.deep_merge(DEFAULT_OPTIONS, options)
+        @options[:bounce] = compile_bounce!(@options[:bounce])
       end
 
       def call(env)
@@ -65,14 +72,43 @@ module Startback
 
       def cors_headers(origin)
         headers = @options[:headers].dup
-        if bounce?
-          headers['Access-Control-Allow-Origin'] = origin
-        end
+        bounce = do_bounce(origin)
+        headers['Access-Control-Allow-Origin'] = bounce
         headers
       end
 
-      def bounce?
-        @options[:bounce]
+      def compile_bounce!(bounce)
+        case bounce
+        when TrueClass
+          true
+        when FalseClass, NilClass
+          nil
+        when Regexp
+          bounce
+        when String
+          rx_str = bounce
+            .split(',')
+            .map{|b| b.gsub(/\*/, '[^.]+') }
+            .join('|')
+          Regexp.new("^(#{rx_str})$")
+        when Array
+          compile_bounce!(bounce.join(','))
+        else
+          nil
+        end
+      end
+
+      def do_bounce(origin)
+        case bounce = @options[:bounce]
+        when NilClass
+          @options[:headers]['Access-Control-Allow-Origin']
+        when TrueClass
+          origin
+        when Regexp
+          bounce =~ origin ? origin : nil
+        else
+          nil
+        end
       end
 
     end # class AllowCors
