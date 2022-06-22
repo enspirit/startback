@@ -1,4 +1,4 @@
-## 0.15.0
+## 0.15.0 - 2022-06-22
 
 * POSSIBLY BREAKING: when a Finitio::TypeError is raised
   (typically by an operation failing to validate its input),
