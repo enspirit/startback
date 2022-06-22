@@ -1,4 +1,4 @@
-## 0.15.1
+## 0.15.1 - 2022-06-22
 
 * Fix Web::CorsHeaders. An empty value is not allowed, the
   header should simply not be present.
