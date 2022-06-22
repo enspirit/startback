@@ -95,6 +95,7 @@ module Startback
         it 'rejects otherwise' do
           header('Origin', "https://nosuchone.com")
           get '/'
+          expect(last_response.headers.key?('Access-Control-Allow-Origin')).to eql(false)
           expect(last_response['Access-Control-Allow-Origin']).to be_nil
         end
       end

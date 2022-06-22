@@ -1,3 +1,8 @@
+## 0.15.1
+
+* Fix Web::CorsHeaders. An empty value is not allowed, the
+  header should simply not be present.
+
 ## 0.15.0 - 2022-06-22
 
 * POSSIBLY BREAKING: when a Finitio::TypeError is raised

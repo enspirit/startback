@@ -72,8 +72,11 @@ module Startback
 
       def cors_headers(origin)
         headers = @options[:headers].dup
-        bounce = do_bounce(origin)
-        headers['Access-Control-Allow-Origin'] = bounce
+        if bounce = do_bounce(origin)
+          headers['Access-Control-Allow-Origin'] = bounce
+        else
+          headers.delete('Access-Control-Allow-Origin')
+        end
         headers
       end
 
