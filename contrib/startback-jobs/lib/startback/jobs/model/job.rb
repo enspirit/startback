@@ -18,6 +18,14 @@ module Startback
           !ready?
         end
 
+        def failed?
+          !!self[:hasFailed]
+        end
+
+        def succeeded?
+          !failed?
+        end
+
         def expired?
           self.expiredAt && self.expiredAt < Time.now
         end

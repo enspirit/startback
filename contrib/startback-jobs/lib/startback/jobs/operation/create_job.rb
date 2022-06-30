@@ -15,6 +15,7 @@ module Startback
           strategy: 'NotReady',
           strategyOptions: {},
           expiresAt: nil,
+          hasFailed: false,
           refreshFreq: nil,
           refreshedAt: nil,
           consumeMax: nil,

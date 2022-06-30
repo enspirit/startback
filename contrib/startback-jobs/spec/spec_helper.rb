@@ -15,10 +15,11 @@ RSpec.configure do |c|
       id: 'abcdef',
       isReady: false,
       opClass: 'CowSay',
-      opInput: { 'message' => 'Hello !!' },
+      opInput: { 'message' => 'Hello !!', 'crash' => false },
       opContext: {},
       opResult: nil,
       strategy: 'NotReady',
+      hasFailed: false,
       strategyOptions: {},
       expiresAt: nil,
       refreshFreq: nil,
@@ -37,6 +38,7 @@ class CowSay < Startback::Operation
   end
 
   def call
+    raise Startback::Errors::InternalServerError, "Something bad happened" if input.crash
     input.message
   end
 end

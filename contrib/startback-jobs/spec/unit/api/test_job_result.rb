@@ -64,10 +64,11 @@ module Startback
         end
       end
 
-      context 'when the job is ready' do
+      context 'when the job is ready and successful' do
         let(:override) do
           {
             isReady: true,
+            hasFailed: false,
             opResult: { "foo" => 'Hello!!' },
             strategy: 'Embedded'
           }
@@ -77,6 +78,30 @@ module Startback
           res = subject
           expect(res.status).to eql(200)
           expect(res.body).to eql({ "foo" => 'Hello!!' }.to_json)
+        end
+      end
+
+      context 'when the job failed' do
+        let(:override) do
+          {
+            isReady: true,
+            hasFailed: true,
+            opResult: {
+              errClass: 'AClass',
+              message: 'Something bad happened',
+              backtrace: ['private information'],
+            },
+            strategy: 'Embedded'
+          }
+        end
+
+        it 'works fine' do
+          res = subject
+          expect(res.status).to eql(272)
+          decoded = JSON.parse(res.body)
+          expect(decoded.keys).to eql(['errClass', 'message'])
+          expect(decoded['errClass']).to eql('AClass')
+          expect(decoded['message']).to eql('Something bad happened')
         end
       end
 

@@ -1,3 +1,12 @@
+## 0.15.5
+
+* [startback-jobs] add support for job failures. Failed jobs
+are considered ready (`isReady: true`) but have a new flag
+(`hasFailed: true`) that tracks the failure. The failure
+itself is dumped in `opResult`. The API that serves the job
+result always dumps the `opResult` and uses a 200 status code
+in case of success and 272 in case of failure.
+
 ## 0.15.4 - 2022-10-13
 
 * BadRequestError and subclasses (40x) are now logged in WARN

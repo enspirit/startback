@@ -11,10 +11,10 @@ module Startback
         attr_reader :job
 
         def self.for(job)
-          unless job.is_ready?
-            JobResult::NotReady.new(job)
-          else
+          if job.is_ready?
             JobResult.const_get(job.strategy).new(job)
+          else
+            JobResult::NotReady.new(job)
           end
         end
 

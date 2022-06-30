@@ -11,21 +11,22 @@ Job.Ref = {
 Job.Strategy = String(s | %w{Embedded NotReady Redirect}.include? s )
 
 Job.Full = {
-  id              : String
-  opClass         : ClassName
-  opInput         : DumpableHash
-  opContext       : DumpableHash
-  opResult        : .
-  isReady         : Boolean
-  strategy        : Job.Strategy
-  strategyOptions : DumpableHash
-  expiresAt       : DateTime|Time|Nil
-  refreshFreq     : String|Nil
-  refreshedAt     : DateTime|Time|Nil
-  consumeMax      : Integer|Nil
-  consumeCount    : Integer|Nil
-  createdAt       : DateTime|Time|Nil
-  createdBy       : String|Nil
+  id              :  String
+  opClass         :  ClassName
+  opInput         :  DumpableHash
+  opContext       :  DumpableHash
+  opResult        :  .
+  isReady         :  Boolean
+  hasFailed       :? Boolean
+  strategy        :  Job.Strategy
+  strategyOptions :  DumpableHash
+  expiresAt       :  DateTime|Time|Nil
+  refreshFreq     :  String|Nil
+  refreshedAt     :  DateTime|Time|Nil
+  consumeMax      :  Integer|Nil
+  consumeCount    :  Integer|Nil
+  createdAt       :  DateTime|Time|Nil
+  createdBy       :  String|Nil
 }
 
 Job.CreationRequest = {
