@@ -1,22 +1,15 @@
 ARG MRI_VERSION
-FROM ruby:${MRI_VERSION}
+FROM ruby:${MRI_VERSION}-alpine
 
-LABEL maintainer=blambeau@enspirit.be
-
-ENV LANG C.UTF-8
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-RUN apt-get update -qq \
- && apt-get install -qq --no-install-recommends \
-    curl \
-    vim \
-    libsasl2-dev \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apk add --no-cache --virtual ffi-dependencies \
+   build-base\
+   libffi-dev\
+   curl\
+   bash
 
 # Add user
-RUN addgroup --gid 1000 --system app \
- && adduser --uid 1000 --system --gid 1000 app \
+RUN addgroup -g 1000 --system app \
+ && adduser --uid 1000 --system app app \
  && mkdir -p /home/app \
  && chown app:app -R /home/app
 
@@ -26,7 +19,7 @@ WORKDIR /home/app
 
 COPY . /tmp/startback
 RUN cd /tmp/startback && \
-    mkdir -p /tmp/startback/pkg && \
-    gem build -o pkg/startback-base.gem startback-base.gemspec && \
-    gem install pkg/startback-base.gem && \
-    rm -rf /tmp/startback
+    mkdir -p /tmp/startback/pkg
+   #  gem build -o pkg/startback-base.gem startback-base.gemspec && \
+   #  gem install pkg/startback-base.gem && \
+   #  rm -rf /tmp/startback
