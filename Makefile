@@ -108,7 +108,7 @@ images: ${DOCKER_IMAGES}
 images.push: ${DOCKER_PUSHES}
 
 .build/%/Dockerfile.built: Dockerfile.%
-	@docker build -t startback:$* -f $< ./ --build-arg MRI_VERSION=${MRI_VERSION}
+	@docker build -t enspirit/startback:$* -f $< ./ --build-arg MRI_VERSION=${MRI_VERSION}
 
 .build/%/Dockerfile.pushed: .build/%/Dockerfile.built
 	@echo ===================================================================
@@ -117,22 +117,22 @@ images.push: ${DOCKER_PUSHES}
 
 	if [ "${MRI_VERSION}" == "${DEFAULT_MRI_VERSION}" ]; then \
 		# without version \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*; \
+		docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*; \
 		docker push $(DOCKER_REGISTRY)/startback:$*; \
 		# with tiny \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
+		docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
 		docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
 		# with minor \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
+		docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
 		docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
 	fi
 
 	# with ruby version
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
+	docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
 	docker push $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
+	docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
 	docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
+	docker tag enspirit/startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
 	docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
 
 .build/engine/Dockerfile.built: .build/base/Dockerfile.built
