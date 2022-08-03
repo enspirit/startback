@@ -7,7 +7,7 @@ gemspec do |s|
 
   s.add_runtime_dependency "sinatra", [">= 2.0", "< 3.0"]
   s.add_runtime_dependency "rack-robustness", [">= 1.0", "< 2.0"]
-  s.add_runtime_dependency "finitio", [">= 0.10", "< 0.11"]
+  s.add_runtime_dependency "finitio", [">= 0.10", "< 0.12"]
   s.add_runtime_dependency "path", [">= 2.0", "< 3.0"]
   s.add_runtime_dependency "http", [">= 4.4", "< 5.0"]
   s.add_runtime_dependency "bunny", [">= 2.14", "< 3.0"]
