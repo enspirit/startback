@@ -1,3 +1,7 @@
+## 0.15.3 - 2022-09-30
+
+* Rebuilding of docker images on latest ruby versions.
+
 ## 0.15.2 - 2022-08-03
 
 * Allow finitio 0.11 to be used. It's safe.
