@@ -32,6 +32,7 @@ module StartbackTodo
     end
 
     around_run(PROMETHEUS)
+    around_run(TRAILER)
 
   end # class Api
 end # module StartbackTodo

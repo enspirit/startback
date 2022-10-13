@@ -69,6 +69,9 @@ module Startback
         time = Benchmark.realtime{ result = yield }
         logger.info(op_to_trail(op, time))
         result
+      rescue Startback::Errors::BadRequestError => ex
+        logger.warn(op_to_trail(op, time, ex))
+        raise
       rescue => ex
         logger.error(op_to_trail(op, time, ex))
         raise

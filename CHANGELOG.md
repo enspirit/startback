@@ -1,3 +1,10 @@
+## 0.15.4
+
+* BadRequestError and subclasses (40x) are now logged in WARN
+  severity instead of ERROR. This is considered a good idea
+  on almost all projects, so we dare doing it on a tiny version
+  bump (angel emoji).
+
 ## 0.15.3 - 2022-09-30
 
 * Rebuilding of docker images on latest ruby versions.
