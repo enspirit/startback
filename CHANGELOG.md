@@ -1,4 +1,4 @@
-## 0.15.5
+## 0.15.5 - 2023-01-11
 
 * [startback-jobs] add support for job failures. Failed jobs
 are considered ready (`isReady: true`) but have a new flag
