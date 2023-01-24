@@ -1,3 +1,23 @@
+## 0.16.0
+
+* Upgraded puma to 6.x
+
+* The .api and .web images no longer specify default -t
+  (threads) and -w (workers) options to puma commandline.
+
+  One should use PUMA_MIN_THREADS, PUMA_MAX_THREADS and
+  WEB_CONCURRENCY envionment variables instead. For the record,
+  the default values (under MRI & puma 6.0.x) are 0, 5 and 0
+  (no forking model), respectively.
+
+  Stricly speaking, this is a broken API, even if you will
+  probably not notice the change.
+
+  Also, note that the .engine image now uses `-t 1:1 -w 0`,
+  which should be backward compatible as well. We stopped
+  using the workers mode, since only one worker makes little
+  sense.
+
 ## 0.15.5 - 2023-01-11
 
 * [startback-jobs] add support for job failures. Failed jobs
