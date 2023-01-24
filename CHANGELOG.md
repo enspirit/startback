@@ -18,6 +18,11 @@
   using the workers mode, since only one worker makes little
   sense.
 
+* Default ruby version is now 3.1 instead of 2.7
+
+  If you need ruby 2.7, you must say it explicitely, e.g.
+  `enspirit/startback:base-0.16-ruby2.7`
+
 ## 0.15.5 - 2023-01-11
 
 * [startback-jobs] add support for job failures. Failed jobs

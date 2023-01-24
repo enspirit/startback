@@ -89,7 +89,7 @@ $(foreach project,$(PROJECTS),$(eval $(call test-targets,$(project))))
 #####
 
 # Specify which ruby version is used as base
-DEFAULT_MRI_VERSION := 2.7
+DEFAULT_MRI_VERSION := 3.1
 MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},$(DEFAULT_MRI_VERSION))
 
 VERSION := $(or ${VERSION},${VERSION},latest)
@@ -102,13 +102,34 @@ MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 
 DOCKERFILES := $(wildcard Dockerfile.*)
 DOCKER_IMAGES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.built)
+DOCKER_TAGGED = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.tagged)
 DOCKER_PUSHES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.pushed)
 
 images: ${DOCKER_IMAGES}
+images.tag: ${DOCKER_TAGGED}
 images.push: ${DOCKER_PUSHES}
 
 .build/%/Dockerfile.built: Dockerfile.%
 	@docker build -t startback:$* -f $< ./ --build-arg MRI_VERSION=${MRI_VERSION}
+
+.build/%/Dockerfile.tagged: .build/%/Dockerfile.built
+	@echo ===================================================================
+	@echo "Tagging all startback:$* images"
+	@echo ===================================================================
+
+	if [ "${MRI_VERSION}" == "${DEFAULT_MRI_VERSION}" ]; then \
+		# without version \
+		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*; \
+		# with tiny \
+		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
+		# with minor \
+		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
+	fi
+
+	# with ruby version
+	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
+	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
+	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
 
 .build/%/Dockerfile.pushed: .build/%/Dockerfile.built
 	@echo ===================================================================
