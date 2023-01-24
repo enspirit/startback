@@ -5,3 +5,5 @@ vendor
 Dockerfile*
 pkg/*
 Makefile
+node_modules
+example
