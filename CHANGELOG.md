@@ -1,3 +1,8 @@
+## 0.17.0 - 2023-02-22
+
+* Upgraded sinatra to 3.x
+* Upgraded webspicy to 0.23.x
+
 ## 0.16.0 - 2023-01-24
 
 * Upgraded puma to 6.x
