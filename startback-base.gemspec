@@ -5,7 +5,7 @@ gemspec do |s|
   s.description = "Yet another ruby backend framework, I'm afraid"
   s.files       = Dir['Rakefile', '{lib,spec,tasks}/**/*', 'README.md', 'VERSION']
 
-  s.add_runtime_dependency "sinatra", [">= 2.0", "< 3.0"]
+  s.add_runtime_dependency "sinatra", [">= 3.0", "< 4.0"]
   s.add_runtime_dependency "rack-robustness", [">= 1.0", "< 2.0"]
   s.add_runtime_dependency "finitio", [">= 0.10", "< 0.12"]
   s.add_runtime_dependency "path", [">= 2.0", "< 3.0"]

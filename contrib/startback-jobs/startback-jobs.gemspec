@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
   s.add_development_dependency 'rspec_junit_formatter', [">= 0.4.1", "< 0.5"]
-  s.add_development_dependency "webspicy", [">= 0.20.5", "< 0.21"]
+  s.add_development_dependency "webspicy", [">= 0.20.5", "< 0.24"]
   s.add_development_dependency "rake"
   s.add_development_dependency "rack-test"
   s.add_development_dependency "bmg"
