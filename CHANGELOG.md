@@ -1,3 +1,7 @@
+## 0.17.1
+
+* [startback-websocket] Add a way to unsubscribe from a room.
+
 ## 0.17.0 - 2023-02-22
 
 * Upgraded sinatra to 3.x

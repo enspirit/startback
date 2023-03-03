@@ -25,6 +25,11 @@ export default class Room {
     this.#handlers[event].push(cb);
   }
 
+  unsubscribe(event, cb) {
+    this.#handlers[event] ||= [];
+    this.#handlers[event] = this.#handlers[event].filter(elm => elm !== cb);
+  }
+
   execute(command, body, headers = {}) {
     return this.#client.execute(command, body, {
       ...headers,

@@ -10,6 +10,11 @@ export default class Observable {
     this.#observers[event].push(cb);
   }
 
+  unsubscribe(cb) {
+    this.#observers[event] ||= [];
+    this.#observers[event] = this.#observers[event].filter((elm) => elm !== cb);
+  }
+
   emit(event, data) {
     this.#observers[event] ||= [];
     this.#observers[event].forEach(cb => {
