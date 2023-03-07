@@ -1,4 +1,4 @@
-## 0.17.1
+## 0.17.1 - 2023-03-07
 
 * API#loaded_body now supports x-www-form-urlencoded and returns
   a dup of the request params.
