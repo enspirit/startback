@@ -1,5 +1,8 @@
 ## 0.17.1
 
+* API#loaded_body now supports x-www-form-urlencoded and returns
+  a dup of the request params.
+
 * [startback-websocket] Add a way to unsubscribe from a room.
 
 ## 0.17.0 - 2023-02-22

@@ -44,6 +44,8 @@ module Startback
         @loaded_body ||= case ctype = request.content_type
         when /json/
           json_body
+        when /x-www-form-urlencoded/
+          request.params.dup
         when /multipart\/form-data/
           file = params[:file]
           file_body file, Path(file[:filename]).extname
