@@ -14,9 +14,10 @@ module Startback
       include Support::OperationRunner
       include Support::Robustness
 
-      def initialize(engine)
+      def initialize(engine, type = :all)
         @engine = engine
         @context = nil
+        @type = type
         install_listeners
       end
       attr_reader :engine
@@ -41,6 +42,8 @@ module Startback
       #
       # See Bus#listen
       def async(exchange, queue)
+        return unless async?
+
         bus.async.listen(exchange, queue) do |event_data|
           event = engine.factor_event(event_data)
           with_context(event.context).call(event)
@@ -51,6 +54,8 @@ module Startback
       #
       # See Bus#listen
       def sync(exchange, queue)
+        return unless sync?
+
         bus.listen(exchange, queue) do |event_data|
           event = engine.factor_event(event_data)
           with_context(event.context).call(event)
@@ -77,6 +82,16 @@ module Startback
 
       def operation_world(op)
         super(op).merge(context: context)
+      end
+
+    private
+
+      def async?
+        @type == :async || @type == :all
+      end
+
+      def sync?
+        @type == :sync || @type == :all
       end
 
     end # class Agent

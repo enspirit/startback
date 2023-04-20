@@ -62,13 +62,13 @@ module Startback
         bus.connect
       end
 
-      def create_agents
+      def create_agents(type = :all)
         return unless parent = self.class.auto_create_agents
 
         ObjectSpace
           .each_object(Class)
           .select { |klass| klass <= parent }
-          .each { |klass| klass.new(self) }
+          .each { |klass| klass.new(self, type) }
       end
 
       def factor_event(event_data)
