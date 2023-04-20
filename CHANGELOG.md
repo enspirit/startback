@@ -1,3 +1,7 @@
+## 0.17.4
+
+* Fix wrong return in proc
+
 ## 0.17.3 - 2023-04-20
 
 * Allow event emitters to decide not to emit anything at a later time (ignore event data when it is nil).
