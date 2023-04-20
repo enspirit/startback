@@ -1,6 +1,11 @@
+## 0.17.3 - 2023-04-20
+
+* Allow event emitters to decide not to emit anything at a later time (ignore event data when it is nil).
+
 ## 0.17.2 - 2023-04-20
 
 * Adds the possibility to start only :sync or :async agents in Engine#create_agents
+
 ## 0.17.1 - 2023-03-07
 
 * API#loaded_body now supports x-www-form-urlencoded and returns
