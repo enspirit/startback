@@ -1,4 +1,4 @@
-## 0.17.4
+## 0.17.4 - 2023-04-20
 
 * Fix wrong return in proc
 
