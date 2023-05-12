@@ -1,6 +1,7 @@
 require 'startback'
 require 'startback/event'
 require 'startback/support/fake_logger'
+require 'startback/audit'
 require 'rack/test'
 require 'ostruct'
 

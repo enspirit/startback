@@ -2,16 +2,33 @@ module Startback
   module Support
     class LogFormatter
 
+      DEFAULT_OPTIONS = {
+        pretty_print: nil
+      }
+
+      def initialize(options = {})
+        @options = DEFAULT_OPTIONS.merge(options)
+        @options[:pretty_print] ||= auto_pretty_print
+      end
+
+      def pretty_print?
+        !!@options[:pretty_print]
+      end
+
       def call(severity, time, progname, msg)
         msg = { message: msg } if msg.is_a?(String)
         msg = { error: msg } if msg.is_a?(Exception)
-        {
+        data = {
           severity: severity,
           time: time
         }.merge(msg)
          .merge(error: error_to_json(msg[:error], severity))
          .compact
-         .to_json << "\n"
+        if pretty_print?
+          JSON.pretty_generate(data) << "\n"
+        else
+          data.to_json << "\n"
+        end
       end
 
       def error_to_json(error, severity = nil)
@@ -27,6 +44,12 @@ module Startback
           backtrace: backtrace,
           causes: causes
         }.compact
+      end
+
+    private
+
+      def auto_pretty_print
+        ENV['RACK_ENV'] != 'production'
       end
 
     end # class LogFormatter

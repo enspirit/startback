@@ -15,6 +15,7 @@ module Startback
   end # module Support
 end # module Startback
 require_relative 'support/env'
+require_relative 'support/redactor'
 require_relative 'support/log_formatter'
 require_relative 'support/logger'
 require_relative 'support/robustness'

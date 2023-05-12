@@ -24,7 +24,7 @@ module Startback
   #           h.merge!("foo" => foo)
   #         end
   #
-  #         h_factor do |c,h|
+  #         h_factory do |c,h|
   #           c.foo = h["foo"]
   #         end
   #

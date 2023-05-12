@@ -3,16 +3,27 @@ module Startback
     class FakeLogger < Logger
 
       def initialize(*args)
-        @last_msg = nil
+        @seen = []
       end
-      attr_reader :last_msg
+      attr_accessor :formatter
+      attr_reader :seen
+
+      def last_msg
+        seen.last
+      end
 
       [:debug, :info, :warn, :error, :fatal].each do |meth|
         define_method(meth) do |msg|
-          @last_msg = msg
-        end        
+          @seen << format(meth, msg)
+        end
       end
 
-    end # class Logger
+      def format(severity, message)
+        return message unless formatter
+
+        formatter.call(severity.to_s.upcase, Time.now, 'prognam', message)
+      end
+
+    end # class FakeLogger
   end # module Support
 end # module Startback

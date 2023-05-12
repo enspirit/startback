@@ -2,6 +2,11 @@ module Startback
   class Context
     module HFactory
 
+      def inherited(subclass)
+        subclass.h_factories = h_factories.dup if h_factories?
+        subclass.h_dumpers = h_dumpers.dup if h_dumpers?
+      end
+
       def h(hash)
         h_factor!(self.new, hash)
       end
@@ -11,6 +16,14 @@ module Startback
           f.call(context, hash)
         end
         context
+      end
+
+      def h_factories?
+        !!@h_factories && @h_factories.any?
+      end
+
+      def h_factories=(factories)
+        @h_factories = factories
       end
 
       def h_factories
@@ -30,8 +43,16 @@ module Startback
         hash
       end
 
+      def h_dumpers?
+        !!@h_dumpers && @h_dumpers.any?
+      end
+
       def h_dumpers
         @h_dumpers ||= []
+      end
+
+      def h_dumpers=(dumpers)
+        @h_dumpers = dumpers
       end
 
       def h_dump(&dumper)

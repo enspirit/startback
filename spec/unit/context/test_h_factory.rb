@@ -7,9 +7,11 @@ module Startback
       expect(Context.new.to_json).to eql("{}")
     end
 
-    it 'allows installing factories' do
-      expect(Context.h_factories).to be_empty
-      expect(SubContext.h_factories.size).to eql(2)
+    it 'allows installing factories and dumpers' do
+      expect(Context.h_factories.size).to eql(1)
+      expect(SubContext.h_factories.size).to eql(3)
+      expect(Context.h_dumpers.size).to eql(1)
+      expect(SubContext.h_dumpers.size).to eql(3)
     end
 
     it 'has a `to_h` information contract that works as expected' do
