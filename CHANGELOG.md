@@ -2,6 +2,8 @@
 
 * [startback-websocket] BREAKING: contribution is discontinued and removed. Please use Pusher instead.
 
+* Bmg minimal dependency is now 0.21.0, to get a startback-jobs bug fix
+
 ## 0.17.4 - 2023-04-20
 
 * Fix wrong return in proc
