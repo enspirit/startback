@@ -77,13 +77,6 @@ $1.test::
 endef
 $(foreach project,$(PROJECTS),$(eval $(call test-targets,$(project))))
 
-# the websocket contrib has also tests for the javascript code base
-./contrib/startback-websocket.test:: ./contrib/startback-websocket/node_modules
-	@echo ===================================================================
-	@echo "Running javascript tests for ./contrib/startback-websocket"
-	@echo ===================================================================
-	@cd contrib/startback-websocket && npm run test
-
 #####
 ### DOCKER
 #####

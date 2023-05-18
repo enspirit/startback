@@ -14,10 +14,6 @@ module StartbackTodo
       run StartbackTodo::Api
     end
 
-    map '/ws' do
-      run StartbackTodo::WebsocketApp
-    end
-
     map '/health' do
       run Startback::Web::HealthCheck.new {
         "StartbackTodo v#{Startback::VERSION}"

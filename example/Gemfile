@@ -2,7 +2,6 @@ source "https://rubygems.org"
 
 gem 'startback-engine', path: '..'
 gem 'startback-web', path: '..'
-gem 'startback-websocket', path: '../contrib/startback-websocket'
 
 group :test do
   gem 'rake'

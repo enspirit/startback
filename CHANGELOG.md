@@ -1,3 +1,7 @@
+## 0.18.0
+
+* [startback-websocket] BREAKING: contribution is discontinued and removed. Please use Pusher instead.
+
 ## 0.17.4 - 2023-04-20
 
 * Fix wrong return in proc
