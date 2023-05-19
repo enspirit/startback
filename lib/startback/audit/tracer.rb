@@ -41,16 +41,20 @@ module Startback
       end
 
       def fork(attributes = {}, &block)
-        span = last_span!.fork(@redactor.redact(attributes))
+        attributes = @redactor.redact(attributes)
+        span = last_span!.fork(attributes)
         @stack << span
         propagate_to_listeners(span)
         result, error = nil, nil
         timing = Benchmark.measure do
           result, error = exec_block_with_error_handling(block)
         end
-        span = @stack.pop.finish(timing, error)
-        propagate_to_listeners(span)
         error ? raise(error) : result
+      ensure
+        unless stack.empty?
+          span = @stack.pop.finish(timing, error)
+          propagate_to_listeners(span)
+        end
       end
 
       def on_span(listener = nil, &block)
@@ -75,8 +79,9 @@ module Startback
       end
 
       def propagate_to_listeners(span)
+        puts "Propagating #{span.inspect}"
         @listeners.each do |listener|
-          listener.call(span)
+          listener.call(span) rescue nil
         end
       end
 
