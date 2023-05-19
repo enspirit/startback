@@ -79,7 +79,6 @@ module Startback
       end
 
       def propagate_to_listeners(span)
-        puts "Propagating #{span.inspect}"
         @listeners.each do |listener|
           listener.call(span) rescue nil
         end
