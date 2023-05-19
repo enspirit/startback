@@ -1,3 +1,7 @@
+## 0.18.2 - 2023-05-19
+
+* Ensure all tracing spans are propagated properly even upon catch.
+
 ## 0.18.1 - 2023-05-19
 
 * [startback-jobs] BREAKING: the context may no longer be provided as input to the CreateJob operation (`opContext`). The operation itself dumps the current context. Fork it if required before calling the operation.
