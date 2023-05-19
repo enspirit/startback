@@ -1,10 +1,7 @@
 ARG MRI_VERSION
-FROM ruby:${MRI_VERSION}
 
-LABEL maintainer=blambeau@enspirit.be
-
-ENV LANG C.UTF-8
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+###### Base version
+FROM ruby:${MRI_VERSION} as classic
 
 RUN apt-get update -qq \
  && apt-get install -qq --no-install-recommends \
@@ -17,6 +14,33 @@ RUN apt-get update -qq \
 # Add user
 RUN addgroup --gid 1000 --system app \
  && adduser --uid 1000 --system --gid 1000 app \
+ && mkdir -p /home/app \
+ && chown app:app -R /home/app
+
+# Set correct environment variables and workdir
+ENV HOME /home/app
+WORKDIR /home/app
+
+COPY . /tmp/startback
+RUN cd /tmp/startback && \
+    mkdir -p /tmp/startback/pkg && \
+    gem build -o pkg/startback-base.gem startback-base.gemspec && \
+    gem install pkg/startback-base.gem && \
+    rm -rf /tmp/startback
+
+
+###### Alpine version
+FROM ruby:${MRI_VERSION}-alpine as alpine
+
+RUN apk add --no-cache --virtual ffi-dependencies \
+   build-base\
+   libffi-dev\
+   curl\
+   bash
+
+# Add user
+RUN addgroup -g 1000 --system app \
+ && adduser --uid 1000 --system app app \
  && mkdir -p /home/app \
  && chown app:app -R /home/app
 
