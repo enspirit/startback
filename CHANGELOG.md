@@ -1,4 +1,4 @@
-## 0.18.0
+## 0.18.0 - 2023-05-19
 
 * BREAKING: Audit::Trailer is removed and replaced by Audit::Tracer, inspired by open telemetry.
   The following changes are necessary:
