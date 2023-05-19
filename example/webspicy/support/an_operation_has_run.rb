@@ -12,6 +12,7 @@ class AnOperationHasRun
       description: "Do something smart"
     })
     unless res.status == 201
+      puts res.body
       raise "Unexpected status: `#{res.status}`"
     end
     nil

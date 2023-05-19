@@ -33,6 +33,6 @@ module StartbackTodo
     end
 
     around_run(PROMETHEUS)
-    around_run(TRAILER)
+    around_run(OPERATION_TRACER)
   end # class Errors
 end # module StartbackTodo

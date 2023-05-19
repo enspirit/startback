@@ -14,9 +14,13 @@ module StartbackTodo
     prefix: "example"
   })
 
-  TRAILER = ::Startback::Audit::Trailer.new(STDERR)
+  LOGGER = Logger.new(STDERR)
 
-  DEFAULT_CONTEXT = Startback::Context.new
+  OPERATION_TRACER = Startback::Audit::OperationTracer.new
+
+  DEFAULT_CONTEXT = Startback::Context.new.tap{|c|
+    c.logger = LOGGER
+  }
 
   require_relative 'startback_todo/model'
   require_relative 'startback_todo/dto'
