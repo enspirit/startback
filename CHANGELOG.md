@@ -1,3 +1,7 @@
+## 0.18.1 - 2023-05-19
+
+* [startback-jobs] BREAKING: the context may no longer be provided as input to the CreateJob operation (`opContext`). The operation itself dumps the current context. Fork it if required before calling the operation.
+
 ## 0.18.0 - 2023-05-19
 
 * BREAKING: Audit::Trailer is removed and replaced by Audit::Tracer, inspired by open telemetry.
@@ -15,6 +19,8 @@
 
   The keys of the jobs created by 0.17.x are not the same as those created by 0.18.x. Finding a job
   by id may fail even if the job exists.
+
+* [startback-jobs] BREAKING: the context may no longer be provided as input to the CreateJob operation (`opContext`). The operation itself dumps the current context. Fork it if required before calling the operation.
 
 * The data logs are now pretty printed by default in development mode.
 

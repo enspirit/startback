@@ -7,7 +7,6 @@ module Startback
           isReady: false,
           opClass: op.class.name,
           opInput: op.input,
-          opContext: context.to_h,
           createdBy: '',
         })
       end

@@ -10,7 +10,7 @@ module Startback
         @job = Model::Job.full({
           id: SecureRandom.urlsafe_base64(16),
           opInput: {},
-          opContext: {},
+          opContext: context.to_h,
           opResult: nil,
           strategy: 'NotReady',
           strategyOptions: {},

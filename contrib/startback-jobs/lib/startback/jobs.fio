@@ -32,7 +32,6 @@ Job.Full = {
 Job.CreationRequest = {
   opClass         :  ClassName
   opInput         :  DumpableHash
-  opContext       :  DumpableHash
   createdBy       :  String
 
   isReady         : Boolean

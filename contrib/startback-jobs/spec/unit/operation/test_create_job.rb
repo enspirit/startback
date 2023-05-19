@@ -9,7 +9,6 @@ module Startback
           isReady: false,
           opClass: 'CowSay',
           opInput: {},
-          opContext: {},
           createdBy: 'blambeau',
         }
       end
