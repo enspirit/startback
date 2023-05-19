@@ -5,7 +5,6 @@ module StartbackTodo
     use Startback::Web::Prometheus
 
     use Startback::Context::Middleware, DEFAULT_CONTEXT
-    use Startback::Audit::Middleware
 
     map '/errors' do
       run StartbackTodo::Errors

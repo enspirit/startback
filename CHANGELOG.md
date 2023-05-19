@@ -1,8 +1,25 @@
 ## 0.18.0
 
+* BREAKING: Audit::Trailer is removed and replaced by Audit::Tracer, inspired by open telemetry.
+  The following changes are necessary:
+
+    1. Replace `around_run(Audit::Trailer.new)` by `around_run(Audit::OperationTracer.new)`
+    2. (optional) Make sure an instance of `Tracer` is available on the context
+    3. (optional) Make sure you add an instance of `TraceLogger` as listener on that tracer
+    4. (optional) Use the Audit::Middleware to reattach to existing traces provided by api callers
+       through the X-Span-Id and X-Trace-Id HTTP headers.
+
 * [startback-websocket] BREAKING: contribution is discontinued and removed. Please use Pusher instead.
 
-* Bmg minimal dependency is now 0.21.0, to get a startback-jobs bug fix
+* [startback-jobs] BREAKING: Bmg minimal dependency is now 0.21.0, to get a startback-jobs bug fix.
+
+  The keys of the jobs created by 0.17.x are not the same as those created by 0.18.x. Finding a job
+  by id may fail even if the job exists.
+
+* The data logs are now pretty printed by default in development mode.
+
+* Sensitive data sanitization (now called "redacting") now hides emails and adresses. The redactor
+  no longer remove hash entries, but replaces the values by a '---redacted---' string.
 
 ## 0.17.4 - 2023-04-20
 
