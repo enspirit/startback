@@ -86,69 +86,44 @@ DEFAULT_MRI_VERSION := 3.1
 MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},$(DEFAULT_MRI_VERSION))
 
 VERSION := $(or ${VERSION},${VERSION},latest)
-DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
-
 TINY = ${VERSION}
 MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 # not used until 1.0
 # MAJOR = $(shell echo '${MINOR}' | cut -f'1-2' -d'.')
 
-DOCKERFILES := $(wildcard Dockerfile.*)
-DOCKER_IMAGES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.built)
-DOCKER_TAGGED = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.tagged)
-DOCKER_PUSHES = $(DOCKERFILES:Dockerfile.%=.build/%/Dockerfile.pushed)
+DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
+PLATFORMS := linux/amd64,linux/arm64/v8
 
-images: ${DOCKER_IMAGES}
-images.tag: ${DOCKER_TAGGED}
-images.push: ${DOCKER_PUSHES}
+TARGETS := base api engine web
+IMAGES = $(TARGETS:%=.build/%/Dockerfile.built)
 
-.build/%/Dockerfile.built: Dockerfile.%
-	@docker build -t startback:$* -f $< ./ --build-arg MRI_VERSION=${MRI_VERSION}
+images: .build/buildx.builder ${IMAGES}
 
-.build/%/Dockerfile.tagged: .build/%/Dockerfile.built
-	@echo ===================================================================
-	@echo "Tagging all startback:$* images"
-	@echo ===================================================================
+.build/buildx.builder:
+	mkdir -p .build
+	docker buildx create --use --name startback
+	touch .build/buildx.builder
 
-	if [ "${MRI_VERSION}" == "${DEFAULT_MRI_VERSION}" ]; then \
-		# without version \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*; \
-		# with tiny \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
-		# with minor \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
-	fi
-
-	# with ruby version
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
-
-.build/%/Dockerfile.pushed: .build/%/Dockerfile.built
-	@echo ===================================================================
-	@echo "Pushing all startback:$* images"
-	@echo ===================================================================
-
-	if [ "${MRI_VERSION}" == "${DEFAULT_MRI_VERSION}" ]; then \
-		# without version \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*; \
-		docker push $(DOCKER_REGISTRY)/startback:$*; \
-		# with tiny \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
-		docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY); \
-		# with minor \
-		docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
-		docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR); \
-	fi
-
-	# with ruby version
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
-	docker push $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
-	docker push $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION}
-	docker tag startback:$* $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
-	docker push $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
-
-.build/engine/Dockerfile.built: .build/base/Dockerfile.built
-.build/web/Dockerfile.built: .build/base/Dockerfile.built
-.build/api/Dockerfile.built: .build/base/Dockerfile.built
+ifeq (${VERSION},latest)
+.build/%/Dockerfile.built: Dockerfile .build/
+	@docker buildx build -f $< ./\
+		--build-arg MRI_VERSION=${MRI_VERSION} \
+		--push \
+		--platform ${PLATFORMS} \
+		--target $* \
+		-t $(DOCKER_REGISTRY)/startback:$* \
+		-t $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
+else
+.build/%/Dockerfile.built: Dockerfile
+	@docker buildx build -f $< ./ \
+		--push \
+		--build-arg MRI_VERSION=${MRI_VERSION} \
+		--platform ${PLATFORMS} \
+		--target $* \
+		-t $(DOCKER_REGISTRY)/startback:$* \
+		-t $(DOCKER_REGISTRY)/startback:$*-${TINY} \
+		-t $(DOCKER_REGISTRY)/startback:$*-${MINOR} \
+		-t $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION} \
+		-t $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION} \
+		-t $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
+endif
