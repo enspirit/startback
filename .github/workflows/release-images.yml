@@ -3,7 +3,7 @@ name: Release Images
 on:
   push:
     branches:
-    - master
+      - master
     tags:
       - "*"
 
@@ -33,19 +33,15 @@ jobs:
 
       - run: echo "MRI_VERSION=${{ matrix.ruby-version }}" >> $GITHUB_ENV
 
-      - name: Building images
-        id: build-images
-        run: make images
-
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Pushing images
-        id: push-images
-        run: make images.push
+      - name: Building & pushing images
+        id: build-images
+        run: make images
 
       - uses: act10ns/slack@v1
         with:

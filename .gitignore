@@ -10,3 +10,4 @@ rspec-unit.xml
 example/Gemfile.lock
 Gemfile.lock
 *.gem
+.build
