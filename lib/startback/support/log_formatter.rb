@@ -8,7 +8,7 @@ module Startback
 
       def initialize(options = {})
         @options = DEFAULT_OPTIONS.merge(options)
-        @options[:pretty_print] ||= auto_pretty_print
+        @options[:pretty_print] = auto_pretty_print unless @options.has_key?(:pretty_print)
       end
 
       def pretty_print?
