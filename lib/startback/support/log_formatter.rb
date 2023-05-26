@@ -49,7 +49,7 @@ module Startback
     private
 
       def auto_pretty_print
-        ENV['RACK_ENV'] != 'production'
+        ENV['RACK_ENV'] == 'development'
       end
 
     end # class LogFormatter
