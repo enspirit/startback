@@ -1,3 +1,9 @@
+## 0.19.0 - xxx
+
+* BREAKING: drop support for ruby < 2.7
+* Upgraded webspicy to 0.24.x
+* Upgraded finitio to 0.12.x
+
 ## 0.18.2 - 2023-05-19
 
 * Ensure all tracing spans are propagated properly even upon catch.
