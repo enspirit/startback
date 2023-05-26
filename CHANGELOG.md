@@ -1,4 +1,4 @@
-## 0.19.0 - xxx
+## 0.19.0 - 2023-05-26
 
 * BREAKING: drop support for ruby < 2.7
 * Upgraded webspicy to 0.24.x
