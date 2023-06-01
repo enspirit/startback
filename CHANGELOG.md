@@ -1,3 +1,7 @@
+## 0.19.1 - 2023-06-01
+
+* Startback::Support::Env exposes the development?, staging? & production? helpers
+
 ## 0.19.0 - 2023-05-26
 
 * BREAKING: drop support for ruby < 2.7
