@@ -36,6 +36,21 @@ module Startback
       end
       module_function :env
 
+      def staging?
+        ENV['RACK_ENV'] == 'staging'
+      end
+      module_function :staging?
+
+      def production?
+        ENV['RACK_ENV'] =~ /^prod/
+      end
+      module_function :production?
+
+      def development?
+        ENV['RACK_ENV'] =~ /^dev/
+      end
+      module_function :development?
+
     end # module Env
   end # module Support
 end # module Startback
