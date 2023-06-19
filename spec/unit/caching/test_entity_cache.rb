@@ -1,14 +1,13 @@
 require 'spec_helper'
-require 'startback/caching/entity_cache'
-require 'startback/caching/store'
+require 'startback/caching'
 module Startback
   module Caching
     describe EntityCache do
 
       class BaseCache < EntityCache
 
-        def initialize(context = nil)
-          super(Store.new, context)
+        def initialize(options = {})
+          super(Store.new, context, options)
           @called = 0
           @last_key = nil
         end
@@ -76,15 +75,22 @@ module Startback
 
       describe "get" do
 
-        subject{
+        subject do
           cache.get("a key")
-        }
+        end
 
         it 'yields to load_raw_data only once with the short key' do
           expect(subject).to eql("a value")
           expect(subject).to eql("a value")
           expect(cache.called).to eql(1)
           expect(cache.last_key).to eql("a key")
+        end
+
+        it 'raises when an error occurs' do
+          expect_any_instance_of(Store).to receive(:exist?).and_raise("Cache failed")
+          expect {
+            subject
+          }.to raise_error(/Cache failed/)
         end
 
       end
@@ -127,6 +133,48 @@ module Startback
           expect(cache.get("a key")).to eql("a value")
           expect(cache.called).to eql(2)
           expect(cache.last_key).to eql("a key")
+        end
+
+      end
+
+      describe 'when disabling error raising' do
+        let(:cache) do
+          BaseCache.new(:raise_on_cache_fail => false)
+        end
+
+        subject do
+          cache.get("a key")
+        end
+
+        it 'yields to load_raw_data only once with the short key' do
+          expect(subject).to eql("a value")
+        end
+
+        it 'does not raise when an error occurs' do
+          expect_any_instance_of(Store).to receive(:exist?).and_raise("Cache failed")
+          expect_any_instance_of(Caching::Logger).to receive(:cache_fail)
+          expect(subject).to eql("a value")
+        end
+      end
+
+      describe "with prometheus listener too" do
+
+        let(:listener) do
+          Caching::Prometheus.new
+        end
+
+        let(:cache) do
+          BaseCache.new.send(:register, listener)
+        end
+
+        before do
+          expect(listener).to receive(:cache_miss)
+          expect(listener).to receive(:cache_hit)
+        end
+
+        it 'yields to load_raw_data only once with the extend key' do
+          expect(cache.get("a key")).to eql("a value")
+          expect(cache.get("a key")).to eql("a value")
         end
 
       end

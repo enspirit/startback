@@ -1,3 +1,12 @@
+## 0.19.2
+
+* Improved Caching::EntityCache with more observability and error handling.
+
+  A Prometheus listener is now provided and can be installed via options passed at
+  cache construction (or via subclass overriding). An option also allows not raising
+  errors when the cache fails, and loading the entity instead. One is supposed to at
+  least log or monitor those errors.
+
 ## 0.19.1 - 2023-06-01
 
 * Startback::Support::Env exposes the development?, staging? & production? helpers

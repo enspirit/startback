@@ -43,7 +43,10 @@ module Startback
           @@default_logger ||= begin
             l = ::Logger.new(STDOUT)
             l.formatter = LogFormatter.new
-            l.warn(op: "#{self}", op_data: { msg: "Using default logger to STDOUT" })
+            l.warn(op: "#{self}", op_data: {
+              msg: "Using default logger to STDOUT",
+              caller: caller
+            })
             @@default_logger = l
           end
           @@default_logger

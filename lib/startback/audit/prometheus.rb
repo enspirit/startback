@@ -7,7 +7,8 @@ module Startback
     # Prometheus exporter abstraction, that can be registered as an around
     # hook on OperationRunner and as a prometheus client on Context instances.
     #
-    # The exporter uses the ruby client for prometheus to expose metrics regarding Operation runs.
+    # The exporter uses the ruby client for prometheus to expose metrics
+    # regarding Operation runs.
     #
     # The following metrics are exported:
     #
