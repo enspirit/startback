@@ -1,3 +1,8 @@
+## 0.19.3 - 2023-06-22
+
+* Fix backward compatibility bug when using entity_cache without loading the
+  entire caching module.
+
 ## 0.19.2 - 2023-06-22
 
 * Improved Caching::EntityCache with more observability and error handling.

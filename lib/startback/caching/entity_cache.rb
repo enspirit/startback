@@ -1,3 +1,7 @@
+# For backward compatibility, may be removed in next released
+require_relative 'listeners'
+require_relative 'logger'
+
 module Startback
   module Caching
     #
