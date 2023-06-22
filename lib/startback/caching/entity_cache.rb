@@ -87,8 +87,8 @@ module Startback
           store.set(cache_key, to_cache, caching_options)
         }
       rescue => ex
+        raise if raise_on_cache_fail? || pkey.nil?
         cache_fail(pkey, ex)
-        raise if raise_on_cache_fail?
         load_entity(pkey)
       end
 

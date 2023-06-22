@@ -155,6 +155,11 @@ module Startback
           expect_any_instance_of(Caching::Logger).to receive(:cache_fail)
           expect(subject).to eql("a value")
         end
+
+        it 'does raise when an error occurs during primary key resolution' do
+          expect(cache).to receive(:primary_key).and_raise("Primary key failed")
+          expect{ subject }.to raise_error(/Primary key failed/)
+        end
       end
 
       describe "with prometheus listener too" do
