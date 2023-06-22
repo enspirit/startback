@@ -1,3 +1,8 @@
+## 0.19.4 - 2023-06-22
+
+* Fix a bug in EntityCache error handling: do not hide primary key resolution
+  issues.
+
 ## 0.19.3 - 2023-06-22
 
 * Fix backward compatibility bug when using entity_cache without loading the
