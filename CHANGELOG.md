@@ -1,4 +1,4 @@
-## 0.19.2
+## 0.19.2 - 2023-06-22
 
 * Improved Caching::EntityCache with more observability and error handling.
 
