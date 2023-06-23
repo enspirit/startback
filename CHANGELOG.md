@@ -1,4 +1,8 @@
-## 1.0
+## 1.0 - 2023-06-23
+
+This gem is used in production for several years, so we bump it to 1.x to use
+better semantics versioning schemes. See README for the definition of the public
+API.
 
 * BREAKING: the `base` and `engine` gems and images have been removed.
   Only `api` and `web` are kept while `web` will be discontinued in the future.
