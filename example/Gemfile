@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-gem 'startback-engine', path: '..'
-gem 'startback-web', path: '..'
+gem 'startback', path: '..'
+gem 'startback-web', path: '../contrib/startback-web'
 
 group :test do
   gem 'rake'

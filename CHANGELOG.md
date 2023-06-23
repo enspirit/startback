@@ -1,4 +1,16 @@
-## 0.20.0
+## 1.0
+
+* BREAKING: the `base` and `engine` gems and images have been removed.
+  Only `api` and `web` are kept while `web` will be discontinued in the future.
+  You can use the api image for engine, as it was the same.
+
+* BREAKING: the images no longer have the startback gem installed. You have to
+  install it yourself as part of your own `bundle`.
+
+* BREAKING: the `engine` default CMD is no longer provided by default.
+  For reference, we used `bundle exec puma -t 1:1 -w 0 -p 3000 config.engine.ru`
+  that you probably want to add to your own docker image. We recommand using
+  a `puma.rb` file instead, and rely on the default command of the `api` image.
 
 * Upgraded dependencies, notably http (5.x), tzinfo (2.x) and webspicy (0.26.x).
   This may force clients to upgrade them as well.

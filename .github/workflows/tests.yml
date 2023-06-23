@@ -34,7 +34,7 @@ jobs:
           node-version: 14
 
       - name: Bundling
-        run: make bundles
+        run: make bundle
 
       - name: Run tests
         run: make tests

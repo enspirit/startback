@@ -45,7 +45,7 @@ clean:
 
 ### BUNDLES
 
-bundles: $(addsuffix .bundle,$(PROJECTS))
+bundle: $(addsuffix .bundle,$(PROJECTS))
 
 define bundle-targets
 $1.bundle:
@@ -94,7 +94,7 @@ MINOR = $(shell echo '${TINY}' | cut -f'1-2' -d'.')
 DOCKER_REGISTRY := $(or ${DOCKER_REGISTRY},${DOCKER_REGISTRY},docker.io/enspirit)
 PLATFORMS := linux/amd64,linux/arm64/v8
 
-TARGETS := base api engine web
+TARGETS := api web
 IMAGES = $(TARGETS:%=.build/%/Dockerfile.built)
 
 images: .build/buildx.builder ${IMAGES}

@@ -1,9 +1,23 @@
-require_relative './startback.gemspec'
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+require 'startback/version'
+require 'date'
 
-gemspec do |s|
+Gem::Specification.new do |s|
   s.name        = 'startback'
   s.description = "Yet another ruby backend framework, I'm afraid"
   s.files       = Dir['Rakefile', '{lib,spec,tasks}/**/*', 'README.md', 'VERSION']
+  s.version     = Startback::VERSION
+  s.date        = Date.today
+  s.summary     = "Got Your Ruby Back"
+  s.authors     = ["Bernard Lambeau"]
+  s.email       = 'blambeau@gmail.com'
+  s.homepage    = 'https://www.enspirit.be'
+  s.license     = 'MIT'
+
+  s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
+  s.add_development_dependency 'rspec_junit_formatter', [">= 0.6", "< 0.7"]
+  s.add_development_dependency "webspicy", [">= 0.26.0", "< 0.27"]
+  s.add_development_dependency "rake"
 
   s.add_runtime_dependency "sinatra", [">= 3.0", "< 4.0"]
   s.add_runtime_dependency "rack-robustness", [">= 1.0", "< 2.0"]
