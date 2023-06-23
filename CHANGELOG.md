@@ -1,3 +1,8 @@
+## 0.20.0
+
+* Upgraded dependencies, notably http (5.x), tzinfo (2.x) and webspicy (0.26.x).
+  This may force clients to upgrade them as well.
+
 ## 0.19.4 - 2023-06-22
 
 * Fix a bug in EntityCache error handling: do not hide primary key resolution

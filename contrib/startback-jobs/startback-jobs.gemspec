@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
-  s.add_development_dependency 'rspec_junit_formatter', [">= 0.4.1", "< 0.5"]
-  s.add_development_dependency "webspicy", [">= 0.24.0", "< 0.25"]
+  s.add_development_dependency 'rspec_junit_formatter', [">= 0.6", "< 0.7"]
+  s.add_development_dependency "webspicy", [">= 0.26.0", "< 0.27"]
   s.add_development_dependency "rake"
   s.add_development_dependency "rack-test"
   s.add_development_dependency "bmg"

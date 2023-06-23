@@ -6,6 +6,6 @@ gem 'startback-web', path: '..'
 group :test do
   gem 'rake'
   gem 'rspec', ['>= 3.6', '< 4.0']
-  gem 'rspec_junit_formatter', [">= 0.4.1", "< 0.5"]
-  gem 'webspicy', '~> 0.24.0', '< 0.25'
+  gem 'rspec_junit_formatter', [">= 0.6.0", "< 0.7"]
+  gem 'webspicy', '~> 0.26.0', '< 0.27'
 end
