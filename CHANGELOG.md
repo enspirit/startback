@@ -4,9 +4,14 @@ This gem is used in production for several years, so we bump it to 1.x to use
 better semantics versioning schemes. See README for the definition of the public
 API.
 
-* BREAKING: the `base` and `engine` gems and images have been removed.
-  Only `api` and `web` are kept while `web` will be discontinued in the future.
-  You can use the api image for engine, as it was the same.
+* BREAKING: the `base` `api` and `engine` gems have been removed.
+
+  The main `startback` gems provides what base/api/engine already provided (they
+  were actually the same), while `-web` became a contrib, like `-jobs`.
+
+* BREAKING: Only `api` and `web` docker images are kept, while `web` will be
+  discontinued in the future. You can use the api image for engine, as it was
+  the same.
 
 * BREAKING: the images no longer have the startback gem installed. You have to
   install it yourself as part of your own `bundle`.
