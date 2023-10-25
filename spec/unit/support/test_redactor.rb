@@ -79,6 +79,17 @@ module Startback
         })
       end
 
+      it 'redacts urls as expected' do
+        r = Redactor.new
+        expect(r.redact('hello')).to eql('hello')
+        expect(r.redact('http://google.com')).to eql('http://google.com')
+        expect(r.redact('http://google.com/a/path')).to eql('http://google.com/a/path')
+        expect(r.redact('http://user@google.com')).to eql('http://--redacted--@google.com')
+        expect(r.redact('http://user@google.com/a/path')).to eql('http://--redacted--@google.com/a/path')
+        expect(r.redact('http://user:password@google.com')).to eql('http://--redacted--@google.com')
+        expect(r.redact('http://user:password@google.com/a/path')).to eql('http://--redacted--@google.com/a/path')
+      end
+
     end # class Redactor
   end # module Support
 end # module Startback

@@ -6,9 +6,10 @@ module Startback
         pretty_print: nil
       }
 
-      def initialize(options = {})
+      def initialize(options = {}, redactor = default_redactor)
         @options = DEFAULT_OPTIONS.merge(options)
         @options[:pretty_print] = auto_pretty_print unless @options.has_key?(:pretty_print)
+        @redactor = redactor
       end
 
       def pretty_print?
@@ -24,6 +25,7 @@ module Startback
         }.merge(msg)
          .merge(error: error_to_json(msg[:error], severity))
          .compact
+        data = @redactor.redact(data)
         if pretty_print?
           JSON.pretty_generate(data) << "\n"
         else
@@ -47,6 +49,10 @@ module Startback
       end
 
     private
+
+      def default_redactor
+        Support::Redactor.new
+      end
 
       def auto_pretty_print
         development?

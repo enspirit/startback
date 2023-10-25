@@ -1,3 +1,8 @@
+## 1.0.1 - 2023-10-25
+
+* Tracer and LogFormatter now both use the Redactor, that correctly redacts
+  credentials in URLs.
+
 ## 1.0 - 2023-06-23
 
 This gem is used in production for several years, so we bump it to 1.x to use

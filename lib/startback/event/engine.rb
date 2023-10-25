@@ -58,7 +58,7 @@ module Startback
       end
 
       def connect
-        log(:info, self, "Connecting to the bus now!")
+        log(:debug, "Connecting to the bus now!", self)
         bus.connect
       end
 
