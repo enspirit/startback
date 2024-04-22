@@ -97,6 +97,10 @@ module Startback
             @bunny.close if @bunny
           end
 
+          def connected?
+            @bunny.connected?
+          end
+
           def channel
             unless @bunny
               raise Startback::Errors::Error, "Please connect your bus first, or use autoconnect: true"
