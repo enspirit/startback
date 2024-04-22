@@ -69,6 +69,10 @@ module Startback
         async.connect if async
       end
 
+      def connected?
+        async.connected? if async
+      end
+
       # Emits a particular event to the listeners.
       #
       # @arg event an event, should be an Event instance (through duck
