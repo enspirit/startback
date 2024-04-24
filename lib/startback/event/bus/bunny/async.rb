@@ -98,7 +98,7 @@ module Startback
           end
 
           def connected?
-            @bunny.connected?
+            @bunny && @bunny.connected?
           end
 
           def channel

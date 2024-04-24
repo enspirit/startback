@@ -70,7 +70,13 @@ module Startback
       end
 
       def connected?
-        async.connected? if async
+        if sync && async
+          sync.connected? && async.connected?
+        elsif sync
+          sync.connected?
+        elsif async
+          async.connected?
+        end
       end
 
       # Emits a particular event to the listeners.

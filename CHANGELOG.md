@@ -1,3 +1,8 @@
+## 1.0.2
+
+* The Bus abstraction now exposes a `connected?` method, implemented by the
+  various implementations.
+
 ## 1.0.1 - 2023-10-25
 
 * Tracer and LogFormatter now both use the Redactor, that correctly redacts

@@ -24,6 +24,10 @@ module Startback
           def connect
           end
 
+          def connected?
+            true
+          end
+
           def emit(event)
             (@listeners[event.type.to_s] || []).each do |l|
               stop_errors(self, "emit", event) {
