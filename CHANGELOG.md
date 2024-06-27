@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Allow usage of Bmg 0.23.x, that makes no broken API.
+
 ## 1.0.2 - 2024-04-24
 
 * The Bus abstraction now exposes a `connected?` method, implemented by the

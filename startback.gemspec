@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "nokogiri", [">= 1.11.4", "< 2.0"]
   s.add_runtime_dependency "puma", [">= 6.0.2", "< 7.0"]
   s.add_runtime_dependency "jwt", [">= 2.1", "< 3.0"]
-  s.add_runtime_dependency "bmg", [">= 0.21.0", "< 0.22.0"]
+  s.add_runtime_dependency "bmg", [">= 0.21.0", "< 0.24.0"]
   s.add_runtime_dependency "tzinfo", [">= 2.0", "< 3.0"]
   s.add_runtime_dependency "tzinfo-data"
   s.add_runtime_dependency "i18n", [">= 1.0", "< 2.0"]
