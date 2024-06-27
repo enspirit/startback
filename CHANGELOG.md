@@ -1,4 +1,4 @@
-## 1.0.3
+## 1.0.3 - 2024-06-27
 
 * Allow usage of Bmg 0.23.x, that makes no broken API.
 
