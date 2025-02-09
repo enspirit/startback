@@ -1,3 +1,8 @@
+## 1.1.0 - 2025-02-09
+
+* Added ruby 3.3 to the build & release matrix
+* Ruby dependencies upgraded in a backward compatibility way.
+
 ## 1.0.3 - 2024-06-27
 
 * Allow usage of Bmg 0.23.x, that makes no broken API.

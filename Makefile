@@ -82,7 +82,7 @@ $(foreach project,$(PROJECTS),$(eval $(call test-targets,$(project))))
 #####
 
 # Specify which ruby version is used as base
-DEFAULT_MRI_VERSION := 3.1
+DEFAULT_MRI_VERSION := 3.4
 MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},$(DEFAULT_MRI_VERSION))
 
 VERSION := $(or ${VERSION},${VERSION},latest)
