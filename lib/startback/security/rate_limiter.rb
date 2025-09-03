@@ -11,15 +11,28 @@ module Startback
     #     RATE_LIMITER = Startback::Security::RateLimiter.new({
     #       store: Startback::Caching::Store.new,  # use a redis cache store in practice
     #       defaults: {
-    #         strategy: :silent_drop,              # simply ignore the call
-    #         detection: :input,                   # method to call on Operation instance to detect call duplicates via pure data
-    #         periodicity: 60,                     # periodicity of occurence count, in seconds
-    #         max_occurence: 3,                    # max number of occurences during the period
+    #         strategy: :silent_drop,
+    #         detection: :input,
+    #         periodicity: 60,
+    #         max_occurence: 3,
     #       },
     #     })
     #
     #     # in api.rb
     #     around_run(RATE_LIMITER)
+    #
+    #     # in an operation.rb
+    #     class Op < Startback::Operation
+    #       rate_limit { max_occurences: 2 }   # Partial<Config>
+    #       rate_limit :dynamic_config         # Config obtained on op instance
+    #     end
+    #
+    # Reference:
+    #
+    #     strategy: Symbol => :silent_drop or :fail (429 status code)
+    #     detection: Symbol => method to call on Operation instance to detect call duplicates via pure data
+    #     periodicity: Integer => periodicity of occurence count, in seconds
+    #     max_occurences: Integer => max number of occurences during the period
     #
     class RateLimiter
       include Support::Robustness
@@ -38,7 +51,7 @@ module Startback
         raise ArgumentError, "A block is required" unless then_block
 
         if op.class.has_rate_limit?
-          limit_options = op.class.rate_limit_options(defaults || {})
+          limit_options = op.class.rate_limit_options(op, defaults || {})
           key, authorized = authorize_call!(op, limit_options)
           unless authorized
             log_rate_limited(op, key, limit_options)
@@ -54,9 +67,18 @@ module Startback
       def authorize_call!(op, limit_options)
         key = get_detection_key(op, limit_options)
         count = get_detection_count(key)
+        strat = strategy(limit_options)
         authorize = (count < max_occurences_allowed(limit_options))
-        save_detection_count(key, count + 1, limit_options) if authorize
-        [key, authorize]
+        if authorize
+          save_detection_count(key, count + 1, limit_options)
+          [key, authorize]
+        elsif strat === :silent_drop
+          [key, authorize]
+        elsif strat === :fail
+          raise Startback::Errors::TooManyRequestsError, op.class.name.to_s
+        else
+          [key, authorize]
+        end
       end
 
       def get_detection_count(key)
@@ -99,6 +121,10 @@ module Startback
 
       def max_occurences_allowed(limit_options)
         limit_options[:max_occurences] || @options[:max_occurences] || 1
+      end
+
+      def strategy(limit_options)
+        limit_options[:strategy] || @options[:strategy] || :silent_drop
       end
 
       def log_rate_limited(op, key, limit_options)

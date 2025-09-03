@@ -1,3 +1,7 @@
+## 1.2.1 - 2025-09-03
+
+* Add :fail strategy and dynamic options to Startback::Security::RateLimiter
+
 ## 1.2.0 - 2025-09-03
 
 * BREAKING change: only ruby 3.3 is kept in build & test matrix.

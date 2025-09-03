@@ -10,8 +10,14 @@ module Startback
         !!@rate_limit
       end
 
-      def rate_limit_options(defaults)
-        defaults.merge(@rate_limit || {})
+      def rate_limit_options(op, defaults)
+        case @rate_limit
+        when NilClass then defaults
+        when Hash then defaults.merge(@rate_limit)
+        when Symbol then defaults.merge(op.send(@rate_limit))
+        else
+          raise ArgumentError
+        end
       end
 
     end # module RateLimit

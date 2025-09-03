@@ -76,6 +76,31 @@ module Startback
         end
       end
 
+      context 'when :fail with a constant' do
+        class FailingRateLimitedOp < RateLimitedOp
+          rate_limit({
+            strategy: :fail,
+            detection: "constant"
+          })
+        end
+
+        let (:op_class) {
+          FailingRateLimitedOp
+        }
+
+        it 'works when called once' do
+          call_it_once
+          expect(op_class.called_count).to eql(1)
+        end
+
+        it 'fails on second call' do
+          call_it_once
+          expect {
+            call_it_once
+          }.to raise_error(Startback::Errors::TooManyRequestsError)
+        end
+      end
+
       context 'when silent_drop with a symbol' do
         class InputRateLimitedOp < RateLimitedOp
           rate_limit({
@@ -158,6 +183,31 @@ module Startback
           call_it_once
           call_it_once
           expect(op_class.called_count).to eql(3)
+        end
+      end
+
+      context 'when using a dynamic configuration' do
+        class DynamicRateLimitedOp < RateLimitedOp
+          rate_limit :rate_limit_options
+
+          def rate_limit_options
+            {
+              strategy: :silent_drop,
+              detection: "constant",
+              max_occurences: input[:max],
+            }
+          end
+        end
+
+        let (:op_class) {
+          DynamicRateLimitedOp
+        }
+
+        it 'works when called three times in a row' do
+          call_it_once(max: 2)
+          call_it_once(max: 2)
+          call_it_once(max: 2)
+          expect(op_class.called_count).to eql(2)
         end
       end
     end

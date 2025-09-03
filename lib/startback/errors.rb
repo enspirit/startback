@@ -94,6 +94,10 @@ module Startback
         status 428
       end
 
+      class TooManyRequestsError < BadRequestError
+        status 429
+      end
+
     class InternalServerError < Error
       status 500
       keep_error(true)
