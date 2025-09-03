@@ -1,4 +1,4 @@
-## 1.2.0
+## 1.2.0 - 2025-09-03
 
 * BREAKING change: only ruby 3.3 is kept in build & test matrix.
 
