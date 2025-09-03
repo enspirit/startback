@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Don't debug caller on WARN message about default logger.
+
 ## 1.1.0 - 2025-02-09
 
 * Added ruby 3.3 to the build & release matrix

@@ -45,7 +45,6 @@ module Startback
             l.formatter = LogFormatter.new
             l.warn(op: "#{self}", op_data: {
               msg: "Using default logger to STDOUT",
-              caller: caller
             })
             @@default_logger = l
           end
