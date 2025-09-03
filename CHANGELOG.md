@@ -10,6 +10,8 @@
 * Added Startback::Security::RateLimiter to help limiting operation executions
   as a security measure.
 
+* Added Env#test?, in addition to production? and development?
+
 ## 1.1.0 - 2025-02-09
 
 * Added ruby 3.3 to the build & release matrix

@@ -51,6 +51,11 @@ module Startback
       end
       module_function :development?
 
+      def test?
+        ENV['RACK_ENV'] =~ /^test/
+      end
+      module_function :test?
+
     end # module Env
   end # module Support
 end # module Startback
