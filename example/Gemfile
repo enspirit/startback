@@ -3,6 +3,8 @@ source "https://rubygems.org"
 gem 'startback', path: '..'
 gem 'startback-web', path: '../contrib/startback-web'
 
+gem 'csv'
+
 group :test do
   gem 'rake'
   gem 'rspec', ['>= 3.6', '< 4.0']
