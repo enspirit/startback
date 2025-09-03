@@ -1,0 +1,39 @@
+---
+name: |-
+  Rate limited operation
+
+url: |-
+  /api/rate-limited
+
+services:
+- method: |-
+    POST
+
+  description: |-
+    Runs a rate limited operation
+
+  input_schema: |-
+    .
+
+  output_schema: |-
+    .
+
+  error_schema: |-
+    ErrorSchema
+
+  examples:
+
+    - description: |-
+        when requested the first time
+      params:
+        description: "run it"
+      expected:
+        content_type: application/json
+        status: 201
+
+    - description: |-
+        when requested twice in a row
+      params:
+        description: "run it"
+      expected:
+        status: 204

@@ -35,7 +35,7 @@ module Startback
       DEVELOPMENT_CACHE_CONTROL = ENV['STARTBACK_AUTOCACHING_DEVELOPMENT_CACHE_CONTROL'] || \
                                   "no-cache, no-store, max-age=0, must-revalidate"
 
-      # Cache-Control header to use in produdction mode
+      # Cache-Control header to use in production mode
       PRODUCTION_CACHE_CONTROL = ENV['STARTBACK_AUTOCACHING_PRODUCTION_CACHE_CONTROL'] ||\
                                  "public, must-revalidate, max-age=3600, s-max-age=3600"
 

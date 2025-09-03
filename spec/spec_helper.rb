@@ -1,7 +1,9 @@
 require 'startback'
+require 'startback/caching'
 require 'startback/event'
 require 'startback/support/fake_logger'
 require 'startback/audit'
+require 'startback/security'
 require 'rack/test'
 require 'ostruct'
 

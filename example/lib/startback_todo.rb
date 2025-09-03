@@ -1,10 +1,12 @@
 require 'bmg'
 require 'startback'
+require 'startback/caching'
 require 'startback/web/catch_all'
 require 'startback/web/shield'
 require 'startback/web/prometheus'
 require 'startback/web/api'
 require 'startback/web/health_check'
+require 'startback/security'
 require 'startback/audit'
 require 'startback/event'
 
@@ -17,6 +19,15 @@ module StartbackTodo
   LOGGER = Logger.new(STDERR)
 
   OPERATION_TRACER = Startback::Audit::OperationTracer.new
+
+  RATE_LIMITER = Startback::Security::RateLimiter.new({
+    store: Startback::Caching::Store.new,
+    defaults: {
+      strategy: :silent_drop,
+      detection: :input,
+      periodicity: 60,
+    },
+  })
 
   DEFAULT_CONTEXT = Startback::Context.new.tap{|c|
     c.logger = LOGGER

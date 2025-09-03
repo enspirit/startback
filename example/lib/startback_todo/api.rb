@@ -17,6 +17,12 @@ module StartbackTodo
       serve "Toto", todo
     end
 
+    post '/rate-limited' do
+      ran = run RateLimited.new(json_body)
+      status ran ? 201 : 204
+      serve("Sensitive executed", { ok: true }) if ran
+    end
+
   private
 
     def db
@@ -32,6 +38,7 @@ module StartbackTodo
     end
 
     around_run(PROMETHEUS)
+    around_run(RATE_LIMITER)
     around_run(OPERATION_TRACER)
 
   end # class Api
