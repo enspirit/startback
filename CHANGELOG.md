@@ -1,5 +1,7 @@
 ## 1.2.0
 
+* BREAKING change: only ruby 3.3 is kept in build & test matrix.
+
 * Don't debug caller on WARN message about default logger.
 
 * Exposed `logger_for` publicly in Robustness module, in addition to `log`.
