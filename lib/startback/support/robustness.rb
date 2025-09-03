@@ -91,6 +91,11 @@ module Startback
 
       end # module Tools
 
+      # Returns the natural logger to use for a specific arg
+      def logger_for(arg)
+        Tools.logger_for(arg)
+      end
+
       # Logs a specific message with a given severity.
       #
       # Severity can be :debug, :info, :warn, :error or :fatal.

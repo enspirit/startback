@@ -2,6 +2,11 @@
 
 * Don't debug caller on WARN message about default logger.
 
+* Exposed `logger_for` publicly in Robustness module, in addition to `log`.
+
+* Added SpyLogger that helps integration tests wanting to lightly observe
+  call flows.
+
 ## 1.1.0 - 2025-02-09
 
 * Added ruby 3.3 to the build & release matrix
