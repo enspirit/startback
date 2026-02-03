@@ -1,3 +1,8 @@
+## 1.2.2
+
+* Add `emits_on_commit` event hook to avoid race conditions between sender and
+  receiver against the database.
+
 ## 1.2.1 - 2025-09-03
 
 * Add :fail strategy and dynamic options to Startback::Security::RateLimiter
@@ -395,6 +400,7 @@ Unfortunately it comes with a couple of BREAKING changes:
 of root on port 80.
 
 * Upgrades uglify.js to 4.2, to enable support for ES6.
+
 ## 0.8.3 - 2021-05-25
 
 * Update dependencies for security patches.
