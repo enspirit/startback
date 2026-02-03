@@ -1,4 +1,4 @@
-## 1.2.2
+## 1.2.2 - 2026-02-03
 
 * Add `emits_on_commit` event hook to avoid race conditions between sender and
   receiver against the database.
