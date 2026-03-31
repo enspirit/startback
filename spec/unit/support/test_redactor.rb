@@ -90,6 +90,19 @@ module Startback
         expect(r.redact('http://user:password@google.com/a/path')).to eql('http://--redacted--@google.com/a/path')
       end
 
+      it 'handles strings with invalid encoding without raising' do
+        binary = "hello\x80\xFF world".dup.force_encoding('UTF-8')
+        expect(binary.valid_encoding?).to be false
+        expect { redactor.redact(binary) }.not_to raise_error
+        expect(redactor.redact(binary)).to equal(binary)
+      end
+
+      it 'handles binary strings in nested structures' do
+        binary = "\x80\xFF".dup.force_encoding('UTF-8')
+        data = { foo: "bar", nested: { value: binary } }
+        expect { redactor.redact(data) }.not_to raise_error
+      end
+
     end # class Redactor
   end # module Support
 end # module Startback

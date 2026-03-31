@@ -21,8 +21,9 @@ module Startback
           }]
         when Enumerable
           data.map{|elm| redact(elm) }.compact
-        when /:\/\//
-          data.gsub(/:\/\/([^@]+[@])/){|m| "://--redacted--@" }
+        when String
+          return data unless data.valid_encoding?
+          data =~ /:\/\// ? data.gsub(/:\/\/([^@]+[@])/){|m| "://--redacted--@" } : data
         else
           data
         end
