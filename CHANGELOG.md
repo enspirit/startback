@@ -1,3 +1,7 @@
+## 1.2.4 - 2026-09-01
+
+* Allow bmg 0.24.0
+
 ## 1.2.3 - 2026-03-31
 
 * Fix redactor when handling invalid string encoding.
