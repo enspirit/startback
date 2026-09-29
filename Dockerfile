@@ -1,12 +1,14 @@
 ###
 ### MAIN TARGET
 ###
-ARG MRI_VERSION
-FROM ruby:${MRI_VERSION} as api
+# Mirrors DEFAULT_MRI_VERSION in the Makefile, which always passes the arg.
+# Having one here keeps a plain `docker build .` working too.
+ARG MRI_VERSION=3.4
+FROM ruby:${MRI_VERSION} AS api
 
 LABEL maintainer=blambeau@enspirit.be
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update -qq \
@@ -24,7 +26,7 @@ RUN addgroup --gid 1000 --system app \
  && chown app:app -R /home/app
 
 # Set correct environment variables and workdir
-ENV HOME /home/app
+ENV HOME=/home/app
 WORKDIR /home/app
 
 USER app
@@ -34,7 +36,7 @@ CMD bundle exec puma -p 3000
 ###
 ### WEB TARGET
 ###
-FROM api as web
+FROM api AS web
 
 USER root
 
