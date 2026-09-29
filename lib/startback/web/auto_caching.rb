@@ -1,3 +1,5 @@
+require 'rack'
+
 module Startback
   module Web
     #
@@ -53,8 +55,12 @@ module Startback
 
     protected
 
+      # Rack::Headers is used so that the defaults set here are actually
+      # overriden by the downstream application, whatever the case it uses
+      # for its own header names.
       def patch_response_headers(hs)
-        (development? ? @cache_headers[:development] : @cache_headers[:production]).merge(hs)
+        defaults = development? ? @cache_headers[:development] : @cache_headers[:production]
+        Rack::Headers[defaults].merge(hs)
       end
 
       def development?
@@ -68,16 +74,16 @@ module Startback
       def default_headers
         {
           development: {
-            "Cache-Control" => DEVELOPMENT_CACHE_CONTROL
+            "cache-control" => DEVELOPMENT_CACHE_CONTROL
           },
           production: {
-            "Cache-Control" => PRODUCTION_CACHE_CONTROL
+            "cache-control" => PRODUCTION_CACHE_CONTROL
           }
         }
       end
 
       def normalize_headers(h)
-        Hash[h.map{|k,v| [k, v.is_a?(Hash) ? v : {"Cache-Control" => v} ] }]
+        Hash[h.map{|k,v| [k, v.is_a?(Hash) ? v : {"cache-control" => v} ] }]
       end
 
     end # class AutoCaching

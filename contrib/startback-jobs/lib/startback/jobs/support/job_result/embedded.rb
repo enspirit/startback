@@ -13,13 +13,13 @@ module Startback
               payload = job.opResult.delete_if{|k| k == :backtrace }
               [
                 FAILURE_STATUS_CODE,
-                {"Content-Type" => "application/json"},
+                {"content-type" => "application/json"},
                 [payload.to_json]
               ]
             else
               [
                 200,
-                {"Content-Type" => "application/json"},
+                {"content-type" => "application/json"},
                 [job.opResult.to_json]
               ]
             end

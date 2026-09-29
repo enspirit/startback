@@ -1,3 +1,5 @@
+require 'rack'
+
 module Startback
   module Jobs
     module Support
@@ -13,7 +15,7 @@ module Startback
             options = redirect_options
             [
               options.status || 301,
-              options.headers.merge("Location" => job.opResult),
+              Rack::Headers[options.headers].merge("location" => job.opResult),
               []
             ]
           end

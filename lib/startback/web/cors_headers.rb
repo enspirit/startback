@@ -1,3 +1,5 @@
+require 'rack'
+
 module Startback
   module Web
     #
@@ -62,7 +64,8 @@ module Startback
           headers = cors_headers(origin).merge(headers)
         end
         if env['REQUEST_METHOD'] == 'OPTIONS'
-          headers['Content-Length'] = '0'
+          headers = Rack::Headers[headers]
+          headers['content-length'] = '0'
           status, headers, body = [204, headers, []]
         end
         [status, headers, body]
@@ -70,8 +73,11 @@ module Startback
 
     private
 
+      # Rack::Headers is used so that the CORS headers set here are actually
+      # overriden by the downstream application, whatever the case it uses
+      # for its own header names.
       def cors_headers(origin)
-        headers = @options[:headers].dup
+        headers = Rack::Headers[@options[:headers]]
         if bounce = do_bounce(origin)
           headers['Access-Control-Allow-Origin'] = bounce
         else

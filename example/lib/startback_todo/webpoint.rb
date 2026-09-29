@@ -22,7 +22,7 @@ module StartbackTodo
 
     map '/' do
       use Rack::Static, :urls => ["/"], :root => 'public', :index => 'index.html'
-      run ->(env) { [404, { 'Content-Type': 'text/plain' }, 'NotFound'] }
+      run ->(env) { [404, { 'content-type' => 'text/plain' }, ['NotFound']] }
     end
 
   end.to_app

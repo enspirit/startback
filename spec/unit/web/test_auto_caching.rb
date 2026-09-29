@@ -76,6 +76,25 @@ module Startback
         end
       end
 
+      context 'when a lowercase cache-control header is already set by the app' do
+        # This is what Rack 3 applications actually emit, Sinatra 4 included.
+        # The raw response triple is inspected here on purpose: Rack::Test
+        # normalizes header names on read, and would hide a duplicate.
+        subject do
+          app = Rack::Builder.new do
+            use AutoCaching
+            run ->(env){ [200, {"cache-control" => "priority"}, ["Hello error"]] }
+          end.to_app
+          _, headers, _ = app.call(Rack::MockRequest.env_for("/"))
+          headers
+        end
+
+        it 'lets the application win, and does not duplicate the header' do
+          expect(subject.keys.grep(/cache-control/i)).to eql(["cache-control"])
+          expect(subject["cache-control"]).to eql("priority")
+        end
+      end
+
     end # CatchAll
   end # module Web
 end # module Startback

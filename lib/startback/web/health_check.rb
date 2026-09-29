@@ -32,7 +32,7 @@ module Startback
 
       def call(env)
         if debug_msg = check!(env)
-          [ 200, { "Content-Type" => "text/plain" }, Array(debug_msg) ]
+          [ 200, { "content-type" => "text/plain" }, Array(debug_msg) ]
         else
           [ 204, {}, [] ]
         end

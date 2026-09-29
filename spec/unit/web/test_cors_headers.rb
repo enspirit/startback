@@ -134,6 +134,27 @@ module Startback
         end
       end
 
+      context 'when the app sets specific headers in lowercase' do
+        # This is what Rack 3 applications actually emit, Sinatra 4 included.
+        # The raw response triple is inspected here on purpose: Rack::Test
+        # normalizes header names on read, and would hide a duplicate.
+        subject do
+          app = Rack::Builder.new do
+            use CorsHeaders
+            run ->(env){ [200, {'access-control-allow-methods' => "POST"}, ["Hello world"]] }
+          end.to_app
+          env = Rack::MockRequest.env_for("/", "HTTP_ORIGIN" => "https://test.com")
+          _, headers, _ = app.call(env)
+          headers
+        end
+
+        it 'does not override them, and does not duplicate them either' do
+          expect(subject.keys.grep(/access-control-allow-methods/i))
+            .to eql(["access-control-allow-methods"])
+          expect(subject["access-control-allow-methods"]).to eql("POST")
+        end
+      end
+
     end # CatchAll
   end # module Web
 end # module Startback
