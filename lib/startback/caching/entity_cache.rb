@@ -144,10 +144,10 @@ module Startback
 
       # Encodes a context free key to an actual cache key.
       #
-      # Default implementation uses JSON.fast_generate but MAY be
+      # Default implementation uses JSON.generate but MAY be
       # overriden.
       def encode_key(context_free_key)
-        JSON.fast_generate(context_free_key)
+        JSON.generate(context_free_key)
       end
 
       # Returns whether `cached` entity seems fresh enough to

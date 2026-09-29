@@ -5,6 +5,9 @@ Todo = {
   description: String
 }
 
+# Raw body of a csv representation, as served on `Accept: text/csv`.
+Csv = String
+
 ErrorSchema = {
   code:? String
   description: String

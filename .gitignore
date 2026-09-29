@@ -11,3 +11,6 @@ example/Gemfile.lock
 Gemfile.lock
 *.gem
 .build
+
+# Local checkout of rack-robustness, not part of this gem.
+gems-devel/

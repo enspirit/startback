@@ -104,7 +104,7 @@ module Startback
           op_class: op.class.name.to_s,
           value: value,
         }
-        JSON.fast_generate(key)
+        JSON.generate(key)
       end
 
       def defaults

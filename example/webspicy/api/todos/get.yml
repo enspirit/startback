@@ -16,8 +16,11 @@ services:
     {
     }
 
+  # This service negotiates its representation on Accept. Since webspicy
+  # 0.27, the output schema is also checked against unstructured bodies,
+  # so the csv representation must be covered here as well.
   output_schema: |-
-    [Todo]
+    [Todo]|Csv
 
   error_schema: |-
     ErrorSchema

@@ -14,9 +14,14 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://www.enspirit.be'
   s.license     = 'MIT'
 
+  # Ruby 3.2 is what the newest dependencies require (bunny 3, finitio 1.0,
+  # http 6, json 3, nokogiri 1.19). Ruby 3.1 reached end of life in March
+  # 2025, and the test grid never covered it.
+  s.required_ruby_version = '>= 3.2'
+
   s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
   s.add_development_dependency 'rspec_junit_formatter', [">= 0.6", "< 0.7"]
-  s.add_development_dependency "webspicy", [">= 0.26.0", "< 0.27"]
+  s.add_development_dependency "webspicy", [">= 1.0", "< 2.0"]
   s.add_development_dependency "rake"
   s.add_development_dependency "rack-test"
 
