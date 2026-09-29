@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "webspicy", [">= 0.27.0", "< 0.28"]
   s.add_development_dependency "rake"
 
-  s.add_runtime_dependency "sinatra", [">= 3.0", "< 4.0"]
+  s.add_runtime_dependency "sinatra", [">= 4.0", "< 5.0"]
   s.add_runtime_dependency "rack-robustness", [">= 1.0", "< 2.0"]
   s.add_runtime_dependency "finitio", [">= 0.12", "< 0.13"]
   s.add_runtime_dependency "path", [">= 2.1", "< 3.0"]
