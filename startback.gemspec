@@ -5,7 +5,7 @@ require 'date'
 Gem::Specification.new do |s|
   s.name        = 'startback'
   s.description = "Yet another ruby backend framework, I'm afraid"
-  s.files       = Dir['Rakefile', '{lib,spec,tasks}/**/*', 'README.md', 'VERSION']
+  s.files       = Dir['Rakefile', '{lib,spec,tasks}/**/*', 'README.md', 'CHANGELOG.md', 'UPGRADING.md', 'VERSION']
   s.version     = Startback::VERSION
   s.date        = Date.today
   s.summary     = "Got Your Ruby Back"

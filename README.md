@@ -14,10 +14,11 @@ Currently,
 
 ## Public API
 
-This gem uses semantics versioning and has reached it's 1.0 version. The public
-API is defined as follows:
+This gem uses semantic versioning. The public API is defined as follows:
 
 * All ruby classes, require path, constructor arguments, and public methods.
 
 * The `enspirit/startback:api` and `enspirit/startback:web` docker images and
   main `CMD`.
+
+Upgrading across a major version? See [UPGRADING.md](UPGRADING.md).

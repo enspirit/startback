@@ -1,3 +1,155 @@
+## 2.0.0 - 2026-09-29
+
+Major dependency upgrade. Sinatra 4 (hence Rack 3) is now required, and the
+ranges of the other dependencies are widened so that their latest major
+release is picked by default while applications remain free to pin an older
+one in their own Gemfile.
+
+**Startback's own API is unchanged.** Every class, require path, constructor
+argument and public method behaves as in 1.2.x. The major bump is about the
+dependency floor, and about what that floor asks of the applications built on
+top -- which is most of what follows.
+
+**See [UPGRADING.md](UPGRADING.md) for the migration guide**: what you will
+see, why, and what to do about it. The short version is that a typical API
+service needs two changes, setting `RACK_ENV` and lowercasing the response
+triples it builds by hand.
+
+### BREAKING: Sinatra 4 and Rack 3 are now required
+
+Startback's own middlewares now rely on `Rack::Headers`, which only exists in
+Rack 3. There is no way to stay on Sinatra 3 with this release.
+
+* **Response headers must be lowercase.** The Rack 3 SPEC states that header
+  keys "must not contain uppercase ASCII characters". Any place where your
+  application builds a response triple by hand, e.g.
+  `[200, {"Content-Type" => "application/json"}, [body]]`, must now use
+  `"content-type"`. Nothing crashes if you don't, but a Rack 3 middleware
+  looking the header up in lowercase will not find it and will happily add its
+  own, so the response goes out with the header twice. This is exactly the bug
+  that `AutoCaching` and `CorsHeaders` had, and that this release fixes.
+
+* **Response bodies must respond to `each` or `call`.** A bare String is no
+  longer a valid body: `[404, {}, "NotFound"]` must become
+  `[404, {}, ["NotFound"]]`.
+
+* Rack 2-only middlewares in your stack (anything using the removed
+  `Rack::Utils::HeaderHash`, or `Rack::File`) will break. This is the usual
+  Rack 2 to 3 migration and is not specific to Startback.
+
+* **`Rack::Protection::HostAuthorization` is enabled by Sinatra 4.** In the
+  `development` environment — which is the one used whenever neither `RACK_ENV`
+  nor `APP_ENV` is set — only `localhost`, `*.localhost`, `*.test` and IP
+  literals are accepted as `Host`. Anything else gets a `403 Host not
+  permitted` before reaching any route. In every other environment the check is
+  disabled, so *production deployments are not affected*. What is affected:
+
+  - local development behind a custom hostname or a docker-compose service name;
+  - test suites, since `Rack::Test` issues requests against `example.org`.
+
+  Set `RACK_ENV` (`test` in test suites, as Startback's own specs now do), or
+  configure the permitted hosts explicitly:
+
+      class MyApi < Startback::Web::Api
+        set :host_authorization, { permitted_hosts: [".my-app.internal"] }
+      end
+
+### BREAKING: Ruby >= 3.2 is now required
+
+Declared through `required_ruby_version`, because that is what bunny 3,
+finitio 1.0, http 6, json 3 and nokogiri 1.19 all require. Ruby 3.1 reached
+end of life in March 2025 and was never part of the test matrix.
+
+### BREAKING: `JSON.fast_generate` is gone
+
+Removed by json 3. Startback used it in `Security::RateLimiter` and
+`Caching::EntityCache#encode_key`, both of which now use `JSON.generate`. The
+generated keys are identical, so caches and rate limit counters are not
+invalidated. Applications calling `JSON.fast_generate` themselves must do the
+same substitution.
+
+### BREAKING: rack-robustness 2 is now required
+
+`Web::Shield` and `Web::CatchAll` subclass it. 2.0.0 requires Rack 3, and
+emits lowercase header names everywhere -- including the last resort
+response, the one returned when error handling itself fails, which is a raw
+Rack triple and so never went through `Rack::Response` normalization. That
+was the only genuinely Rack 3 non-compliant response Startback produced.
+
+It also normalizes the header names given to its DSL, fixing a silent bug
+where `g.headers('content-type' => ...)` lost to the `'Content-Type'`
+default. Startback spells it `content_type` and never hit that one, but
+applications configuring their own `Shield` subclass in lowercase did.
+
+### Dependencies whose major version is now the default
+
+Startback does not use most of these itself: they are shipped as a convenience,
+and their ranges have been widened rather than moved, so `< 4.0` style
+constraints in your own Gemfile keep working. A plain `bundle update` will
+however resolve to the newest of each, and each has its own breaking changes:
+
+* **puma 6 -> 8** (`>= 6.0.2, < 9.0`). Puma 7 renamed every lifecycle hook
+  (`on_worker_boot` -> `before_worker_boot`, and so on), made `preload_app!`
+  the default in clustered mode, and lowercased its response headers. Puma 8
+  changed the default production bind from `0.0.0.0` to `::` when an IPv6
+  interface is available, which matters for container port publishing.
+
+* **jwt 2 -> 3** (`>= 2.1, < 4.0`). This one has teeth: RSA keys must now be at
+  least 2048 bits, base64 decoding follows RFC 4648 strictly, the payload
+  cannot be read before the signature is verified, `HS512256` is dropped, and
+  custom algorithms must include `JWT::JWA::SigningAlgorithm`. Since 3.3, code
+  that rescues `JWT::DecodeError`, `JWT::IncorrectAlgorithm` or `ArgumentError`
+  *around `JWT.encode`* must rescue `JWT::EncodeError` instead. Applications
+  doing anything non-trivial with JWT should read its `UPGRADING.md` and pin
+  `jwt` themselves if they are not ready.
+
+* **bunny 2 -> 3** (`>= 2.14, < 4.0`). Used by `Event::Bus::Bunny::Async`.
+  Versioned delivery tags are removed, passive declarations are no longer
+  replayed by topology recovery, and the `openssl` gem >= 3.3 is now required,
+  which means a native build in slim images.
+
+* **finitio 0.12 -> 1.0** (`>= 0.12, < 2.0`). Two changes affect `.fio`
+  schemas: the `Fixnum` and `Bignum` aliases are removed (use `Integer`), and
+  the `FalseClass` alias is fixed — it used to be an alias of `.TrueClass`, so
+  it accepted `true` and rejected `false`. A schema that worked around that bug
+  now means the opposite of what it did.
+
+* **http 5 -> 6** (`>= 5.0, < 7.0`) and **nokogiri**, **tzinfo**, **i18n**,
+  **mustache**: unchanged ranges or widened, never loaded by Startback itself.
+
+### Other changes
+
+* `Web::HealthCheck` now returns a lowercase `content-type` header, as do
+  `Jobs::Support::JobResult::Embedded` and `::Redirect` in `startback-jobs`.
+  HTTP header names are case-insensitive and every client normalizes them, so
+  this only matters if you assert on the raw Rack triple.
+
+* Development dependency on `webspicy` is dropped from `startback.gemspec`:
+  Startback's own specs never used it. `rack-test`, which used to arrive
+  transitively through it, is now an explicit development dependency.
+
+* `benchmark`, `json`, `logger` and `ostruct` are now explicit runtime
+  dependencies. They are required by `lib/startback.rb` and stop being default
+  gems in Ruby 3.5.
+
+* The example application and both contrib gems moved to webspicy 1.0, whose
+  own ranges are what makes finitio 1.0, http 6 and rack-robustness 2.0
+  reachable at all here: every 0.27.x release capped the three of them. On the
+  way through 0.27 they also started validating unstructured response bodies
+  against `output_schema` instead of skipping them.
+
+### Known gaps
+
+* The Bunny event bus has no automated coverage — the test matrix has no
+  RabbitMQ — so bunny 3 is upgraded but unverified by the suite. Likewise,
+  `http`, `jwt`, `puma`, `nokogiri`, `tzinfo`, `i18n` and `mustache` are never
+  loaded by Startback, so the suite says nothing about their new majors.
+
+* Applications testing with webspicy must move to its 1.x line. Every 0.27.x
+  release requires `finitio < 0.13`, `http < 6.0` and `rack-robustness < 2.0`,
+  which conflicts with what Startback now asks for: bundler fails to resolve
+  rather than quietly holding a version back.
+
 ## 1.2.4 - 2026-09-01
 
 * Allow bmg 0.24.0
