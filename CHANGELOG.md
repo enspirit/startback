@@ -1,3 +1,141 @@
+## 2.1.0 - 2026-09-30
+
+Ruby 4.0 support, docker images for several ruby versions, and the Bunny
+event bus finally under test -- which is how two silent bugs and a RabbitMQ
+4.3 incompatibility came to light.
+
+**Almost nothing here asks anything of you.** Startback's API is unchanged
+and the bus upgrade needs no broker-side migration. The one thing that does
+move: the un-suffixed docker tags go from Ruby 3.3 to Ruby 3.4, a minor
+bump. The details are below because the *reasons* matter, not because there
+is much to do.
+
+### Ruby 4.0 is supported
+
+The test grid now runs **Ruby 3.2, 3.3, 3.4 and 4.0** -- the whole range
+`required_ruby_version` allows, so the floor is a tested claim rather than an
+assumed one. Startback needed no source change for 4.0: the gem,
+`startback-jobs`, `startback-web` and the example application's webspicy
+specs are green on all four, with no deprecation warning from Startback's own
+code.
+
+`required_ruby_version` stays `>= 3.2`.
+
+### Docker images are released for Ruby 3.4 and 4.0
+
+Images are built for each ruby version of the release matrix. The tags that
+name no ruby version follow `DEFAULT_MRI_VERSION`, which is **Ruby 3.4**:
+2.0.0 published them from Ruby 3.3, so `enspirit/startback:api` and `:web`
+move by one minor version here, and stay put from now on.
+
+| Tag | Ruby |
+|---|---|
+| `enspirit/startback:api`, `:api-2.1.0`, `:api-2.1` | 3.4 (was 3.3 in 2.0.0) |
+| `enspirit/startback:api-ruby3.4`, `:api-2.1.0-ruby3.4`, `:api-2.1-ruby3.4` | 3.4 |
+| `enspirit/startback:api-ruby4.0`, `:api-2.1.0-ruby4.0`, `:api-2.1-ruby4.0` | 4.0 |
+
+Same for the `web` target. **No Ruby 3.3 image is published any more**: an
+application pinned to `:api-ruby3.3` stays at 2.0.0 and should move to
+`:api-ruby3.4`. Only `DEFAULT_MRI_VERSION` in the Makefile publishes the
+un-suffixed tags, so adding a ruby version to the matrix can
+never change what `:api` means depending on which release job finished last.
+`make images.all` walks the whole matrix the way the release workflow does.
+
+The `web` image moves from **nodejs 20 to nodejs 22**, node 20 having reached
+end of life in April 2026.
+
+### The Bunny event bus is now covered by the test suite
+
+It was the one part of Startback with no automated coverage, on the grounds
+that the grid had no broker. It now has one, and 19 specs that talk to it for
+real -- mocking bunny would only assert that Startback calls the methods
+Startback calls. They cover connecting, autoconnect, the emit/listen round
+trip, fanout across processor queues, type isolation, adoption of a
+pre-existing topology, and the asynchronous contract that emit errors must
+not reach the emitter.
+
+Without a broker those specs skip, so `make tests` stays green for a
+contributor without docker; `make rabbitmq.up` starts one through the new
+`docker-compose.yml`. CI sets `STARTBACK_SPEC_REQUIRE_BUNNY=1`, which turns
+"no broker" into a failure, because otherwise a broken service container
+would take the coverage away without anything turning red.
+
+### The bus stops working on RabbitMQ 4.3, and now does not
+
+`queue_options` defaulted to `{}`, which declares a *transient non-exclusive*
+queue. RabbitMQ deprecated that, and flips it from `permitted_by_default` to
+`denied_by_default` in 4.3:
+
+| RabbitMQ | transient non-exclusive queues | Startback <= 2.0 bus |
+|---|---|---|
+| 4.0, 4.1, 4.2 | permitted | works |
+| **4.3+** | **denied** | **`listen` receives nothing, then `Timeout::Error`** |
+
+The defaults are now durable for both the exchange and the queue, which is
+also what a named processor queue wants: events waiting in it outlive a
+broker restart instead of being dropped, and a durable queue bound to a
+transient exchange would come back after a restart with nothing routing to
+it.
+
+```ruby
+fanout_options: { durable: true },
+queue_options:  { durable: true },
+```
+
+**No migration is required, deliberately.** AMQP refuses to redeclare an
+object with different properties, so on a broker up since an older Startback
+declared its topology the durable declaration is rejected with
+`PRECONDITION_FAILED`. Rather than make that your problem, the bus *adopts*
+whatever is already there (`passive: true` matches an existing object
+whatever its properties) and logs a warning. Transient objects do not survive
+a broker restart, so the durable declaration takes over by itself at the next
+one, with nobody having done anything.
+
+Left alone that would have been a nasty upgrade: `emit` runs inside
+`stop_errors`, so the rejection was swallowed and the application went on
+returning 200s while silently dropping every event.
+
+Applications already passing their own `queue_options`/`fanout_options` are
+unaffected: explicit options still win.
+
+### Two silent bunny bugs fixed
+
+Both predate this release and neither announced itself:
+
+* **A dead channel was cached forever.** A channel-level error closes the
+  channel, and the bus kept one per thread without checking it was still
+  open. One such error therefore broke the bus for that thread permanently --
+  every later `emit` failing with `cannot use a closed channel`, for *any*
+  event type, swallowed by `stop_errors`. The channel is now renewed when
+  found closed.
+
+* **Declaring could unsubscribe your listeners.** A rejected declaration
+  closes the channel it happened on, which was the shared one carrying the
+  consumers. Topology is now probed on a scratch channel, memoized per
+  connection so `emit` does not pay for it on every call.
+
+### Known wart, documented rather than fixed
+
+A Bunny listener receives the raw JSON `String` off the queue, where a
+`Bus::Memory::Async` listener receives a `Startback::Event`. Listeners are
+not portable between the two busses. The bus even carries a `factor_event`
+method for this, defined and never called. A spec pins the current
+behaviour; changing it would break every existing listener.
+
+### Other changes
+
+* CI housekeeping: `actions/checkout` v2/v3 -> v4, `actions/setup-node` v3
+  -> v4 on nodejs 22 (14 was long end of life, and it is the javascript
+  runtime `startback-web`'s sprockets specs need), `docker/login-action` v1
+  -> v3. The image release workflow reads the version to tag from
+  `github.ref_name` rather than `git describe --contains`, which silently
+  yielded nothing on a shallow checkout and downgraded a release to
+  unversioned tags.
+
+* The 2.0.0 notes said `benchmark`, `json`, `logger` and `ostruct` stop being
+  default gems "in Ruby 3.5". That release became 4.0, and `json` is still a
+  default gem there. Corrected in place.
+
 ## 2.0.0 - 2026-09-29
 
 Major dependency upgrade. Sinatra 4 (hence Rack 3) is now required, and the
@@ -130,7 +268,7 @@ however resolve to the newest of each, and each has its own breaking changes:
 
 * `benchmark`, `json`, `logger` and `ostruct` are now explicit runtime
   dependencies. They are required by `lib/startback.rb` and stop being default
-  gems in Ruby 3.5.
+  gems in Ruby 4.0 -- `json` excepted, which is still one there.
 
 * The example application and both contrib gems moved to webspicy 1.0, whose
   own ranges are what makes finitio 1.0, http 6 and rack-robustness 2.0
@@ -144,6 +282,7 @@ however resolve to the newest of each, and each has its own breaking changes:
   RabbitMQ — so bunny 3 is upgraded but unverified by the suite. Likewise,
   `http`, `jwt`, `puma`, `nokogiri`, `tzinfo`, `i18n` and `mustache` are never
   loaded by Startback, so the suite says nothing about their new majors.
+  *(The bus is covered as of 2.1.0.)*
 
 * Applications testing with webspicy must move to its 1.x line. Every 0.27.x
   release requires `finitio < 0.13`, `http < 6.0` and `rack-robustness < 2.0`,

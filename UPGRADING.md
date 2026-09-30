@@ -1,5 +1,121 @@
 # Upgrading Startback
 
+## From 2.0.x to 2.1.0
+
+**There is next to nothing to do.** Startback's API is unchanged and the
+event bus upgrade needs no broker-side migration. One thing does move: the
+un-suffixed docker tags go from Ruby 3.3 to Ruby 3.4. This section exists so
+you know *why*, and so you can spot the one thing that might bite you later.
+
+| | |
+|---|---|
+| Ruby | Unchanged, still `>= 3.2`. Ruby 4.0 is now supported and tested. |
+| Docker images | `enspirit/startback:api` and `:web` move from Ruby 3.3 to **Ruby 3.4**. Ruby 4.0 is opt-in by name. |
+| Event bus | Durable topology now, adopted automatically. **But see the RabbitMQ 4.3 wall below.** |
+
+---
+
+### The one thing to know: RabbitMQ 4.3
+
+This is the only item here with a deadline, and it is not really about
+Startback.
+
+`queue_options` used to default to `{}`, declaring a *transient
+non-exclusive* queue. RabbitMQ deprecated that and flips it to denied in 4.3:
+
+| RabbitMQ | transient non-exclusive queues | Startback <= 2.0 bus |
+|---|---|---|
+| 4.0, 4.1, 4.2 | permitted | works |
+| **4.3+** | **denied** | **`listen` receives nothing, then `Timeout::Error`** |
+
+So on 4.2 or earlier nothing is on fire today -- but 4.3 is a wall you hit
+whether or not you upgrade Startback. 2.1.0 is what gets you over it: the
+exchange and queue are now declared `durable: true`.
+
+### Why the durable switch costs you nothing
+
+AMQP refuses to redeclare an exchange or queue with different properties. On
+a broker that has been up continuously since an older Startback declared its
+topology, the new durable declaration is rejected with
+`PRECONDITION_FAILED`. Startback now **adopts** what is already there rather
+than failing on it, logging:
+
+```
+Adopting an existing fanout whose properties differ from the requested ones.
+It will be declared as requested after the next broker restart.
+```
+
+So deploy in any order, with or without restarting the broker. There is
+nothing to drain and nothing to delete: a transient queue holds no durable
+state, and does not survive a broker restart in the first place. You become
+durable by yourself the next time the broker restarts.
+
+Restarting the broker before deploying gets you there immediately, but it is
+an option, not a requirement.
+
+Applications already passing their own `queue_options`/`fanout_options` are
+unaffected: explicit options still win.
+
+### Two bus bugs fixed, in case you saw them
+
+Both predate 2.1.0 and neither announced itself. If you have ever seen the
+bus "just stop" until a restart, this is likely why:
+
+* **A dead channel was cached forever.** A channel-level error closes the
+  channel, and the bus kept one per thread without checking it was still
+  open. One such error broke the bus for that thread permanently -- every
+  later `emit` failing with `cannot use a closed channel`, for *any* event
+  type. Since `emit` runs inside `stop_errors`, the application kept
+  returning 200s while dropping every event.
+
+* **Declaring could unsubscribe your listeners.** A rejected declaration
+  closes the channel it happened on, which was the shared one carrying your
+  consumers. Topology is now probed on a scratch channel.
+
+### Bus listeners still receive a String
+
+Not a change, but now documented and pinned by a spec, because it bites
+people moving a listener between busses:
+
+```ruby
+bus.listen("My::Event::Type", "my-processor") do |body|
+  # Bus::Memory::Async hands over a Startback::Event here.
+  # Bus::Bunny::Async hands over the raw JSON String.
+  event = Startback::Event.json(body, nil)
+end
+```
+
+### Docker images, if you build on them
+
+`enspirit/startback:api` and `:web` are built from `DEFAULT_MRI_VERSION`,
+now **Ruby 3.4**. 2.0.0 published them from Ruby 3.3, so tracking those tags
+moves you one ruby minor version -- not a major, and 3.3 reaches end of life
+in March 2027. Ruby 4.0 stays opt-in, asked for by name:
+
+```dockerfile
+FROM enspirit/startback:api-ruby4.0         # tracks 2.x on ruby 4.0
+FROM enspirit/startback:api-2.1.0-ruby4.0   # pinned
+```
+
+The `web` target now installs **nodejs 22** instead of 20, node 20 being end
+of life since April 2026. Applications pinning a node version in their own
+layer are unaffected.
+
+**Moving your own application to Ruby 4.0** is a separate exercise, and worth
+doing separately. `benchmark`, `logger` and `ostruct` stop being default gems
+there: if your code requires them without declaring them, add them to your
+Gemfile. Startback already declares all three for itself.
+
+### Checklist
+
+- [ ] Nothing, unless you are heading for RabbitMQ 4.3 -- in which case 2.1.0
+      is what you need, and it is enough
+- [ ] `:api` / `:web` move from Ruby 3.3 to 3.4. 2.1.0 publishes no Ruby 3.3
+      image: ask for `-ruby4.0` if you want 4.0, or stay on
+      `:api-2.0.0-ruby3.3` if you are not ready to leave 3.3
+
+---
+
 ## From 1.2.x to 2.0.0
 
 **Startback's own API has not changed.** Every class, require path, constructor
@@ -270,11 +386,13 @@ Applies to `Startback::Event::Bus::Bunny::Async` only.
 
 **Heads up on coverage:** Startback's test matrix has no RabbitMQ, so the Bunny
 bus is upgraded but *unverified by the suite*. If you use it, exercise it in a
-staging environment rather than trusting the green build.
+staging environment rather than trusting the green build. *(Fixed in 2.1.0 --
+and it found a RabbitMQ 4.3 incompatibility. See the 2.1.0 section above.)*
 
 **Not ready?** `gem 'bunny', '~> 2.14'`. Startback accepts `>= 2.14, < 4.0`.
 
 ---
+
 
 ## 10. webspicy must move to 1.x
 

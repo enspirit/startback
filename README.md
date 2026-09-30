@@ -22,3 +22,45 @@ This gem uses semantic versioning. The public API is defined as follows:
   main `CMD`.
 
 Upgrading across a major version? See [UPGRADING.md](UPGRADING.md).
+
+## Supported rubies
+
+CI runs the suite on **Ruby 3.2, 3.3, 3.4 and 4.0** -- the whole range
+`required_ruby_version` allows. Docker images are released for 3.4 and 4.0.
+
+## Running the tests
+
+    make tests
+
+The `Startback::Event::Bus::Bunny::Async` specs need a real RabbitMQ broker --
+mocking bunny would only assert that Startback calls the methods Startback
+calls. Start one and point the suite at it:
+
+    make rabbitmq.up
+    export STARTBACK_BUS_BUNNY_ASYNC_URL=amqp://guest:guest@localhost:5672
+    make tests
+    make rabbitmq.down
+
+Without a broker those specs **skip**, and the suite is still green. CI sets
+`STARTBACK_SPEC_REQUIRE_BUNNY=1`, which turns "no broker" into a failure, so
+that a broken service container cannot quietly take the coverage away.
+
+## Docker images
+
+    docker pull enspirit/startback:api    # ruby 3.4
+    docker pull enspirit/startback:web    # ruby 3.4, plus nodejs and yarn
+
+The tags that name no ruby version -- `:api`, `:api-2.1.0`, `:api-2.1` -- are
+built with `DEFAULT_MRI_VERSION`, currently **3.4**. Every ruby version listed
+in `RELEASE_MRI_VERSIONS` is also reachable by name:
+
+    docker pull enspirit/startback:api-ruby4.0
+    docker pull enspirit/startback:api-2.1.0-ruby4.0
+
+Both variables live at the bottom of the [Makefile](Makefile). Adding a ruby
+version to the release matrix means listing it there and in the
+`ruby-version` matrix of the tests and release-images workflows.
+
+`make images` builds and pushes one ruby version (`MRI_VERSION`, defaulting to
+`DEFAULT_MRI_VERSION`); `make images.all` walks the whole matrix, as the
+release workflow does with one job per version.
