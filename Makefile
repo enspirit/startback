@@ -81,8 +81,11 @@ $(foreach project,$(PROJECTS),$(eval $(call test-targets,$(project))))
 ### DOCKER
 #####
 
-# Specify which ruby version is used as base
+# Specify which ruby version is used as base. Images are released for every
+# version in RELEASE_MRI_VERSIONS, one CI job each, and DEFAULT_MRI_VERSION is
+# the one a plain `make images` builds.
 DEFAULT_MRI_VERSION := 3.4
+RELEASE_MRI_VERSIONS := 3.4 4.0
 MRI_VERSION := $(or ${MRI_VERSION},${MRI_VERSION},$(DEFAULT_MRI_VERSION))
 
 VERSION := $(or ${VERSION},${VERSION},latest)
@@ -99,31 +102,41 @@ IMAGES = $(TARGETS:%=.build/%/Dockerfile.built)
 
 images: .build/buildx.builder ${IMAGES}
 
+# Build and push every ruby version of the release matrix, which is what the
+# release-images workflow does with one job per version. Sequential here,
+# so mostly useful to check a Dockerfile change against all of them.
+images.all:
+	for mri in ${RELEASE_MRI_VERSIONS}; do
+	  ${MAKE} images MRI_VERSION=$$mri
+	done
+
 .build/buildx.builder:
 	mkdir -p .build
 	docker buildx create --use --name startback
 	touch .build/buildx.builder
 
-ifeq (${VERSION},latest)
-.build/%/Dockerfile.built: Dockerfile .build/
-	@docker buildx build -f $< ./\
-		--build-arg MRI_VERSION=${MRI_VERSION} \
-		--push \
-		--platform ${PLATFORMS} \
-		--target $* \
-		-t $(DOCKER_REGISTRY)/startback:$* \
-		-t $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION}
-else
+# Tags naming the ruby version they were built with. Every version of the
+# release matrix pushes those, so each one stays reachable on its own.
+TAGS = $*-ruby${MRI_VERSION}
+ifneq (${VERSION},latest)
+TAGS += $*-${TINY}-ruby${MRI_VERSION} $*-${MINOR}-ruby${MRI_VERSION}
+endif
+
+# Tags naming no ruby version. Those are reserved for DEFAULT_MRI_VERSION:
+# since several versions are released in parallel, whoever pushed last would
+# otherwise decide what `startback:api` means. Applications that want another
+# one ask for it by name, through the tags above.
+ifeq (${MRI_VERSION},${DEFAULT_MRI_VERSION})
+TAGS += $*
+ifneq (${VERSION},latest)
+TAGS += $*-${TINY} $*-${MINOR}
+endif
+endif
+
 .build/%/Dockerfile.built: Dockerfile
 	@docker buildx build -f $< ./ \
 		--push \
 		--build-arg MRI_VERSION=${MRI_VERSION} \
 		--platform ${PLATFORMS} \
 		--target $* \
-		-t $(DOCKER_REGISTRY)/startback:$* \
-		-t $(DOCKER_REGISTRY)/startback:$*-${TINY} \
-		-t $(DOCKER_REGISTRY)/startback:$*-${MINOR} \
-		-t $(DOCKER_REGISTRY)/startback:$*-ruby${MRI_VERSION} \
-		-t $(DOCKER_REGISTRY)/startback:$*-$(TINY)-ruby${MRI_VERSION} \
-		-t $(DOCKER_REGISTRY)/startback:$*-$(MINOR)-ruby${MRI_VERSION}
-endif
+		$(addprefix -t $(DOCKER_REGISTRY)/startback:,${TAGS})

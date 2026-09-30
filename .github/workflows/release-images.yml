@@ -15,7 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['3.3']
+        # Kept in sync with RELEASE_MRI_VERSIONS in the Makefile. One job per
+        # ruby version, each pushing its own -ruby<X.Y> tags; only
+        # DEFAULT_MRI_VERSION also pushes the tags that name no ruby version.
+        ruby-version: ['3.4', '4.0']
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
@@ -24,15 +27,17 @@ jobs:
           status: starting
           channel: '#opensource-cicd'
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Get tag if exist
-        run: echo "VERSION=$(git describe --contains || true)" >> $GITHUB_ENV
+      # The workflow only triggers on tag pushes, so ref_name is the tag.
+      # Reading it here rather than through `git describe` keeps the versioned
+      # tags from silently degrading to `latest` on a shallow checkout.
+      - run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - run: echo "MRI_VERSION=${{ matrix.ruby-version }}" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

@@ -2,7 +2,8 @@
 ### MAIN TARGET
 ###
 # Mirrors DEFAULT_MRI_VERSION in the Makefile, which always passes the arg.
-# Having one here keeps a plain `docker build .` working too.
+# Having one here keeps a plain `docker build .` working too. The versions
+# actually released are listed as RELEASE_MRI_VERSIONS there.
 ARG MRI_VERSION=3.4
 FROM ruby:${MRI_VERSION} AS api
 
@@ -40,7 +41,7 @@ FROM api AS web
 
 USER root
 
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get update -qq \
  && apt-get install -qq --no-install-recommends \
     nodejs \
