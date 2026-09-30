@@ -15,7 +15,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['3.3', '3.4.1']
+        # The whole supported range, floor included: 3.2 is what
+        # required_ruby_version asks for, 3.4 and 4.0 are what images are
+        # released for (RELEASE_MRI_VERSIONS in the Makefile). Minor versions,
+        # so that the latest patch release is always picked up.
+        ruby-version: ['3.2', '3.3', '3.4', '4.0']
+
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
@@ -24,17 +29,20 @@ jobs:
           status: starting
           channel: '#opensource-cicd'
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
 
+      # startback-web compiles assets through sprockets, uglifier and
+      # babel-transpiler, all of which need a javascript runtime. Without one
+      # the MagicAssets specs fail on ExecJS::RuntimeUnavailable.
       - name: Set up nodejs
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 22
 
       - name: Bundling
         run: make bundle

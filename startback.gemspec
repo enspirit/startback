@@ -17,6 +17,9 @@ Gem::Specification.new do |s|
   # Ruby 3.2 is what the newest dependencies require (bunny 3, finitio 1.0,
   # http 6, json 3, nokogiri 1.19). Ruby 3.1 reached end of life in March
   # 2025, and the test grid never covered it.
+  #
+  # The test grid covers the whole range the floor allows -- 3.2, 3.3, 3.4
+  # and 4.0 -- so this is a tested claim rather than an assumed one.
   s.required_ruby_version = '>= 3.2'
 
   s.add_development_dependency 'rspec', ['>= 3.6', '< 4.0']
@@ -51,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "tzinfo-data"
 
   # Those are required by lib/startback.rb but stop being default gems
-  # with Ruby 3.5, hence the explicit dependencies.
+  # with Ruby 4.0, hence the explicit dependencies.
   s.add_runtime_dependency "benchmark", [">= 0.3", "< 1.0"]
   s.add_runtime_dependency "json", [">= 2.6", "< 4.0"]
   s.add_runtime_dependency "logger", [">= 1.5", "< 2.0"]
