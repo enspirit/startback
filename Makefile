@@ -68,6 +68,28 @@ $(foreach project,$(PROJECTS),$(eval $(call bundle-targets,$(project))))
 
 tests: gems $(addsuffix .test,$(PROJECTS))
 
+### BACKING SERVICES
+
+# The Bunny bus specs need a real broker. Without one they skip, so this is
+# optional locally; CI sets STARTBACK_SPEC_REQUIRE_BUNNY to make the same
+# situation a failure there.
+rabbitmq.up:
+	docker compose up -d rabbitmq
+	@echo "Waiting for RabbitMQ to answer..."
+	@for i in $$(seq 1 60); do
+	  if docker compose exec -T rabbitmq rabbitmq-diagnostics -q ping >/dev/null 2>&1; then
+	    echo "RabbitMQ is up. Export the url the specs look for:"
+	    echo "  export STARTBACK_BUS_BUNNY_ASYNC_URL=amqp://guest:guest@localhost:$${STARTBACK_RABBITMQ_PORT:-5672}"
+	    exit 0
+	  fi
+	  sleep 1
+	done
+	echo "RabbitMQ did not come up in time" >&2
+	exit 1
+
+rabbitmq.down:
+	docker compose down -v
+
 define test-targets
 $1.test::
 	@echo ===================================================================

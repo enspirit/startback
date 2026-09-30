@@ -1,0 +1,31 @@
+# Backing services the test suite needs. Only RabbitMQ for now, which the
+# Startback::Event::Bus::Bunny::Async specs talk to for real -- mocking bunny
+# would only assert that Startback calls the methods Startback calls.
+#
+#     make rabbitmq.up      # start it, wait until it answers
+#     make tests            # bus specs now run instead of skipping
+#     make rabbitmq.down    # stop it
+#
+# Without a broker those specs skip, so the suite stays green for a
+# contributor without docker. CI sets STARTBACK_SPEC_REQUIRE_BUNNY to turn
+# that skip into a failure, so the coverage cannot go missing unnoticed.
+#
+# Same image and version as the CI service container, so that a green run
+# here means the same thing as a green run there.
+services:
+  rabbitmq:
+    image: rabbitmq:4-alpine
+    # The entrypoint writes ~/.erlang.cookie as root, mode 400, while the
+    # erlang node itself runs as `rabbitmq`. It then cannot read its own
+    # cookie and the broker dies on boot with `eacces`. Starting as that
+    # user in the first place is what makes the boot deterministic.
+    user: rabbitmq
+    ports:
+      # Overridable, the default port is a popular one to already have taken:
+      #   STARTBACK_RABBITMQ_PORT=5673 make rabbitmq.up
+      - "${STARTBACK_RABBITMQ_PORT:-5672}:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20

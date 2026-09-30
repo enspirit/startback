@@ -21,8 +21,30 @@ jobs:
         # so that the latest patch release is always picked up.
         ruby-version: ['3.2', '3.3', '3.4', '4.0']
 
+    # The Bunny event bus cannot be covered without a broker: mocking bunny
+    # would only assert that Startback calls the methods Startback calls.
+    services:
+      rabbitmq:
+        image: rabbitmq:4-alpine
+        ports:
+          - 5672:5672
+        # --user rabbitmq: the entrypoint writes ~/.erlang.cookie as root,
+        # mode 400, while the erlang node runs as `rabbitmq`. It then cannot
+        # read its own cookie and the broker dies on boot with `eacces`.
+        options: >-
+          --user rabbitmq
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # Where the bus specs look for the broker. Same variable the bus reads.
+      STARTBACK_BUS_BUNNY_ASYNC_URL: amqp://guest:guest@localhost:5672
+      # Without this, an unreachable broker makes the bus specs *skip*, which
+      # on CI would take the coverage away without anything turning red.
+      STARTBACK_SPEC_REQUIRE_BUNNY: "1"
     steps:
       - uses: act10ns/slack@v1
         with:
@@ -49,3 +71,41 @@ jobs:
 
       - name: Run tests
         run: make tests
+
+  # The bus adopts a pre-existing transient topology rather than failing on
+  # it, which is what makes upgrading to the durable defaults a non-event.
+  # Setting that situation up needs a broker that still *permits* transient
+  # non-exclusive queues, i.e. RabbitMQ <= 4.2. The job above deliberately
+  # runs the current generation, which denies them -- that is what keeps the
+  # durable-defaults regression honest -- and so it skips those examples.
+  bus-legacy:
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:4.1-alpine
+        ports:
+          - 5672:5672
+        options: >-
+          --user rabbitmq
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      STARTBACK_BUS_BUNNY_ASYNC_URL: amqp://guest:guest@localhost:5672
+      STARTBACK_SPEC_REQUIRE_BUNNY: "1"
+      # Bumping the image past 4.2 would make the adoption examples skip.
+      # This turns that into a failure rather than silent coverage loss.
+      STARTBACK_SPEC_REQUIRE_TRANSIENT_QUEUES: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Bundling
+        run: bundle install
+
+      - name: Run the event bus specs against a pre-4.3 broker
+        run: bundle exec rspec spec/unit/event/bus/bunny/test_async.rb -Ilib -Ispec

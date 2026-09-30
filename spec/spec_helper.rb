@@ -12,6 +12,7 @@ require 'startback/audit'
 require 'startback/security'
 require 'rack/test'
 require 'ostruct'
+require 'support/bunny_broker'
 
 module SpecHelpers
 end

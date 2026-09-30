@@ -3,6 +3,7 @@
 contrib
 vendor
 Dockerfile*
+docker-compose.yml
 pkg/*
 Makefile
 node_modules
