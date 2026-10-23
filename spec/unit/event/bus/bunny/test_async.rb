@@ -259,6 +259,105 @@ module Startback
 
       end
 
+      describe "staying alive" do
+
+        # What a broker restart leaves behind when the queue was adopted
+        # passively: Bunny does not replay it, rebinding fails, and the
+        # consumer is gone. Deleting the queue from elsewhere gets the same
+        # outcome -- the broker cancels the consumer -- without a restart.
+        def kill_consumer!
+          BunnyBroker.delete_topology(queues: [processor])
+        end
+
+        # Bunny calls this once it reconnected and replayed its topology.
+        def complete_recovery!(b)
+          b.instance_variable_get(:@bunny).send(:notify_of_recovery_completion)
+        end
+
+        it 'is not alive before connecting' do
+          expect(bus.alive?).to eql(false)
+        end
+
+        it 'is alive once connected and listening' do
+          b = connected_bus
+          b.listen(type, processor) { |body| }
+          expect(b.alive?).to eql(true)
+        end
+
+        it 'is not alive once disconnected' do
+          b = connected_bus
+          b.listen(type, processor) { |body| }
+          b.disconnect
+          expect(b.alive?).to eql(false)
+        end
+
+        it 'is not alive when a consumer is gone' do
+          b = connected_bus
+          b.listen(type, processor) { |body| }
+          kill_consumer!
+
+          expect(BunnyBroker.wait_for { !b.alive? }).to eql(true)
+        end
+
+        it 'subscribes dead listeners again once a recovery completed' do
+          b = connected_bus
+          seen = Queue.new
+          b.listen(type, processor) { |body| seen << body }
+          kill_consumer!
+          BunnyBroker.wait_for { !b.alive? }
+
+          complete_recovery!(b)
+
+          expect(b.alive?).to eql(true)
+          b.emit(Event.new(type, { id: 12 }))
+          received = BunnyBroker.wait_for { seen.pop unless seen.empty? }
+          expect(received).not_to be_nil
+          expect(JSON.parse(received)["data"]).to eql({ "id" => 12 })
+        end
+
+        it 'declares the topology as requested when subscribing again' do
+          # An exchange adopted passively before the restart is gone after
+          # it: the durable declaration must win then, not the memoized
+          # `passive: true`, which would fail with NOT_FOUND.
+          b = connected_bus
+          b.listen(type, processor) { |body| }
+          b.instance_variable_get(:@topology)[[:fanout, type]] = { passive: true }
+          BunnyBroker.delete_topology(exchanges: [type], queues: [processor])
+          BunnyBroker.wait_for { !b.alive? }
+
+          complete_recovery!(b)
+
+          expect(b.alive?).to eql(true)
+          expect {
+            ch = b.channel
+            ch.fanout(type, durable: true, passive: true)
+            ch.queue(processor, durable: true, passive: true)
+          }.not_to raise_error
+        end
+
+        it 'leaves live listeners alone' do
+          b = connected_bus
+          consumer = b.listen(type, processor) { |body| }
+
+          complete_recovery!(b)
+
+          expect(b.send(:listeners).first.consumer).to equal(consumer)
+        end
+
+        it "still calls the application's own recovery_completed" do
+          called = Queue.new
+          b = connected_bus(connection_options: ::Bunny::Session.parse_uri(url).merge(
+            recovery_completed: -> { called << true }
+          ))
+          b.listen(type, processor) { |body| }
+
+          complete_recovery!(b)
+
+          expect(called.empty?).to eql(false)
+        end
+
+      end
+
       describe "the asynchronous contract" do
 
         it 'hides emit errors from the emitter' do

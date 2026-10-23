@@ -28,6 +28,15 @@ module Startback
         # A warning is logged, and the durable declaration takes effect on its
         # own at the next broker restart, transient objects not surviving one.
         #
+        # Listeners **survive a broker restart**. Bunny recovers the topology
+        # it recorded, but not what was adopted passively: rebinding such a
+        # queue fails with NOT_FOUND and closes the channel its consumer lives
+        # on. Once Bunny reports the connection recovered, the bus therefore
+        # subscribes again every listener whose consumer did not come back.
+        # `alive?` tells whether every listener still consumes, which is what
+        # a liveness probe wants to ask: Bunny's own recovery may also never
+        # complete at all.
+        #
         # Examples:
         #
         #     # Connects to RabbitMQ using all default options
@@ -102,6 +111,8 @@ module Startback
             @options = DEFAULT_OPTIONS.merge(options)
             @topology = {}
             @topology_lock = Mutex.new
+            @listeners = []
+            @listeners_lock = Mutex.new
             connect if @options[:autoconnect]
           end
           attr_reader :options
@@ -114,6 +125,7 @@ module Startback
             conn = options[:connection_options] || options[:url]
             try_max_times(10) do
               @bunny = ::Bunny.new(conn)
+              @bunny.after_recovery_completed { recovery_completed(conn) }
               @bunny.start
               channel # make sure we already create the channel
               log(:info, {op: "#{self.class.name}#connect", op_data: conn}, options[:context])
@@ -130,6 +142,13 @@ module Startback
 
           def connected?
             @bunny && @bunny.connected?
+          end
+
+          # Whether the bus is connected and every listener still consumes:
+          # its channel is open and the broker did not cancel its consumer.
+          # False is what a liveness probe should restart the process on.
+          def alive?
+            !!connected? && listeners.all?(&:alive?)
           end
 
           def channel
@@ -163,19 +182,67 @@ module Startback
           def listen(type, processor = nil, listener = nil, &bl)
             raise ArgumentError, "A listener must be provided" unless listener || bl
 
-            fanout = declare(:fanout, type.to_s, fanout_options)
-            queue = declare(:queue, (processor || "main").to_s, queue_options)
+            subscription = Subscription.new(type.to_s, (processor || "main").to_s, listener || bl)
+            subscribe(subscription)
+            @listeners_lock.synchronize { @listeners << subscription }
+            subscription.consumer
+          end
+
+        protected
+
+          # What `listen` was asked for, kept to subscribe again after a
+          # broker restart, along with the consumer currently serving it.
+          class Subscription < Struct.new(:type, :processor, :listener, :consumer)
+            def alive?
+              channel = consumer && consumer.channel
+              !!channel && channel.open? && channel.consumers.key?(consumer.consumer_tag)
+            end
+          end
+
+          def listeners
+            @listeners_lock.synchronize { @listeners.dup }
+          end
+
+          def subscribe(subscription)
+            fanout = declare(:fanout, subscription.type, fanout_options)
+            queue = declare(:queue, subscription.processor, queue_options)
             # Bound by name on purpose: declaring the queue may have renewed
             # the channel, in which case `fanout` belongs to a closed one.
             queue.bind(fanout.name)
-            queue.subscribe do |delivery_info, properties, body|
+            subscription.consumer = queue.subscribe do |delivery_info, properties, body|
               stop_errors(self, "listen") do
-                (listener || bl).call(body)
+                subscription.listener.call(body)
               end
             end
           end
 
-        protected
+          # Called by Bunny once it reconnected and replayed the topology it
+          # recorded, after the application's own `recovery_completed`
+          # callback, if any.
+          #
+          # What Bunny replayed may no longer match the broker -- objects
+          # adopted passively are not replayed at all -- so the topology is
+          # probed anew, and the listeners left without a consumer subscribe
+          # again. One that fails stays dead, and `alive?` reports it.
+          def recovery_completed(conn)
+            conn[:recovery_completed].call if conn.is_a?(Hash) && conn[:recovery_completed]
+
+            @topology_lock.synchronize { @topology = {} }
+            listeners.reject(&:alive?).each do |subscription|
+              renew_channel!
+              subscribe(subscription)
+              log(:info, {
+                op: "#{self.class.name}#recovery_completed",
+                op_data: { type: subscription.type, processor: subscription.processor, msg: "Subscribed again" }
+              }, options[:context])
+            rescue StandardError => ex
+              log(:error, {
+                op: "#{self.class.name}#recovery_completed",
+                op_data: { type: subscription.type, processor: subscription.processor },
+                error: ex
+              }, options[:context])
+            end
+          end
 
           # Declares an exchange (`kind` = :fanout) or a queue (:queue) with
           # `options`, adopting one that already exists with other properties
