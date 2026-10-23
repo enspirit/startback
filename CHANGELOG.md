@@ -1,3 +1,40 @@
+## 2.1.1 - 2026-10-23
+
+The Bunny event bus keeps consuming across a broker restart. **Nothing to do
+to get the fix**; `alive?` is there for whoever wants a liveness probe.
+
+### Listeners survive a broker restart
+
+2.1.0 adopts a pre-existing exchange or queue passively when its properties
+differ from the requested ones -- what an older Startback left behind, a
+transient topology. Bunny does not record passive declarations for topology
+recovery. After a broker restart the transient objects are gone, Bunny's
+replay of the queue binding fails with `NOT_FOUND`, the broker closes the
+channel the consumer lived on, and the application keeps running without
+consuming anything, with nothing louder than an error line in Bunny's log.
+It took a manual restart to get it back.
+
+Once Bunny reports the connection recovered, the bus now forgets what it
+knew of the topology and subscribes again every listener whose consumer did
+not come back, declaring the exchange and queue as requested -- durable,
+since the transient ones are gone. Listeners whose consumer survived are left
+alone. An application's own `recovery_completed` connection option is still
+called, first.
+
+### `Bus::Bunny::Async#alive?`
+
+True when the bus is connected and every listener still has a consumer on an
+open channel. A recovery that fails to subscribe a listener again leaves it
+dead and logs the error; Bunny's own recovery may also never complete at all.
+`alive?` reports both, which makes it the right thing for a liveness probe to
+check:
+
+```ruby
+map '/health/bus' do
+  run ->(_env) { bus.async.alive? ? [204, {}, []] : [503, {}, ["Bus is not consuming"]] }
+end
+```
+
 ## 2.1.0 - 2026-09-30
 
 Ruby 4.0 support, docker images for several ruby versions, and the Bunny
