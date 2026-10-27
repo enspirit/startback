@@ -1,3 +1,58 @@
+## 2.1.2 - 2026-10-27
+
+A crawler could take a page down for everyone. **AutoCaching's fix needs
+nothing from you**; the second half is a middleware to mount where it helps.
+
+### An error response is never made cacheable
+
+AutoCaching stamped its production policy -- `public, must-revalidate,
+max-age=3600, s-max-age=3600` by default -- on every response that carried
+none of its own, a 4xx or a 5xx included. Whether a request is answered with
+an error usually depends on that very request: a header, a cookie, a
+credential. A cache in front of the application keys on the url alone, so one
+client's error was handed to everyone who asked for the url next, for an
+hour. Seen in the wild on a marketing site's home page, 400ing for every
+visitor behind an nginx `proxy_cache` because a crawler had asked once with a
+header it had no business sending.
+
+A response of status 400 and up now carries `no-store`, in development and in
+production alike. `no-store` rather than no header at all, because 404 and
+410 are heuristically cacheable (RFC 9111) and a shared cache may keep them
+with nothing else to go by. An application that sets its own `Cache-Control`
+on an error still wins, as it does on a success.
+
+Configurable like the other two policies, for an application that does want
+its errors cached:
+
+```ruby
+use Startback::Web::AutoCaching, error: "public, max-age=60"
+```
+
+or through `STARTBACK_AUTOCACHING_ERROR_CACHE_CONTROL`.
+
+### `Web::IgnoreContentTypeWithoutBody`
+
+What produced that 400 in the first place: a `Content-Type:
+multipart/form-data; boundary=...` on a plain GET makes Rack parse a form out
+of a body that is not there and raise `Rack::Multipart::EmptyContentError`,
+which Sinatra turns into a 400 before the route is ever reached. The url
+answers an error that has nothing to do with what it serves, and crawlers
+send that header on GETs all day. Rack is inconsistent rather than strict
+here: the same request with `Content-Length: 0` parses to no parameters at
+all.
+
+The new middleware drops the content type of a GET or a HEAD, so the route
+runs and the page is served:
+
+```ruby
+use Startback::Web::IgnoreContentTypeWithoutBody
+```
+
+Opt-in, like every middleware here. An application with a GET route that
+loads a body -- `Web::Api#loaded_body` dispatches on the request's content
+type -- would see that body become unsupported. A GET that reads a content
+type at all is unusual, content negotiation being `Accept`'s job.
+
 ## 2.1.1 - 2026-10-23
 
 The Bunny event bus keeps consuming across a broker restart. **Nothing to do
