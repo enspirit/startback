@@ -62,6 +62,64 @@ module Startback
         end
       end
 
+      context 'when the application answers an error in production' do
+        def cache_control_for(status)
+          app = Rack::Builder.new do
+            use AutoCaching, false
+            run ->(env){ [status, {}, ["Hello error"]] }
+          end.to_app
+          _, headers, _ = app.call(Rack::MockRequest.env_for("/"))
+          headers["cache-control"]
+        end
+
+        # A cache in front of the application keys on the url, while the error
+        # is about this request; the production policy would hand it to every
+        # later visitor of the url.
+        it 'forbids storing a bad request' do
+          expect(cache_control_for(400)).to eql("no-store")
+        end
+
+        it 'forbids storing a not found, heuristically cacheable otherwise' do
+          expect(cache_control_for(404)).to eql("no-store")
+        end
+
+        it 'forbids storing a server error' do
+          expect(cache_control_for(500)).to eql("no-store")
+        end
+
+        it 'still makes a redirect cacheable' do
+          expect(cache_control_for(301)).to eql("public, must-revalidate, max-age=3600, s-max-age=3600")
+        end
+      end
+
+      context 'when the error policy is set manually' do
+        def app
+          Rack::Builder.new do
+            use AutoCaching, false, error: "public, max-age=60"
+            run ->(env){ [404, {}, ["Hello error"]] }
+          end
+        end
+
+        it 'uses it rather than the default one' do
+          get '/'
+          expect(last_response['Cache-Control']).to eql("public, max-age=60")
+        end
+      end
+
+      context 'when the application sets its own Cache-Control on an error' do
+        def app
+          Rack::Builder.new do
+            use AutoCaching, false
+            run ->(env){ [404, {"cache-control" => "public, max-age=60"}, ["Hello error"]] }
+          end
+        end
+
+        it 'lets the application win, as on a success' do
+          get '/'
+          expect(last_response['Cache-Control']).to eql("public, max-age=60")
+        end
+      end
+
       context 'when a Cache-Control header is already set by the app' do
         def app
           Rack::Builder.new do
