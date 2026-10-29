@@ -51,9 +51,13 @@ module Startback
       DEVELOPMENT_CACHE_CONTROL = ENV['STARTBACK_AUTOCACHING_DEVELOPMENT_CACHE_CONTROL'] || \
                                   "no-cache, no-store, max-age=0, must-revalidate"
 
-      # Cache-Control header to use in production mode
+      # Cache-Control header to use in production mode. `s-maxage`, and not
+      # `s-max-age`: the latter is not a directive any cache knows, so it was
+      # silently dropped and a shared cache had nothing but `max-age` to go by
+      # -- the very knob an application needs to keep a page in its reverse
+      # proxy for an hour while the browser comes back in a minute.
       PRODUCTION_CACHE_CONTROL = ENV['STARTBACK_AUTOCACHING_PRODUCTION_CACHE_CONTROL'] ||\
-                                 "public, must-revalidate, max-age=3600, s-max-age=3600"
+                                 "public, must-revalidate, max-age=3600, s-maxage=3600"
 
       # Cache-Control header to use on an error response, in either mode
       ERROR_CACHE_CONTROL = ENV['STARTBACK_AUTOCACHING_ERROR_CACHE_CONTROL'] ||\

@@ -30,7 +30,7 @@ module Startback
 
         it 'sets the production Cache-Control' do
           get '/'
-          expect(last_response['Cache-Control']). to eql("public, must-revalidate, max-age=3600, s-max-age=3600")
+          expect(last_response['Cache-Control']). to eql("public, must-revalidate, max-age=3600, s-maxage=3600")
         end
       end
 
@@ -88,7 +88,7 @@ module Startback
         end
 
         it 'still makes a redirect cacheable' do
-          expect(cache_control_for(301)).to eql("public, must-revalidate, max-age=3600, s-max-age=3600")
+          expect(cache_control_for(301)).to eql("public, must-revalidate, max-age=3600, s-maxage=3600")
         end
       end
 
