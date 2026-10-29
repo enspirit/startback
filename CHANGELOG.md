@@ -1,3 +1,32 @@
+## 2.1.3 - 2026-10-29
+
+A one-character fix to AutoCaching's production policy. **Nothing to do, and
+nothing changes for an application that kept the default** -- but the knob it
+unlocks is worth knowing about.
+
+### `s-maxage`, not `s-max-age`
+
+The default production policy read `public, must-revalidate, max-age=3600,
+s-max-age=3600`. There is no `s-max-age` directive: caches skip what they do
+not recognise, so a shared cache had nothing but `max-age` to go by. Same
+hour either way, which is why this went unnoticed -- the two values were
+equal.
+
+It matters the moment they should not be. A page whose reverse proxy should
+hold it for an hour while the browser comes back in a minute is exactly what
+`s-maxage` is for, and overriding the policy to say so had no effect on the
+proxy:
+
+```ruby
+# Now does what it says: one minute in the browser, one hour in nginx.
+use Startback::Web::AutoCaching, production: "public, max-age=60, s-maxage=3600"
+```
+
+Worth a look if your application already overrides
+`PRODUCTION_CACHE_CONTROL`, or sets
+`STARTBACK_AUTOCACHING_PRODUCTION_CACHE_CONTROL`, with a `s-max-age` copied
+from the default: it was being ignored, and now it is not.
+
 ## 2.1.2 - 2026-10-27
 
 A crawler could take a page down for everyone. **AutoCaching's fix needs
