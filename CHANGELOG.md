@@ -1,3 +1,31 @@
+## 2.1.4 - 2026-11-20
+
+No change to Startback itself. This release exists to rebuild the docker
+images on a patched Ruby. **Pull the new images and redeploy**; an
+application that installs the gem on its own Ruby has to upgrade that Ruby
+instead.
+
+### Images rebuilt on Ruby 3.4.13 and 4.0.10
+
+Ruby published a [security advisory](https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/)
+on 2026-11-18: seven vulnerabilities in the regular expression engine and in
+the case conversion of strings, several of them with a proof of concept
+leading to remote code execution. Ruby 3.4.0 through 3.4.12 and 4.0.0 through
+4.0.9 are affected.
+
+The 2.1.3 images were built on 3.4.12 and 4.0.9. Since they follow `ruby:3.4`
+and `ruby:4.0`, building them again is all it takes:
+
+| Tags | Ruby in 2.1.3 | Ruby in 2.1.4 |
+|---|---|---|
+| `:api`, `:web`, `-ruby3.4` | 3.4.12 | 3.4.13 |
+| `-ruby4.0` | 4.0.9 | 4.0.10 |
+
+The floating tags -- `:api`, `:api-2.1`, `:api-2.1-ruby4.0` and their `web`
+counterparts -- move to the new build, so a fresh pull is enough there. A tag
+pinned to a patch version does not move: `api-2.1.3` stays on the affected
+Ruby and has to become `api-2.1.4`.
+
 ## 2.1.3 - 2026-10-29
 
 A one-character fix to AutoCaching's production policy. **Nothing to do, and
