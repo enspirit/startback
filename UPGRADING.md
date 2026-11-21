@@ -419,6 +419,42 @@ them. A content-negotiating endpoint may need its schema widened accordingly
 
 ---
 
+## 11. A request body is empty when read
+
+**You will see** a route receiving `nil` or an empty string where a client
+did send a body, and usually answering a 400 about its input. Only for some
+clients: those sending their body without a content type, or with
+`application/x-www-form-urlencoded`, which is what `curl -d` does unless told
+otherwise.
+
+**Why.** Rack parses the body of such a POST as form data, and Sinatra asks
+for the parameters before any route is reached. Rack 2 rewound the input
+afterwards. Rack 3 no longer does, nor does it require an input to be
+rewindable at all, so the body is simply consumed by the time your route
+reads it.
+
+Nothing raises, and well-behaved clients are fine, which is why this one
+tends to be found late: typically on a service-to-service call made with
+`body: JSON.dump(...)`, which sets no content type.
+
+**Fix.** Nothing, if you go through `json_body`: it rewinds the input as of
+Startback 2.1.5. If you read the body yourself, rewind it first:
+
+```ruby
+# before
+raw = request.body.read
+
+# after
+request.body.rewind
+raw = request.body.read
+```
+
+The inputs of puma and of `Rack::Test` can be rewound. Having the clients
+send `Content-Type: application/json` is the other half of the fix, and the
+better one where they are yours.
+
+---
+
 ## Opting out, gem by gem
 
 Startback deliberately declares **wide ranges** for the dependencies it does
@@ -456,5 +492,6 @@ These cannot be opted out of, because Startback's own code depends on them:
 - [ ] No `JSON.fast_generate` left
 - [ ] `.fio` schemas grepped for `Fixnum`, `Bignum`, `FalseClass`
 - [ ] webspicy on 1.x
+- [ ] Routes reading `request.body` by themselves rewind it first
 - [ ] jwt / bunny reviewed, or pinned
 - [ ] Bunny event bus exercised somewhere real, since CI does not cover it

@@ -1,3 +1,33 @@
+## 2.1.5 - Unreleased
+
+A json body sent without `Content-Type: application/json` was read as empty.
+**Nothing to do to get the fix**, unless your application reads the request
+body by itself.
+
+### `json_body` reads the body from its start
+
+Rack parses the body of a POST as form data when its content type is
+`application/x-www-form-urlencoded` -- what `curl -d` sends by default -- or
+missing altogether, and Sinatra asks for the parameters before any route is
+reached. Rack 2 rewound the input afterwards, Rack 3 does not. Since 2.0.0,
+`Web::Api#json_body` therefore found the body already consumed in those two
+cases, loaded an empty string and returned `nil`.
+
+Nothing raises. The route goes on with a `nil` input and typically answers a
+400 about it, which is how it surfaced: a service calling another one with
+the http gem and `body: JSON.dump(...)`, which sets no content type, something
+that had been working for years.
+
+`json_body` now rewinds the input before reading it. `loaded_body` was not
+affected: it only loads json when the content type says so, and Rack leaves
+such a body alone.
+
+An application reading `request.body` by itself is exposed in the very same
+way, and has to rewind it too: see the new section 11 of
+[UPGRADING.md](UPGRADING.md). An input that cannot be rewound is left as it
+is: Rack 3 no longer requires one to be, though those of puma and Rack::Test
+are.
+
 ## 2.1.4 - 2026-11-20
 
 No change to Startback itself. This release exists to rebuild the docker
