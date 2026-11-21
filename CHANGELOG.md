@@ -1,4 +1,4 @@
-## 2.1.5 - Unreleased
+## 2.1.5 - 2026-11-21
 
 A json body sent without `Content-Type: application/json` was read as empty.
 **Nothing to do to get the fix**, unless your application reads the request
