@@ -47,6 +47,11 @@ module Startback
         get '/dto-path' do
           serve('DTO', DtoAble.new(PathDto.new))
         end
+
+        post '/json-body' do
+          content_type :json
+          json_body.to_json
+        end
       end
 
       let(:app) {
@@ -76,6 +81,45 @@ module Startback
       it 'supports serving DTO-able objects eventually returning paths' do
         get '/dto-path'
         expect(last_response.body).to eql(Path.file.read)
+      end
+
+      describe 'json_body' do
+        let(:json) {
+          %Q{{"todos":[{"id":1}],"done":true}}
+        }
+
+        it 'reads a json body' do
+          post '/json-body', json, { 'CONTENT_TYPE' => 'application/json' }
+          expect(last_response.body).to eql(json)
+        end
+
+        it 'reads a json body sent as text' do
+          post '/json-body', json, { 'CONTENT_TYPE' => 'text/plain' }
+          expect(last_response.body).to eql(json)
+        end
+
+        # Rack parses the body as form data in the next two cases, and Rack 3
+        # no longer rewinds it afterwards.
+
+        it 'reads a json body sent as a form' do
+          post '/json-body', json, { 'CONTENT_TYPE' => 'application/x-www-form-urlencoded' }
+          expect(last_response.body).to eql(json)
+        end
+
+        it 'reads a json body sent without any content type' do
+          # Rack::Test would default to urlencoded
+          env = Rack::MockRequest.env_for('/json-body', method: 'POST', input: json)
+          expect(env['CONTENT_TYPE']).to be_nil
+
+          status, _, body = app.call(env)
+          expect(status).to eql(200)
+          expect(body.each.to_a.join).to eql(json)
+        end
+
+        it 'still loads what it is given' do
+          api = TestedApi.new!
+          expect(api.send(:json_body, %Q{{"foo":"bar"}})).to eql("foo" => "bar")
+        end
       end
     end
   end # module Web

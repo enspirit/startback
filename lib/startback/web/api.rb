@@ -54,8 +54,23 @@ module Startback
         end
       end
 
-      def json_body(body = request.body.read)
+      # Loads `body` as json, the body of the request by default.
+      #
+      # The latter is read from its very start. Rack parses the body of a
+      # POST as form data when its content type is urlencoded, or missing,
+      # which Sinatra triggers before any route is reached. Rack 2 used to
+      # rewind the body afterwards, Rack 3 does not: without rewinding it
+      # here, a json body sent without `Content-Type: application/json` would
+      # be seen as empty.
+      def json_body(body = rewound_body.read)
         JSON.load(body)
+      end
+
+      # Returns the body of the request, rewound when it can be. Rack 3 no
+      # longer requires an input to be rewindable; those of puma and
+      # Rack::Test are.
+      def rewound_body
+        request.body.tap{|io| io.rewind if io.respond_to?(:rewind) }
       end
 
       def file_body(file, ctype)
